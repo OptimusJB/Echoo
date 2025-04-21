@@ -1,5 +1,6 @@
 import pygame
 import sys
+from TextZone import TextZone
 from Screen import resize_screen
 pygame.init()
 class Connexion:
@@ -34,14 +35,30 @@ class Connexion:
         resize_screen.blit(fond_login, (1920 // 2 - 350, 1080 // 2 + 100))
 
         login_message = self.police.render("se connecter au serveur", True, "white")
-        resize_screen.blit(login_message, (1920//2 - 350 + 40, 1080//2 + 100 + 30))
+        resize_screen.blit(login_message, (1920//2 - 350 + 40, 1080//2 + 100 + 20))
 
+        # définition texte zone
+        username = TextZone(self.police)
+        username.set_rect(pygame.rect.Rect(1920//2-350+5, 1080//2-250 + 10, 700, 100))
+        username.set_largeur_max(580)
+
+        password = TextZone(self.police)
+        password.set_rect(pygame.rect.Rect(1920 // 2 - 350 + 10, 1080 // 2 - 120 + 10, 700, 100))
+        password.set_largeur_max(900)
+        password.hide_text()
+
+        resize_screen.save_screen("fond connexion")
         clock = pygame.time.Clock()
         while True:
+            resize_screen.load_screen("fond connexion")
+            resize_screen.blit(username.get_image(), (1920//2-350+100, 1080//2-250 + 15))
+            resize_screen.blit(password.get_image(), (1920//2-350+100, 1080//2-120+15))
             resize_screen.flip()
-            clock.tick(10)
+            clock.tick(20)
 
             for event in pygame.event.get():
+                username.work(event)
+                password.work(event)
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()

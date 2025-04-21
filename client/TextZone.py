@@ -1,0 +1,60 @@
+from Screen import resize_screen
+import pygame
+pygame.init()
+
+class TextZone:
+    def __init__(self, police=pygame.font.Font):
+        self.police = police
+        self.rect = None
+        self.clicked = False
+        self.texte = ""
+        self.color = "white"
+        self.secret = False
+        self.largeur_max = float("inf")
+
+    def set_rect(self, rect:pygame.rect.Rect):
+        self.rect = rect
+
+    def set_largeur_max(self, largeur:int):
+        """
+        largeur en pixel
+        """
+        self.largeur_max = largeur
+
+    def set_color(self, color):
+        self.color = color
+
+    def hide_text(self):
+        self.secret = not self.secret
+
+    def work(self, event):
+        assert self.rect != None, "rect non initialisé"
+        # calcul sélection zone de texte
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                if self.rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
+                    self.clicked = True
+                else:
+                    self.clicked = False
+
+        elif event.type == pygame.KEYDOWN and self.clicked:
+            if event.key == pygame.K_BACKSPACE and len(self.texte) > 0:
+                self.texte = self.texte[:len(self.texte)-1]
+
+            elif self.police.size(self.texte + "|")[0] < self.largeur_max:
+                print(self.texte, self.police.size(self.texte + "|"))
+                if event.key == pygame.K_SPACE:
+                    self.texte = self.texte + " "
+                elif len(pygame.key.name(event.key)) == 1:
+                    self.texte = self.texte + pygame.key.name(event.key)
+
+    def get_image(self):
+        if not self.secret:
+            texte = self.texte
+        else:
+            texte = "." * len(self.texte)
+
+        if pygame.time.get_ticks() // 1000 % 2 == 1 and self.clicked:
+            texte = texte + "|"
+
+        return self.police.render(texte, True, self.color)
