@@ -31,8 +31,10 @@ class Connexion:
         resize_screen.blit(password_image, (1920 // 2 - 350 + 10, 1080 // 2 - 120 + 10))
 
         fond_login = pygame.surface.Surface((700, 100), pygame.SRCALPHA)
-        pygame.draw.rect(fond_login, "dodgerblue3", pygame.rect.Rect(0, 0, 700, 100), border_radius=20)
-        resize_screen.blit(fond_login, (1920 // 2 - 350, 1080 // 2 + 100))
+        rect_login = pygame.rect.Rect(0, 0, 700, 100)
+        pygame.draw.rect(fond_login, "dodgerblue3", rect_login, border_radius=20)
+        rect_login.topleft = (1920 // 2 - 350, 1080 // 2 + 100)
+        resize_screen.blit(fond_login, rect_login.topleft)
 
         login_message = self.police.render("se connecter au serveur", True, "white")
         resize_screen.blit(login_message, (1920//2 - 350 + 40, 1080//2 + 100 + 20))
@@ -54,6 +56,7 @@ class Connexion:
             resize_screen.blit(username.get_image(), (1920//2-350+100, 1080//2-250 + 15))
             resize_screen.blit(password.get_image(), (1920//2-350+100, 1080//2-120+15))
             resize_screen.flip()
+
             clock.tick(20)
 
             for event in pygame.event.get():
@@ -62,3 +65,8 @@ class Connexion:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        if rect_login.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
+                            print("connexion")
