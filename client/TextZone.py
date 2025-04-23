@@ -27,6 +27,9 @@ class TextZone:
     def hide_text(self):
         self.secret = not self.secret
 
+    def est_vide(self):
+        return len(self.texte) == 0
+
     def work(self, event):
         assert self.rect != None, "rect non initialisé"
         # calcul sélection zone de texte
@@ -42,7 +45,6 @@ class TextZone:
                 self.texte = self.texte[:len(self.texte)-1]
 
             elif self.police.size(self.texte + "|")[0] < self.largeur_max:
-                print(self.texte, self.police.size(self.texte + "|"))
                 if event.key == pygame.K_SPACE:
                     self.texte = self.texte + " "
                 elif len(pygame.key.name(event.key)) == 1:
@@ -58,3 +60,6 @@ class TextZone:
             texte = texte + "|"
 
         return self.police.render(texte, True, self.color)
+
+    def get_text(self):
+        return self.texte

@@ -31,8 +31,8 @@ class Screen:
     def blit(self, surface, cos):
         self.screen_calcul.blit(surface, cos)
 
-    def draw_rect(self, color, rect):
-        pygame.draw.rect(self.screen_calcul, color, rect)
+    def draw_rect(self, color, rect, courbure=0):
+        pygame.draw.rect(self.screen_calcul, color, rect, border_radius=courbure)
 
     def fill(self, color):
         self.screen_calcul.fill(color)

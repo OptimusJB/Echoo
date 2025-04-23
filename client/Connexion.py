@@ -2,11 +2,26 @@ import pygame
 import sys
 from TextZone import TextZone
 from Screen import resize_screen
+from Client import client
+from NotifManager import notif_manager
+import User
+from Tick import Tick
 pygame.init()
 class Connexion:
     def __init__(self, game_state_manager):
         self.game_state = game_state_manager
         self.police = pygame.font.Font("assets/police.otf", 50)
+
+    def texte_fond(self, texte:str):
+        texte = pygame.font.Font("assets/police.otf", 20).render(texte, True, "white")
+        texte_rect = texte.get_rect()
+        texte_rect.centerx = 1920//2
+        texte_rect.bottom = 1080
+        full_rect = texte_rect.copy()
+        full_rect.width = 1920
+        full_rect.x = 0
+        resize_screen.draw_rect("grey15", full_rect)
+        resize_screen.blit(texte, texte_rect.topleft)
 
     def run(self):
         # mise en place de l'écran de connexion
@@ -50,14 +65,19 @@ class Connexion:
         password.hide_text()
 
         resize_screen.save_screen("fond connexion")
+        tick = Tick()
         clock = pygame.time.Clock()
         while True:
             resize_screen.load_screen("fond connexion")
             resize_screen.blit(username.get_image(), (1920//2-350+100, 1080//2-250 + 15))
             resize_screen.blit(password.get_image(), (1920//2-350+100, 1080//2-120+15))
-            resize_screen.flip()
 
-            clock.tick(20)
+            notif_manager.work()
+
+            resize_screen.flip()
+            can_connect = tick.wait_during(30*5, "cooldown connexion")
+
+            clock.tick(30)
 
             for event in pygame.event.get():
                 username.work(event)
@@ -68,5 +88,78 @@ class Connexion:
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
-                        if rect_login.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
-                            print("connexion")
+                        if rect_login.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)) and not username.est_vide() and not password.est_vide():
+                            if can_connect:
+                                resize_screen.save_screen("avant demande compte")
+                                self.texte_fond("communication avec le serveur en cours...")
+                                resize_screen.flip()
+                                resultat = client.send_message(["connect", username.get_text(), password.get_text()]) # pas besoin de changement de page
+
+                                # test résultat commande
+                                if resultat != None:
+                                    if resultat[0] == "new account":
+                                        # génération fond
+                                        resize_screen.load_screen("avant demande compte")
+                                        resize_screen.draw_rect("grey15", pygame.rect.Rect((1920//2-400, 1080//2-300, 800, 600)), 50)
+
+                                        # génération boutons et leur rect
+                                        valider_btn_rect = pygame.rect.Rect(700, 600, 200, 100)
+                                        retour_btn_rect = pygame.rect.Rect(1000, 600, 200, 100)
+                                        resize_screen.draw_rect("dodgerblue3", valider_btn_rect, 20)
+                                        resize_screen.draw_rect("dodgerblue3", retour_btn_rect, 20)
+
+                                        # génération texte
+                                        texte = self.police.render("Ce nom d'utilisateur n'existe pas.", True, "white")
+                                        texte2 = self.police.render("Créer un compte ?", True, "white")
+                                        texte = pygame.transform.smoothscale_by(texte, 0.8)
+                                        texte2 = pygame.transform.smoothscale_by(texte2, 0.8)
+                                        resize_screen.blit(texte, (625, 300))
+                                        resize_screen.blit(texte2, (780, 400))
+
+                                        texte = self.police.render("oui", True, "white")
+                                        texte_rect = texte.get_rect()
+                                        texte_rect.center = valider_btn_rect.center
+                                        resize_screen.blit(texte, texte_rect.topleft)
+
+                                        texte = self.police.render("non", True, "white")
+                                        texte_rect = texte.get_rect()
+                                        texte_rect.center = retour_btn_rect.center
+                                        resize_screen.blit(texte, texte_rect.topleft)
+
+                                        resize_screen.flip()
+
+                                        clock_demande = pygame.time.Clock()
+                                        boucle_demande = True
+                                        while boucle_demande:
+                                            clock_demande.tick(30)
+
+                                            for event_demande in pygame.event.get():
+                                                username.work(event_demande)
+                                                password.work(event_demande)
+                                                if event_demande.type == pygame.QUIT:
+                                                    pygame.quit()
+                                                    sys.exit()
+                                                elif event_demande.type == pygame.MOUSEBUTTONDOWN:
+                                                    if event.button == 1:
+                                                        if retour_btn_rect.collidepoint(resize_screen.get_calcul_mouse_cos(event_demande.pos)):
+                                                            boucle_demande = False
+                                                        elif valider_btn_rect.collidepoint(resize_screen.get_calcul_mouse_cos(event_demande.pos)):
+                                                            self.texte_fond("communication avec le serveur en cours...")
+                                                            client.send_message(["create account", username.get_text(), password.get_text()]) # pas besoin de changement de page
+                                                            boucle_demande = False
+
+                                    elif resultat[0] == "oui":
+                                        User.user.username = username.get_text()
+                                        User.user.password = password.get_text()
+                                        notif_manager.add_notif("connexion réussie : bienvenue " + username.get_text() + " !")
+                                        self.game_state.state_actuel = "Accueil"
+                                        return None
+
+                                    elif resultat[0] == "non":
+                                        notif_manager.add_notif("mot de passe incorrect")
+                                        tick.reset_counts("cooldown connexion")
+                                    else:
+                                        raise ValueError("pb avec la réponse")
+                            else:
+                                # cooldown non terminé
+                                notif_manager.add_notif("cooldown de connexion")

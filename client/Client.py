@@ -1,12 +1,46 @@
 import pygame
+import os
+from Screen import resize_screen
 import socket
 pygame.init()
 
 class Client:
+    """
+    le contenu de server ip.txt doit être de la forme 'ip:port'
+    """
     def __init__(self):
+        if not "server ip.txt" in os.listdir():
+            self.reset_server_ip_file()
         fichier = open("server ip.txt", "r")
-        self.ip_serveur = fichier.read()
+        fichier_read = fichier.read().split(":")
+        self.ip_serveur = fichier_read[0]
+        self.port_serveur = int(fichier_read[1].rstrip())
         fichier.close()
+        self.police = pygame.font.Font("assets/police.otf", 20)
+
+    def reset_server_ip_file(self):
+        fichier = open("server ip.txt", "w")
+        fichier.write("0.0.0.0:25565")
+        fichier.close()
+
+    def texte_fond(self, texte:str):
+        texte = pygame.font.Font("assets/police.otf", 20).render(texte, True, "white")
+        texte_rect = texte.get_rect()
+        texte_rect.centerx = 1920//2
+        texte_rect.bottom = 1080
+        full_rect = texte_rect.copy()
+        full_rect.width = 1920
+        full_rect.x = 0
+        resize_screen.draw_rect("grey15", full_rect)
+        resize_screen.blit(texte, texte_rect.topleft)
+
+    def crash(self):
+        self.texte_fond("échec de la connexion au serveur, retour au menu")
+        resize_screen.flip()
+        pygame.event.get()
+        pygame.time.wait(3000)
+        pygame.event.get()
+        return "crash"
 
     def transfo_chaine(self, liste):
         chaine = ""
@@ -16,31 +50,37 @@ class Client:
         return chaine
 
     def transfo_liste(self, chaine:str):
+        if chaine == "":
+            return []
         return chaine.split("&slchaine&")
 
     def send_message(self, liste:list): # liste de str
-        texte = self.transfo_chaine(liste)
-        texte = bytes(texte, "utf-8")
-        texte = bytes(str(len(texte)) + "a", "utf-8") + texte
+        assert type(liste) == list, "pas une liste"
+        try:
+            texte = self.transfo_chaine(liste)
+            texte = bytes(texte, "utf-8")
+            texte = bytes(str(len(texte)) + "a", "utf-8") + texte
 
-        requete = socket.socket()
-        requete.settimeout(20)
-        requete.connect((self.ip_serveur, 25565))
-        requete.sendall(texte)
+            requete = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            requete.settimeout(20)
+            requete.connect((self.ip_serveur, self.port_serveur))
+            requete.sendall(texte)
 
-        nb_bytes = ""
-        data = None
-        while not data == "a":
-            data = str(requete.recv(1), "utf-8")
-            if data == "":
-                raise ConnectionError("pas de réponse du serveur")
-            if not data == "a":
-                nb_bytes = nb_bytes + data
+            nb_bytes = ""
+            data = None
+            while not data == "a":
+                data = str(requete.recv(1), "utf-8")
+                if data == "":
+                    raise ConnectionError("pas de réponse du serveur")
+                if not data == "a":
+                    nb_bytes = nb_bytes + data
 
-        data = requete.recv(int(nb_bytes))
-        data = str(data, "utf-8")
-        data = self.transfo_liste(data)
-        return data
+            data = requete.recv(int(nb_bytes))
+            data = str(data, "utf-8")
+            data = self.transfo_liste(data)
+            return data
+        except:
+            self.crash()
 
     def ask_music(self, nom_musique:str, qualite:str):
         """
@@ -52,7 +92,7 @@ class Client:
         assert qualite in ["min", "moyen", "max"], "qualité invalide"
         requete = socket.socket()
         requete.settimeout(20)
-        requete.connect((self.ip_serveur, 25565))
+        requete.connect((self.ip_serveur, self.port_serveur))
 
         texte = self.transfo_chaine(["ask music", str(nom_musique), str(qualite)])
         texte = bytes(texte, "utf-8")
@@ -72,4 +112,3 @@ class Client:
         return data
 
 client = Client()
-print(client.envoi("salut"))
