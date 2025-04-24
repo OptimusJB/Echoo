@@ -6,11 +6,12 @@ from Accueil import Accueil
 class State:
     def __init__(self):
         pygame.init()
-        pygame.display.set_caption("Spoutoufy")
         infos = pygame.display.Info()
         largeur = min([infos.current_w, 1240])
         hauteur = min([infos.current_h, 700])
         resize_screen.set_mode((largeur, hauteur), pygame.RESIZABLE)
+        pygame.display.set_caption("Spoutoufy")
+        pygame.display.set_icon(pygame.image.load("assets/Spoutoufy logo.png"))
         self.state_actuel = "Connexion"
         self.states = {"Connexion":Connexion(self),
                        "Accueil":Accueil(self)}
