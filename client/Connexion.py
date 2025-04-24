@@ -23,6 +23,85 @@ class Connexion:
         resize_screen.draw_rect("grey15", full_rect)
         resize_screen.blit(texte, texte_rect.topleft)
 
+    def change_server_ip(self):
+        """
+        boucle qui s'enclenche quand l'utilisateur clique sur l'ip en haut à gauche sur l'écran de connexion
+        """
+        # chargement du fond
+        resize_screen.load_screen("fond connexion")   # pour enlever les potentiels messages dynamiques
+        resize_screen.draw_rect("grey15", pygame.rect.Rect((1920 // 2 - 400, 1080 // 2 - 300, 800, 600)), 50)
+
+        texte_ip = TextZone(self.police)
+        texte_port = TextZone(self.police)
+        texte_ip.set_largeur_max(570)
+        texte_port.set_largeur_max(570)
+        texte_ip.set_prefixe("ip : ")
+        texte_port.set_prefixe("port : ")
+
+        ip_rect = pygame.rect.Rect(1920 // 2 - 350, 1080 // 2 - 250 + 100, 700, 100)
+        port_rect = pygame.rect.Rect(1920 // 2 - 350, 1080 // 2 - 120 + 100, 700, 100)
+        texte_ip.set_rect(ip_rect)
+        texte_port.set_rect(port_rect)
+
+        # blit du fond
+        resize_screen.draw_rect("grey50", ip_rect, 20)
+        resize_screen.draw_rect("grey50", port_rect, 20)
+
+        # blit texte
+        texte = self.police.render("nouveau serveur", True, "white")
+        resize_screen.blit(texte, (1920 // 2 - texte.get_size()[0] // 2, 280))
+
+        # génération boutons valider et retour
+        valider_btn = self.police.render("valider", True, "white")
+        valider_btn_rect = valider_btn.get_rect()
+        valider_btn_rect.size = (valider_btn_rect.width + 20, valider_btn_rect.height + 20)
+        valider_btn_rect.topleft = (700, 680)
+
+        retour_btn = self.police.render("retour", True, "white")
+        retour_btn_rect = retour_btn.get_rect()
+        retour_btn_rect.size = (retour_btn_rect.width + 20, retour_btn_rect.height + 20)
+        retour_btn_rect.topleft = (1000, 680)
+
+        # blit des deux boutons
+        resize_screen.draw_rect("dodgerblue3", valider_btn_rect, 20)
+        resize_screen.blit(valider_btn, (valider_btn_rect.x + 10, valider_btn_rect.y + 10))
+        resize_screen.draw_rect("dodgerblue3", retour_btn_rect, 20)
+        resize_screen.blit(retour_btn, (retour_btn_rect.x + 10, retour_btn_rect.y + 10))
+
+        resize_screen.save_screen("fond changement ip")
+
+        boucle_ip = True
+        clock_ip = pygame.time.Clock()
+        while boucle_ip:
+            resize_screen.load_screen("fond changement ip")
+            resize_screen.blit(texte_ip.get_image(), (ip_rect.x + 10, ip_rect.y + 15))
+            resize_screen.blit(texte_port.get_image(), (port_rect.x + 10, port_rect.y + 15))
+
+            notif_manager.work()
+            resize_screen.flip()
+            for event in pygame.event.get():
+                texte_ip.work(event)
+                texte_port.work(event)
+
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        if retour_btn_rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
+                            boucle_ip = False
+                        elif valider_btn_rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
+                            # vérification port
+                            try:
+                                int(texte_port.get_text())
+                                client.change_ip(texte_ip.get_text(), int(texte_port.get_text()))
+                                boucle_ip = False
+                                notif_manager.add_notif("ip serveur modifié")
+                            except:
+                                notif_manager.add_notif("port invalide")
+
+            clock_ip.tick(30)
     def run(self):
         # mise en place de l'écran de connexion
         #fond = pygame.transform.smoothscale(pygame.image.load("assets/fond_connexion.png").convert(), (1920, 1080))
@@ -56,12 +135,12 @@ class Connexion:
 
         # définition texte zone
         username = TextZone(self.police)
-        username.set_rect(pygame.rect.Rect(1920//2-350+5, 1080//2-250 + 10, 700, 100))
-        username.set_largeur_max(580)
+        username.set_rect(pygame.rect.Rect(1920//2-350+5, 1080//2-250, 700, 100))
+        username.set_largeur_max(570)
 
         password = TextZone(self.police)
-        password.set_rect(pygame.rect.Rect(1920 // 2 - 350 + 10, 1080 // 2 - 120 + 10, 700, 100))
-        password.set_largeur_max(900)
+        password.set_rect(pygame.rect.Rect(1920 // 2 - 350 + 10, 1080 // 2 - 120, 700, 100))
+        password.set_largeur_max(570)
         password.hide_text()
 
         resize_screen.save_screen("fond connexion")
@@ -71,6 +150,16 @@ class Connexion:
             resize_screen.load_screen("fond connexion")
             resize_screen.blit(username.get_image(), (1920//2-350+100, 1080//2-250 + 15))
             resize_screen.blit(password.get_image(), (1920//2-350+100, 1080//2-120+15))
+
+            # génération bouton ip
+            ip_info = client.get_ip()
+            texte_ip = self.police.render("serveur : " + ip_info[0] + ":" + str(ip_info[1]), True, "white")
+            texte_ip_rect = texte_ip.get_rect()
+            texte_ip_rect.width = texte_ip_rect.width + 20
+            texte_ip_rect.height = texte_ip_rect.height + 20
+            texte_ip_rect.topleft = (20, 20)
+            resize_screen.draw_rect("grey15", texte_ip_rect, 20)
+            resize_screen.blit(texte_ip, (texte_ip_rect.x + 10, texte_ip_rect.y + 10))
 
             notif_manager.work()
 
@@ -88,18 +177,20 @@ class Connexion:
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
-                        if rect_login.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)) and not username.est_vide() and not password.est_vide():
+                        if texte_ip_rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
+                            # modification de l'ip du serveur
+                            self.change_server_ip()
+                        elif rect_login.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)) and not username.est_vide() and not password.est_vide():
                             if can_connect:
-                                resize_screen.save_screen("avant demande compte")
                                 self.texte_fond("communication avec le serveur en cours...")
                                 resize_screen.flip()
                                 resultat = client.send_message(["connect", username.get_text(), password.get_text()]) # pas besoin de changement de page
 
                                 # test résultat commande
                                 if resultat != None:
-                                    if resultat[0] == "new account":
+                                    if resultat[0] == "new account":    # pop up demande de création de nouveau compte
                                         # génération fond
-                                        resize_screen.load_screen("avant demande compte")
+                                        resize_screen.load_screen("fond connexion")
                                         resize_screen.draw_rect("grey15", pygame.rect.Rect((1920//2-400, 1080//2-300, 800, 600)), 50)
 
                                         # génération boutons et leur rect
@@ -126,11 +217,13 @@ class Connexion:
                                         texte_rect.center = retour_btn_rect.center
                                         resize_screen.blit(texte, texte_rect.topleft)
 
-                                        resize_screen.flip()
-
+                                        resize_screen.save_screen("fond création compte")
                                         clock_demande = pygame.time.Clock()
                                         boucle_demande = True
                                         while boucle_demande:
+                                            resize_screen.load_screen("fond création compte")
+                                            notif_manager.work()
+                                            resize_screen.flip()
                                             clock_demande.tick(30)
 
                                             for event_demande in pygame.event.get():
@@ -146,6 +239,7 @@ class Connexion:
                                                         elif valider_btn_rect.collidepoint(resize_screen.get_calcul_mouse_cos(event_demande.pos)):
                                                             self.texte_fond("communication avec le serveur en cours...")
                                                             client.send_message(["create account", username.get_text(), password.get_text()]) # pas besoin de changement de page
+                                                            notif_manager.add_notif("compte créé")
                                                             boucle_demande = False
 
                                     elif resultat[0] == "oui":

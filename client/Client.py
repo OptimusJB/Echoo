@@ -12,9 +12,9 @@ class Client:
         if not "server ip.txt" in os.listdir():
             self.reset_server_ip_file()
         fichier = open("server ip.txt", "r")
-        fichier_read = fichier.read().split(":")
+        fichier_read = fichier.read().rstrip().split(":")
         self.ip_serveur = fichier_read[0]
-        self.port_serveur = int(fichier_read[1].rstrip())
+        self.port_serveur = int(fichier_read[1])
         fichier.close()
         self.police = pygame.font.Font("assets/police.otf", 20)
 
@@ -22,6 +22,14 @@ class Client:
         fichier = open("server ip.txt", "w")
         fichier.write("0.0.0.0:25565")
         fichier.close()
+
+    def change_ip(self, ip:str, port:int):
+        self.ip_serveur = str(ip)
+        self.port_serveur = int(port)
+
+
+    def get_ip(self):
+        return (self.ip_serveur, self.port_serveur)
 
     def texte_fond(self, texte:str):
         texte = pygame.font.Font("assets/police.otf", 20).render(texte, True, "white")
@@ -90,7 +98,7 @@ class Client:
         = "max (320kbps)" ou "moyen ()" ou "min (160kbps)"
         """
         assert qualite in ["min", "moyen", "max"], "qualité invalide"
-        requete = socket.socket()
+        requete = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         requete.settimeout(20)
         requete.connect((self.ip_serveur, self.port_serveur))
 

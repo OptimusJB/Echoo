@@ -11,9 +11,13 @@ class TextZone:
         self.color = "white"
         self.secret = False
         self.largeur_max = float("inf")
+        self.prefixe = ""
 
     def set_rect(self, rect:pygame.rect.Rect):
         self.rect = rect
+
+    def set_prefixe(self, prefixe:str):
+        self.prefixe = prefixe
 
     def set_largeur_max(self, largeur:int):
         """
@@ -44,17 +48,22 @@ class TextZone:
             if event.key == pygame.K_BACKSPACE and len(self.texte) > 0:
                 self.texte = self.texte[:len(self.texte)-1]
 
-            elif self.police.size(self.texte + "|")[0] < self.largeur_max:
-                if event.key == pygame.K_SPACE:
-                    self.texte = self.texte + " "
-                elif len(pygame.key.name(event.key)) == 1:
-                    self.texte = self.texte + pygame.key.name(event.key)
+            else:
+                if not self.secret:
+                    texte = self.texte + self.prefixe
+                else:
+                    texte = "." * len(self.prefixe + self.texte)
+                if self.police.size(texte)[0] < self.largeur_max:
+                    if event.key == pygame.K_SPACE:
+                        self.texte = self.texte + " "
+                    elif len(pygame.key.name(event.key)) == 1:
+                        self.texte = self.texte + event.unicode
 
     def get_image(self):
         if not self.secret:
-            texte = self.texte
+            texte = self.prefixe + self.texte
         else:
-            texte = "." * len(self.texte)
+            texte = "." * len(self.prefixe + self.texte)
 
         if pygame.time.get_ticks() // 1000 % 2 == 1 and self.clicked:
             texte = texte + "|"
