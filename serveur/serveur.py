@@ -15,8 +15,9 @@ def init_db():
         cursor = database.cursor()
         cursor.execute("CREATE TABLE Utilisateurs(id INTEGER, username TEXT, password TEXT, PRIMARY KEY (id AUTOINCREMENT))")
         cursor.execute("CREATE TABLE Musiques(id INTEGER, nom TEXT, genre TEXT, annee INTEGER, artiste TEXT, album TEXT, image TEXT, min TEXT, moyen TEXT, max TEXT, PRIMARY KEY (id AUTOINCREMENT))")
+        cursor.execute("CREATE TABLE Playlists(id INTEGER, nom TEXT, musiques LONGTEXT, id_utilisateur INTEGER, PRIMARY KEY (id AUTOINCREMENT), FOREIGN KEY (id_utilisateur) REFERENCES Utilisateurs(id))")
         #cursor.execute("INSERT INTO Utilisateurs(username, password) VALUES('jb', 'jb123')")
-        database.commit()
+        #database.commit()
         #cursor.execute("SELECT username FROM Utilisateurs")
         database.close()
 
@@ -91,7 +92,22 @@ class request_manager(socketserver.BaseRequestHandler):
             else:
                 return "non"
         return "new account"
+    
+    def get_playlists(self, pseudo):
+        """
+        retourne une liste de str le nom des playlists de l'utilisateur
+        """
+        database = sqlite3.connect("data.db")
+        cursor = database.cursor()
+        cursor.execute("SELECT nom FROM Playlists JOIN Utilisateurs ON Utilisateurs.id = Playlists.id_utilisateur WHERE Utilisateurs.username == ?", (pseudo,))
+        resultat = cursor.fetchall()
+        database.close()
 
+        liste_final = []
+        for element in resultat:
+            liste_final.append(element[0])
+        
+        return liste_final
     
     def handle(self):
         self.request.settimeout(20)
@@ -125,6 +141,10 @@ class request_manager(socketserver.BaseRequestHandler):
         elif type_data == "create account":
             self.create_account(data[0], data[1])
             self.send_message(["ok"])
+        
+        elif type_data == "get playlists":
+            playlists = self.get_playlists(data[0])
+            self.send_message(playlists)    # playlists est une liste
 
 
 print("que voulez-vous faire ?")
@@ -136,6 +156,7 @@ while not reponse in ("1", "2"):
 if reponse == "1":
     init_db()
 elif reponse == "2":
+    assert "data.db" in os.listdir(), "la base de donnée n'existe pas, créez là avec init_db()"
     serveur = socketserver.TCPServer(("0.0.0.0", 25565), request_manager)
     serveur.request_queue_size = 50
     print("serveur lancé")

@@ -64,6 +64,8 @@ class Client:
 
     def send_message(self, liste:list): # liste de str
         assert type(liste) == list, "pas une liste"
+        self.texte_fond("communication avec le serveur en cours...")
+        resize_screen.flip()
         try:
             texte = self.transfo_chaine(liste)
             texte = bytes(texte, "utf-8")
@@ -98,25 +100,31 @@ class Client:
         = "max (320kbps)" ou "moyen ()" ou "min (160kbps)"
         """
         assert qualite in ["min", "moyen", "max"], "qualité invalide"
-        requete = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        requete.settimeout(20)
-        requete.connect((self.ip_serveur, self.port_serveur))
+        self.texte_fond("communication avec le serveur en cours...")
+        resize_screen.flip()
 
-        texte = self.transfo_chaine(["ask music", str(nom_musique), str(qualite)])
-        texte = bytes(texte, "utf-8")
-        texte = bytes(str(len(texte)) + "a", "utf-8") + texte
-        requete.sendall(texte)
+        try:
+            requete = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            requete.settimeout(20)
+            requete.connect((self.ip_serveur, self.port_serveur))
 
-        nb_bytes = ""
-        data = None
-        while not data == "a":
-            data = str(requete.recv(1), "utf-8")
-            if data == "":
-                raise ConnectionError("pas de réponse du serveur")
-            if not data == "a":
-                nb_bytes = nb_bytes + data
+            texte = self.transfo_chaine(["ask music", str(nom_musique), str(qualite)])
+            texte = bytes(texte, "utf-8")
+            texte = bytes(str(len(texte)) + "a", "utf-8") + texte
+            requete.sendall(texte)
 
-        data = requete.recv(int(nb_bytes))
-        return data
+            nb_bytes = ""
+            data = None
+            while not data == "a":
+                data = str(requete.recv(1), "utf-8")
+                if data == "":
+                    raise ConnectionError("pas de réponse du serveur")
+                if not data == "a":
+                    nb_bytes = nb_bytes + data
+
+            data = requete.recv(int(nb_bytes))
+            return data
+        except:
+            self.crash()
 
 client = Client()

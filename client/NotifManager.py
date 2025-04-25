@@ -50,7 +50,7 @@ class Notif:
         texte_rect.width = texte_rect.width + 40
         texte_rect.height = texte_rect.height + 40
         texte_rect.center = pos
-        resize_screen.draw_rect("grey20", texte_rect, 20)
+        resize_screen.draw_rect("grey30", texte_rect, 20)
         resize_screen.blit(texte, (texte_rect.x + 20, texte_rect.y + 20))
 
     def is_outdated(self, time:int):

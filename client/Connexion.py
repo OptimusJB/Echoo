@@ -102,6 +102,7 @@ class Connexion:
                                 notif_manager.add_notif("port invalide")
 
             clock_ip.tick(30)
+            
     def run(self):
         # mise en place de l'écran de connexion
         #fond = pygame.transform.smoothscale(pygame.image.load("assets/fond_connexion.png").convert(), (1920, 1080))
@@ -182,8 +183,6 @@ class Connexion:
                             self.change_server_ip()
                         elif rect_login.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)) and not username.est_vide() and not password.est_vide():
                             if can_connect:
-                                self.texte_fond("communication avec le serveur en cours...")
-                                resize_screen.flip()
                                 resultat = client.send_message(["connect", username.get_text(), password.get_text()]) # pas besoin de changement de page
 
                                 # test résultat commande
@@ -218,6 +217,8 @@ class Connexion:
                                         resize_screen.blit(texte, texte_rect.topleft)
 
                                         resize_screen.save_screen("fond création compte")
+
+                                        pygame.event.get()
                                         clock_demande = pygame.time.Clock()
                                         boucle_demande = True
                                         while boucle_demande:
@@ -237,7 +238,6 @@ class Connexion:
                                                         if retour_btn_rect.collidepoint(resize_screen.get_calcul_mouse_cos(event_demande.pos)):
                                                             boucle_demande = False
                                                         elif valider_btn_rect.collidepoint(resize_screen.get_calcul_mouse_cos(event_demande.pos)):
-                                                            self.texte_fond("communication avec le serveur en cours...")
                                                             client.send_message(["create account", username.get_text(), password.get_text()]) # pas besoin de changement de page
                                                             notif_manager.add_notif("compte créé")
                                                             boucle_demande = False
