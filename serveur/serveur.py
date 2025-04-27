@@ -11,7 +11,7 @@ def init_db():
     if "data.db" in os.listdir():
         print("data.db existe déjà, supprimez-le pour créer une nouvelle base de données")
     else:
-        database = sqlite3.connect("../data.db")
+        database = sqlite3.connect("data.db")
         cursor = database.cursor()
         cursor.execute("CREATE TABLE Utilisateurs(id INTEGER, username TEXT, password TEXT, PRIMARY KEY (id AUTOINCREMENT))")
         cursor.execute("CREATE TABLE Musiques(id INTEGER, nom TEXT, genre TEXT, annee INTEGER, artiste TEXT, album TEXT, position_album INTEGER, image TEXT, min TEXT, moyen TEXT, max TEXT, PRIMARY KEY (id AUTOINCREMENT))")
@@ -44,7 +44,7 @@ class request_manager(socketserver.BaseRequestHandler):
         les musiques doivent être sous forme de mp3
         """
         assert "data.db" in os.listdir(), "la base de donnée n'existe pas, créez là avec init_db()"
-        database = sqlite3.connect("../data.db")
+        database = sqlite3.connect("data.db")
         cursor = database.cursor()
         cursor.execute("SELECT ? FROM Musiques WHERE nom == ?", (qualite, musique))
         resultat = cursor.fetchall()
@@ -61,7 +61,7 @@ class request_manager(socketserver.BaseRequestHandler):
 
     def create_account(self, pseudo, mdp):
         assert "data.db" in os.listdir(), "la base de donnée n'existe pas, créez là avec init_db()"
-        database = sqlite3.connect("../data.db")
+        database = sqlite3.connect("data.db")
         cursor = database.cursor()
         cursor.execute("INSERT INTO Utilisateurs (username, password) VALUES (?, ?)", (pseudo, mdp))
         database.commit()
@@ -86,7 +86,7 @@ class request_manager(socketserver.BaseRequestHandler):
         retourne True si le compte existe dans la base de données, False sinon
         """
         assert "data.db" in os.listdir(), "la base de donnée n'existe pas, créez là avec init_db()"
-        database = sqlite3.connect("../data.db")
+        database = sqlite3.connect("data.db")
         cursor = database.cursor()
         cursor.execute("SELECT password FROM Utilisateurs WHERE username==?", (pseudo,))
         resultat = cursor.fetchall()
@@ -106,7 +106,7 @@ class request_manager(socketserver.BaseRequestHandler):
         """
         retourne une liste de str le nom des playlists de l'utilisateur
         """
-        database = sqlite3.connect("../data.db")
+        database = sqlite3.connect("data.db")
         cursor = database.cursor()
         cursor.execute("SELECT nom FROM Playlists JOIN Utilisateurs ON Utilisateurs.id = Playlists.id_utilisateur WHERE Utilisateurs.username == ?", (pseudo,))
         resultat = cursor.fetchall()
@@ -120,7 +120,7 @@ class request_manager(socketserver.BaseRequestHandler):
         return liste_final
 
     def create_playlist(self, pseudo, nom_playlist):
-        database = sqlite3.connect("../data.db")
+        database = sqlite3.connect("data.db")
         cursor = database.cursor()
         cursor.execute("SELECT id FROM Utilisateurs WHERE username == ?", (pseudo,))
         resultat = cursor.fetchall()
@@ -142,7 +142,7 @@ class request_manager(socketserver.BaseRequestHandler):
         return "ok"
 
     def delete_playlist(self, pseudo, nom_playlist):
-        database = sqlite3.connect("../data.db")
+        database = sqlite3.connect("data.db")
         cursor = database.cursor()
         # récupération de l'id du pseudo
         cursor.execute("SELECT id FROM Utilisateurs WHERE username==?", (pseudo,))
@@ -157,7 +157,7 @@ class request_manager(socketserver.BaseRequestHandler):
         return "ok"
 
     def get_playlist_content(self, pseudo, nom_playlist):
-        database = sqlite3.connect("../data.db")
+        database = sqlite3.connect("data.db")
         cursor = database.cursor()
         cursor.execute("SELECT musiques FROM Playlists JOIN Utilisateurs ON Utilisateurs.id = Playlists.id_utilisateur WHERE Utilisateurs.username == ? AND Playlists.nom == ?", (pseudo, nom_playlist))
         resultat = cursor.fetchall()
@@ -170,7 +170,7 @@ class request_manager(socketserver.BaseRequestHandler):
         """
         retourne une liste de la forme [artiste, annee, album]
         """
-        database = sqlite3.connect("../data.db")
+        database = sqlite3.connect("data.db")
         cursor = database.cursor()
         cursor.execute("SELECT artiste, annee, album FROM Musiques WHERE nom == ?", (musique,))
         resultat = cursor.fetchall()
@@ -189,7 +189,7 @@ class request_manager(socketserver.BaseRequestHandler):
         """
         l'image stockée doit être sous format png
         """
-        database = sqlite3.connect("../data.db")
+        database = sqlite3.connect("data.db")
         cursor = database.cursor()
         cursor.execute("SELECT image FROM Musiques WHERE nom==?", (nom_musique,))
         resultat = cursor.fetchall()
