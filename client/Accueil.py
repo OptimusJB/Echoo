@@ -19,6 +19,8 @@ class Accueil:
         for element in self.work_elements:
             element.reset()
 
+        internal_state.reset()
+
         clock = pygame.time.Clock()
         while True:
             # blit du fond

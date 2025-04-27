@@ -67,6 +67,7 @@ class ListPlaylistsView:
         print("playlists chargées : " + str(self.playlists))
 
     def blit(self):
+        mouse_pos = pygame.mouse.get_pos()
         resize_screen.draw_rect("grey20", self.rect_dimensions, 50)
         if not self.playlists_charged:
             # affichage texte "chargement"
@@ -90,7 +91,17 @@ class ListPlaylistsView:
 
             # test de si ça doit s'afficher ou pas
             if texte_rect.colliderect(self.rect_fond_playlists):
-                resize_screen.draw_rect("grey15", texte_rect, 20)
+                color = "grey15"
+                # affichage du fond en bleu si la playlist est sélectionnée
+                if type(internal_state.state_actuel) == PlaylistView:
+                    if internal_state.state_actuel.nom_playlist == element and not internal_state.state_actuel.load_via_album:
+                        color = "dodgerblue3"
+
+                # on affiche la playlist en gris clair si la souris est dessus
+                if texte_rect.collidepoint(resize_screen.get_calcul_mouse_cos(mouse_pos)):
+                    color = "grey65"
+
+                resize_screen.draw_rect(color, texte_rect, 20)
                 resize_screen.blit(texte, (texte_rect.x + 10, texte_rect.y + 10))
                 self.liste_rects.append(texte_rect)
             else:
@@ -103,7 +114,11 @@ class ListPlaylistsView:
         resize_screen.blit(self.surface_creation, self.rect_surface_creation.topleft)
         resize_screen.draw_rect("grey10", self.rect_haut)   # non lié à la création de playlist, c'est le truc au dessus
 
-        resize_screen.draw_rect("grey50", self.create_text.rect, 20)  # texte zone
+        # changement de la couleur de la zone de texte si on passe la souris dessus
+        couleur = "grey50"
+        if self.create_text.rect.collidepoint(resize_screen.get_calcul_mouse_cos(mouse_pos)):
+            couleur = "grey65"
+        resize_screen.draw_rect(couleur, self.create_text.rect, 20)  # texte zone
         resize_screen.blit(self.create_text.get_image(), (self.create_text.rect.x + 10, self.create_text.rect.y + 10))
         resize_screen.draw_rect("dodgerblue3", self.create_btn_rect, 20)
         resize_screen.blit(self.create_btn, (self.create_btn_rect.x + 10, self.create_btn_rect.y + 10))
@@ -128,16 +143,19 @@ class ListPlaylistsView:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                 # on check d'abord la création de playlist
-                if self.create_btn_rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)) and len(self.create_text.get_text()) > 0:
-                    resultat = client.send_message(["create playlist", user.username, self.create_text.get_text()])
-                    if resultat == "crash":
-                        return "crash"
-                    elif resultat == ["existe deja"]:
-                        notif_manager.add_notif("la playlist '" + self.create_text.get_text() + "' existe déjà")
-                    elif resultat == ["ok"]:
-                        notif_manager.add_notif("playlist créée")
-                        self.create_text.texte = ""
-                        self.playlists_charged = False
+                if self.create_btn_rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
+                    if len(self.create_text.get_text()) > 0:
+                        resultat = client.send_message(["create playlist", user.username, self.create_text.get_text()])
+                        if resultat == "crash":
+                            return "crash"
+                        elif resultat == ["existe deja"]:
+                            notif_manager.add_notif("la playlist '" + self.create_text.get_text() + "' existe déjà")
+                        elif resultat == ["ok"]:
+                            notif_manager.add_notif("playlist créée")
+                            self.create_text.texte = ""
+                            self.playlists_charged = False
+                    else:
+                        notif_manager.add_notif("le nom de playlist ne peut pas être vide")
 
                 else:
                     # check des playlists si la zone de la création de playlist n'est pas touchée
@@ -145,7 +163,7 @@ class ListPlaylistsView:
                         for rect in self.liste_rects:
                             if rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
                                 playlist_choisie = self.playlists[self.liste_rects.index(rect)]
-                                internal_state.state_actuel = PlaylistView(internal_state, playlist_choisie)
+                                internal_state.state_actuel = PlaylistView(internal_state, playlist_choisie, False)
 
             elif event.button == 3:
                 if not self.rect_surface_creation.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):

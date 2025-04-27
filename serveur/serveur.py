@@ -11,7 +11,7 @@ def init_db():
     if "data.db" in os.listdir():
         print("data.db existe déjà, supprimez-le pour créer une nouvelle base de données")
     else:
-        database = sqlite3.connect("data.db")
+        database = sqlite3.connect("../data.db")
         cursor = database.cursor()
         cursor.execute("CREATE TABLE Utilisateurs(id INTEGER, username TEXT, password TEXT, PRIMARY KEY (id AUTOINCREMENT))")
         cursor.execute("CREATE TABLE Musiques(id INTEGER, nom TEXT, genre TEXT, annee INTEGER, artiste TEXT, album TEXT, position_album INTEGER, image TEXT, min TEXT, moyen TEXT, max TEXT, PRIMARY KEY (id AUTOINCREMENT))")
@@ -31,6 +31,11 @@ class request_manager(socketserver.BaseRequestHandler):
         texte = bytes(str(len(texte)) + "a", "utf-8") + texte
         self.request.sendall(texte)
 
+    def send_bytes(self, message):
+        texte = message
+        texte = bytes(str(len(texte)) + "a", "utf-8") + texte
+        self.request.sendall(texte)
+
     def get_music_envoi(self, musique, qualite="max"):
         """
         qualite = qualité à renvoyer
@@ -39,7 +44,7 @@ class request_manager(socketserver.BaseRequestHandler):
         les musiques doivent être sous forme de mp3
         """
         assert "data.db" in os.listdir(), "la base de donnée n'existe pas, créez là avec init_db()"
-        database = sqlite3.connect("data.db")
+        database = sqlite3.connect("../data.db")
         cursor = database.cursor()
         cursor.execute("SELECT ? FROM Musiques WHERE nom == ?", (qualite, musique))
         resultat = cursor.fetchall()
@@ -56,7 +61,7 @@ class request_manager(socketserver.BaseRequestHandler):
 
     def create_account(self, pseudo, mdp):
         assert "data.db" in os.listdir(), "la base de donnée n'existe pas, créez là avec init_db()"
-        database = sqlite3.connect("data.db")
+        database = sqlite3.connect("../data.db")
         cursor = database.cursor()
         cursor.execute("INSERT INTO Utilisateurs (username, password) VALUES (?, ?)", (pseudo, mdp))
         database.commit()
@@ -81,7 +86,7 @@ class request_manager(socketserver.BaseRequestHandler):
         retourne True si le compte existe dans la base de données, False sinon
         """
         assert "data.db" in os.listdir(), "la base de donnée n'existe pas, créez là avec init_db()"
-        database = sqlite3.connect("data.db")
+        database = sqlite3.connect("../data.db")
         cursor = database.cursor()
         cursor.execute("SELECT password FROM Utilisateurs WHERE username==?", (pseudo,))
         resultat = cursor.fetchall()
@@ -101,7 +106,7 @@ class request_manager(socketserver.BaseRequestHandler):
         """
         retourne une liste de str le nom des playlists de l'utilisateur
         """
-        database = sqlite3.connect("data.db")
+        database = sqlite3.connect("../data.db")
         cursor = database.cursor()
         cursor.execute("SELECT nom FROM Playlists JOIN Utilisateurs ON Utilisateurs.id = Playlists.id_utilisateur WHERE Utilisateurs.username == ?", (pseudo,))
         resultat = cursor.fetchall()
@@ -115,7 +120,7 @@ class request_manager(socketserver.BaseRequestHandler):
         return liste_final
 
     def create_playlist(self, pseudo, nom_playlist):
-        database = sqlite3.connect("data.db")
+        database = sqlite3.connect("../data.db")
         cursor = database.cursor()
         cursor.execute("SELECT id FROM Utilisateurs WHERE username == ?", (pseudo,))
         resultat = cursor.fetchall()
@@ -137,7 +142,7 @@ class request_manager(socketserver.BaseRequestHandler):
         return "ok"
 
     def delete_playlist(self, pseudo, nom_playlist):
-        database = sqlite3.connect("data.db")
+        database = sqlite3.connect("../data.db")
         cursor = database.cursor()
         # récupération de l'id du pseudo
         cursor.execute("SELECT id FROM Utilisateurs WHERE username==?", (pseudo,))
@@ -152,7 +157,7 @@ class request_manager(socketserver.BaseRequestHandler):
         return "ok"
 
     def get_playlist_content(self, pseudo, nom_playlist):
-        database = sqlite3.connect("data.db")
+        database = sqlite3.connect("../data.db")
         cursor = database.cursor()
         cursor.execute("SELECT musiques FROM Playlists JOIN Utilisateurs ON Utilisateurs.id = Playlists.id_utilisateur WHERE Utilisateurs.username == ? AND Playlists.nom == ?", (pseudo, nom_playlist))
         resultat = cursor.fetchall()
@@ -165,18 +170,41 @@ class request_manager(socketserver.BaseRequestHandler):
         """
         retourne une liste de la forme [artiste, annee, album]
         """
-        database = sqlite3.connect("data.db")
+        database = sqlite3.connect("../data.db")
         cursor = database.cursor()
         cursor.execute("SELECT artiste, annee, album FROM Musiques WHERE nom == ?", (musique,))
         resultat = cursor.fetchall()
+
+        # peut crash si le nom de la musique a changé après la création de la playlist (qui se base sur les noms)
         assert len(resultat) == 1, "len(resultat) != 1 --> " + str(len(resultat))
 
         liste_finale = []
         for element in resultat[0]:
-            liste_finale.append(element[0])
+            liste_finale.append(element)
         cursor.close()
         database.close()
         return liste_finale
+
+    def get_music_image(self, pseudo, nom_musique):
+        """
+        l'image stockée doit être sous format png
+        """
+        database = sqlite3.connect("../data.db")
+        cursor = database.cursor()
+        cursor.execute("SELECT image FROM Musiques WHERE nom==?", (nom_musique,))
+        resultat = cursor.fetchall()
+        assert len(resultat) > 0, "résultat vide, pas normal"
+        chemin_image = resultat[0][0]
+
+        # ouverture du fichier en bytes
+        assert chemin_image[len(chemin_image)-4:] == ".png", "les images doivent être sous format png"
+        fichier = open(chemin_image, "rb")
+        fichier_read = fichier.read()
+        fichier.close()
+        cursor.close()
+        database.close()
+        return fichier_read
+
     def handle(self):
         self.request.settimeout(20)
 
@@ -229,6 +257,10 @@ class request_manager(socketserver.BaseRequestHandler):
         elif type_data == "get music infos":
             resultat = self.get_music_infos(data[0], data[1])   # renvoie une liste
             self.send_message(resultat)
+
+        elif type_data == "ask music image":
+            resultat = self.get_music_image(data[0], data[1])
+            self.send_bytes(resultat)
 
 print("que voulez-vous faire ?")
 print("1 : créer nouvelle base de données")

@@ -4,4 +4,7 @@ class InternalState:
     def __init__(self):
         self.state_actuel = Rechercher()
 
+    def reset(self):
+        self.state_actuel = Rechercher()
+
 internal_state = InternalState()

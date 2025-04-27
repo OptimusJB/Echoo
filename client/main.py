@@ -2,9 +2,17 @@ import pygame
 from Screen import resize_screen
 from Connexion import Connexion
 from Accueil import Accueil
+import os
 
 class State:
     def __init__(self):
+        # suppression du cache
+        if not "cache" in os.listdir():
+            os.mkdir("cache")
+            print("dossier cache créé")
+        for element in os.listdir("cache/"):
+            os.remove("cache/" + element)
+
         pygame.init()
         infos = pygame.display.Info()
         largeur = min([infos.current_w, 1920])*0.6

@@ -94,7 +94,7 @@ class Client:
             self.crash()
             return "crash"
 
-    def ask_music(self, nom_musique:str, qualite:str):
+    def ask_music(self, pseudo:str, nom_musique:str, qualite:str):
         """
         retourne sous forme de bytes la musique demandée (stockée sur le serveur)
 
@@ -110,7 +110,38 @@ class Client:
             requete.settimeout(20)
             requete.connect((self.ip_serveur, self.port_serveur))
 
-            texte = self.transfo_chaine(["ask music", str(nom_musique), str(qualite)])
+            texte = self.transfo_chaine(["ask music", str(pseudo), str(nom_musique), str(qualite)])
+            texte = bytes(texte, "utf-8")
+            texte = bytes(str(len(texte)) + "a", "utf-8") + texte
+            requete.sendall(texte)
+
+            nb_bytes = ""
+            data = None
+            while not data == "a":
+                data = str(requete.recv(1), "utf-8")
+                if data == "":
+                    raise ConnectionError("pas de réponse du serveur")
+                if not data == "a":
+                    nb_bytes = nb_bytes + data
+
+            data = requete.recv(int(nb_bytes))
+            return data
+        except:
+            self.crash()
+
+    def ask_music_image(self, pseudo:str, nom_musique:str):
+        """
+        retourne sous forme de bytes l'image de la musique demandée (stockée sur le serveur)
+        """
+        self.texte_fond("communication avec le serveur en cours...")
+        resize_screen.flip()
+
+        try:
+            requete = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            requete.settimeout(20)
+            requete.connect((self.ip_serveur, self.port_serveur))
+
+            texte = self.transfo_chaine(["ask music image", str(pseudo), str(nom_musique)])
             texte = bytes(texte, "utf-8")
             texte = bytes(str(len(texte)) + "a", "utf-8") + texte
             requete.sendall(texte)
