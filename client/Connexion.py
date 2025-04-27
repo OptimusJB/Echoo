@@ -37,6 +37,8 @@ class Connexion:
         texte_port.set_largeur_max(570)
         texte_ip.set_prefixe("ip : ")
         texte_port.set_prefixe("port : ")
+        texte_ip.texte = client.ip_serveur
+        texte_port.texte = str(client.port_serveur)
 
         ip_rect = pygame.rect.Rect(1920 // 2 - 350, 1080 // 2 - 250 + 100, 700, 100)
         port_rect = pygame.rect.Rect(1920 // 2 - 350, 1080 // 2 - 120 + 100, 700, 100)
@@ -98,6 +100,10 @@ class Connexion:
                                 client.change_ip(texte_ip.get_text(), int(texte_port.get_text()))
                                 boucle_ip = False
                                 notif_manager.add_notif("ip serveur modifié")
+
+                                # changement fichier
+                                fichier = open("server ip.txt", "w")
+                                fichier.write(texte_ip.get_text() + ":" + texte_port.get_text())
                             except:
                                 notif_manager.add_notif("port invalide")
 
@@ -186,7 +192,7 @@ class Connexion:
                                 resultat = client.send_message(["connect", username.get_text(), password.get_text()]) # pas besoin de changement de page
 
                                 # test résultat commande
-                                if resultat != None:
+                                if resultat != "crash":
                                     if resultat[0] == "new account":    # pop up demande de création de nouveau compte
                                         # génération fond
                                         resize_screen.load_screen("fond connexion")

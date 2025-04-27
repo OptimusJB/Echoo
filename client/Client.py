@@ -43,6 +43,7 @@ class Client:
         resize_screen.blit(texte, texte_rect.topleft)
 
     def crash(self):
+        pygame.event.get()  # retrait du "ne répond pas" pour que flip marche
         self.texte_fond("échec de la connexion au serveur, retour au menu")
         resize_screen.flip()
         pygame.event.get()
@@ -50,17 +51,17 @@ class Client:
         pygame.event.get()
         return "crash"
 
-    def transfo_chaine(self, liste):
+    def transfo_chaine(self, liste, separateur="&slchaine&"):
         chaine = ""
         for element in liste:
-            chaine = chaine + str(element) + "&slchaine&"
-        chaine = chaine[:len(chaine)-10]
+            chaine = chaine + str(element) + separateur
+        chaine = chaine[:len(chaine)-len(separateur)]
         return chaine
 
-    def transfo_liste(self, chaine:str):
+    def transfo_liste(self, chaine:str, separateur="&slchaine&"):
         if chaine == "":
             return []
-        return chaine.split("&slchaine&")
+        return chaine.split(separateur)
 
     def send_message(self, liste:list): # liste de str
         assert type(liste) == list, "pas une liste"
@@ -91,6 +92,7 @@ class Client:
             return data
         except:
             self.crash()
+            return "crash"
 
     def ask_music(self, nom_musique:str, qualite:str):
         """

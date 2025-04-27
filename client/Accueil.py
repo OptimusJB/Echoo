@@ -3,15 +3,9 @@ from ListPlaylistsView import playlist_manager
 from PlayerView import player
 from NotifManager import notif_manager
 import sys
+from InternalState import internal_state
 import pygame
 pygame.init()
-
-class InternalState:
-    def __init__(self):
-        self.state_actuel = "Rechercher"
-        self.states = {}
-
-internal_state = InternalState()
 
 class Accueil:
     def __init__(self, game_state_manager):
@@ -31,14 +25,26 @@ class Accueil:
             resize_screen.fill(("grey10"))
 
             # blit des éléments de la page
+            if internal_state.state_actuel.blit() == "crash":
+                self.game_state.state_actuel = "Connexion"
+                return None
+
             for element in self.work_elements:
-                element.blit()
+                resultat = element.blit()
+                if resultat == "crash":
+                    self.game_state.state_actuel = "Connexion"
+                    return None
 
             notif_manager.work()
             resize_screen.flip()
             clock.tick(30)
             
             for event in pygame.event.get():
+                # tous les listen entry (internal_state compris)
+                if internal_state.state_actuel.listen_entry() == "crash":
+                    self.game_state.state_actuel = "Connexion"
+                    return None
+
                 for element in self.work_elements:
                     resultat = element.listen_entry(event)
                     if resultat == "crash":

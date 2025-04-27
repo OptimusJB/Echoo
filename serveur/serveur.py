@@ -14,11 +14,12 @@ def init_db():
         database = sqlite3.connect("data.db")
         cursor = database.cursor()
         cursor.execute("CREATE TABLE Utilisateurs(id INTEGER, username TEXT, password TEXT, PRIMARY KEY (id AUTOINCREMENT))")
-        cursor.execute("CREATE TABLE Musiques(id INTEGER, nom TEXT, genre TEXT, annee INTEGER, artiste TEXT, album TEXT, image TEXT, min TEXT, moyen TEXT, max TEXT, PRIMARY KEY (id AUTOINCREMENT))")
+        cursor.execute("CREATE TABLE Musiques(id INTEGER, nom TEXT, genre TEXT, annee INTEGER, artiste TEXT, album TEXT, position_album INTEGER, image TEXT, min TEXT, moyen TEXT, max TEXT, PRIMARY KEY (id AUTOINCREMENT))")
         cursor.execute("CREATE TABLE Playlists(id INTEGER, nom TEXT, musiques LONGTEXT, id_utilisateur INTEGER, PRIMARY KEY (id AUTOINCREMENT), FOREIGN KEY (id_utilisateur) REFERENCES Utilisateurs(id))")
         #cursor.execute("INSERT INTO Utilisateurs(username, password) VALUES('jb', 'jb123')")
         #database.commit()
         #cursor.execute("SELECT username FROM Utilisateurs")
+        cursor.close()
         database.close()
 
 class request_manager(socketserver.BaseRequestHandler):
@@ -42,6 +43,7 @@ class request_manager(socketserver.BaseRequestHandler):
         cursor = database.cursor()
         cursor.execute("SELECT ? FROM Musiques WHERE nom == ?", (qualite, musique))
         resultat = cursor.fetchall()
+        cursor.close()
         database.close()
         assert len(resultat) > 0, "la musique " + str(musique) + " n'existe pas"
         resultat = resultat[0][0]   # resultat[0] de la forme tuple de 1 valeur
@@ -58,20 +60,21 @@ class request_manager(socketserver.BaseRequestHandler):
         cursor = database.cursor()
         cursor.execute("INSERT INTO Utilisateurs (username, password) VALUES (?, ?)", (pseudo, mdp))
         database.commit()
+        cursor.close()
         database.close()
         print("nouvel utilisateur : " + pseudo)
 
-    def transfo_chaine(self, liste):
+    def transfo_chaine(self, liste, separateur="&slchaine&"):
         chaine = ""
         for element in liste:
-            chaine = chaine + str(element) + "&slchaine&"
-        chaine = chaine[:len(chaine)-10]
+            chaine = chaine + str(element) + separateur
+        chaine = chaine[:len(chaine)-len(separateur)]
         return chaine
 
-    def transfo_liste(self, chaine:str):
+    def transfo_liste(self, chaine:str, separateur="&slchaine&"):
         if chaine == "":
             return []
-        return chaine.split("&slchaine&")
+        return chaine.split(separateur)
 
     def check_exist(self, pseudo, password):
         """
@@ -82,6 +85,7 @@ class request_manager(socketserver.BaseRequestHandler):
         cursor = database.cursor()
         cursor.execute("SELECT password FROM Utilisateurs WHERE username==?", (pseudo,))
         resultat = cursor.fetchall()
+        cursor.close()
         database.close()
 
         assert not len(resultat) > 1, "trop d'enregistrements trouvés (normalement il y en a qu'un)"
@@ -101,6 +105,7 @@ class request_manager(socketserver.BaseRequestHandler):
         cursor = database.cursor()
         cursor.execute("SELECT nom FROM Playlists JOIN Utilisateurs ON Utilisateurs.id = Playlists.id_utilisateur WHERE Utilisateurs.username == ?", (pseudo,))
         resultat = cursor.fetchall()
+        cursor.close()
         database.close()
 
         liste_final = []
@@ -108,7 +113,70 @@ class request_manager(socketserver.BaseRequestHandler):
             liste_final.append(element[0])
         
         return liste_final
-    
+
+    def create_playlist(self, pseudo, nom_playlist):
+        database = sqlite3.connect("data.db")
+        cursor = database.cursor()
+        cursor.execute("SELECT id FROM Utilisateurs WHERE username == ?", (pseudo,))
+        resultat = cursor.fetchall()
+        assert len(resultat) > 0, "resultat vide, problème car le pseudo est censé exister"
+        id_pseudo = resultat[0][0]
+
+        # test de si la playlist existe déjà
+        cursor.execute("SELECT * FROM Playlists WHERE nom==? AND id_utilisateur==?", (nom_playlist, id_pseudo))
+        resultat = cursor.fetchall()
+        if len(resultat) > 0:
+            # la playlist existe déjà
+            cursor.close()
+            database.close()
+            return "existe deja"
+        cursor.execute("INSERT INTO Playlists(nom, musiques, id_utilisateur) VALUES(?, '', ?)", (nom_playlist, id_pseudo))
+        database.commit()
+        cursor.close()
+        database.close()
+        return "ok"
+
+    def delete_playlist(self, pseudo, nom_playlist):
+        database = sqlite3.connect("data.db")
+        cursor = database.cursor()
+        # récupération de l'id du pseudo
+        cursor.execute("SELECT id FROM Utilisateurs WHERE username==?", (pseudo,))
+        resultat = cursor.fetchall()
+        assert len(resultat) > 0, "pseudo non trouvé"
+        id_pseudo = resultat[0][0]
+        # pas besoin de vérification de présence
+        cursor.execute("DELETE FROM Playlists WHERE nom==? and id_utilisateur==?", (nom_playlist, id_pseudo))
+        database.commit()
+        cursor.close()
+        database.close()
+        return "ok"
+
+    def get_playlist_content(self, pseudo, nom_playlist):
+        database = sqlite3.connect("data.db")
+        cursor = database.cursor()
+        cursor.execute("SELECT musiques FROM Playlists JOIN Utilisateurs ON Utilisateurs.id = Playlists.id_utilisateur WHERE Utilisateurs.username == ? AND Playlists.nom == ?", (pseudo, nom_playlist))
+        resultat = cursor.fetchall()
+        assert len(resultat) == 1, "problème : nombre d'enregistrements pas égal 1 : " + str(len(resultat))
+        cursor.close()
+        database.close()
+        return self.transfo_liste(resultat[0][0])
+
+    def get_music_infos(self, pseudo:str, musique:str):
+        """
+        retourne une liste de la forme [artiste, annee, album]
+        """
+        database = sqlite3.connect("data.db")
+        cursor = database.cursor()
+        cursor.execute("SELECT artiste, annee, album FROM Musiques WHERE nom == ?", (musique,))
+        resultat = cursor.fetchall()
+        assert len(resultat) == 1, "len(resultat) != 1 --> " + str(len(resultat))
+
+        liste_finale = []
+        for element in resultat[0]:
+            liste_finale.append(element[0])
+        cursor.close()
+        database.close()
+        return liste_finale
     def handle(self):
         self.request.settimeout(20)
 
@@ -142,10 +210,25 @@ class request_manager(socketserver.BaseRequestHandler):
             self.create_account(data[0], data[1])
             self.send_message(["ok"])
         
-        elif type_data == "get playlists":
+        elif type_data == "get playlists names":
             playlists = self.get_playlists(data[0])
             self.send_message(playlists)    # playlists est une liste
 
+        elif type_data == "create playlist":
+            resultat = self.create_playlist(data[0], data[1])
+            self.send_message([resultat])
+
+        elif type_data == "delete playlist":
+            resultat = self.delete_playlist(data[0], data[1])
+            self.send_message([resultat])
+
+        elif type_data == "get playlist content":
+            resultat = self.get_playlist_content(data[0], data[1])  # renvoie une liste
+            self.send_message(resultat)
+
+        elif type_data == "get music infos":
+            resultat = self.get_music_infos(data[0], data[1])   # renvoie une liste
+            self.send_message(resultat)
 
 print("que voulez-vous faire ?")
 print("1 : créer nouvelle base de données")
