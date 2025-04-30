@@ -67,31 +67,31 @@ class Client:
         assert type(liste) == list, "pas une liste"
         self.texte_fond("communication avec le serveur en cours...")
         resize_screen.flip()
-        try:
-            texte = self.transfo_chaine(liste)
-            texte = bytes(texte, "utf-8")
-            texte = bytes(str(len(texte)) + "a", "utf-8") + texte
+        requete = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-            requete = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        texte = self.transfo_chaine(liste)
+        assert not "#" in texte, "# interdit"
+        texte = bytes(texte + "#", "utf-8")
+
+        try:
+
+
             requete.settimeout(20)
             requete.connect((self.ip_serveur, self.port_serveur))
             requete.sendall(texte)
 
-            nb_bytes = ""
-            data = None
-            while not data == "a":
-                data = str(requete.recv(1), "utf-8")
-                if data == "":
-                    raise ConnectionError("pas de réponse du serveur")
-                if not data == "a":
-                    nb_bytes = nb_bytes + data
-
-            data = requete.recv(int(nb_bytes))
-            data = str(data, "utf-8")
+            data = ""
+            reception = "truc"
+            while reception:
+                pygame.event.get()
+                reception = requete.recv(65536)
+                data = data + str(reception, "utf-8")
             data = self.transfo_liste(data)
+            requete.close()
             return data
         except:
             self.crash()
+            requete.close()
             return "crash"
 
     def ask_music(self, pseudo:str, nom_musique:str, qualite:str):
@@ -104,30 +104,31 @@ class Client:
         assert qualite in ["min", "moyen", "max"], "qualité invalide"
         self.texte_fond("communication avec le serveur en cours...")
         resize_screen.flip()
+        requete = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         try:
-            requete = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             requete.settimeout(20)
             requete.connect((self.ip_serveur, self.port_serveur))
 
             texte = self.transfo_chaine(["ask music", str(pseudo), str(nom_musique), str(qualite)])
-            texte = bytes(texte, "utf-8")
-            texte = bytes(str(len(texte)) + "a", "utf-8") + texte
+            assert not "#" in texte, "# interdit"
+            texte = bytes(texte + "#", "utf-8")
+            #texte = bytes(str(len(texte)) + "a", "utf-8") + texte
             requete.sendall(texte)
 
-            nb_bytes = ""
-            data = None
-            while not data == "a":
-                data = str(requete.recv(1), "utf-8")
-                if data == "":
-                    raise ConnectionError("pas de réponse du serveur")
-                if not data == "a":
-                    nb_bytes = nb_bytes + data
-
-            data = requete.recv(int(nb_bytes))
+            data = bytes("", "utf-8")
+            reception = "truc"
+            while reception:
+                pygame.event.get()
+                reception = requete.recv(65536)
+                data = data + reception
+            requete.close()
             return data
-        except:
+        except Exception as error:
             self.crash()
+            requete.close()
+            print(error)
+            return "crash"
 
     def ask_music_image(self, pseudo:str, nom_musique:str):
         """
@@ -135,29 +136,29 @@ class Client:
         """
         self.texte_fond("communication avec le serveur en cours...")
         resize_screen.flip()
+        requete = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         try:
-            requete = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             requete.settimeout(20)
             requete.connect((self.ip_serveur, self.port_serveur))
 
             texte = self.transfo_chaine(["ask music image", str(pseudo), str(nom_musique)])
-            texte = bytes(texte, "utf-8")
-            texte = bytes(str(len(texte)) + "a", "utf-8") + texte
+            assert not "#" in texte, "# interdit"
+            texte = bytes(texte + "#", "utf-8")
+            #texte = bytes(str(len(texte)) + "a", "utf-8") + texte
             requete.sendall(texte)
-
-            nb_bytes = ""
-            data = None
-            while not data == "a":
-                data = str(requete.recv(1), "utf-8")
-                if data == "":
-                    raise ConnectionError("pas de réponse du serveur")
-                if not data == "a":
-                    nb_bytes = nb_bytes + data
-
-            data = requete.recv(int(nb_bytes))
+            data = bytes("", "utf-8")
+            reception = "truc"
+            while reception:
+                pygame.event.get()
+                reception = requete.recv(65536)
+                data = data + reception
+            requete.close()
             return data
-        except:
+        except Exception as error:
+            print(error)
             self.crash()
+            requete.close()
+            return "crash"
 
 client = Client()

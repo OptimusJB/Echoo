@@ -8,5 +8,5 @@ class Rechercher:
     def blit(self):
         pass
 
-    def listen_entry(self):
+    def listen_entry(self, event):
         pass

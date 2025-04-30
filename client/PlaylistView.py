@@ -1,6 +1,7 @@
 from User import user
 from Client import client
 from Screen import resize_screen
+from PlayerView import player
 import os
 import pygame
 pygame.init()
@@ -70,7 +71,6 @@ class PlaylistView:
                 self.playlist[musique][0] = self.get_icone_base()
 
         self.playlist_charged = True
-        print("playlist chargée")
 
     def get_icone_base(self):
         if self.icone_base == None:
@@ -178,9 +178,18 @@ class PlaylistView:
 
             self.y = self.y + 100
 
-    def listen_entry(self):
+    def listen_entry(self, event):
         # check du chargement de la playlist
         if not self.playlist_charged:
             # chargement de la playlist
             if self.charger_playlist() == "crash":
                 return "crash"
+
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                # test des rects play
+                for rect in self.rects_play:
+                    if rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
+                        index_rect = self.rects_play.index(rect)
+                        if player.load(self.liste_noms_musiques, self.liste_noms_musiques[index_rect]) == "crash":
+                            return "crash"

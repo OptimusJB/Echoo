@@ -28,15 +28,14 @@ class request_manager(socketserver.BaseRequestHandler):
         assert type(liste) == list, "pas une liste"
         texte = self.transfo_chaine(liste)
         texte = bytes(texte, "utf-8")
-        texte = bytes(str(len(texte)) + "a", "utf-8") + texte
         self.request.sendall(texte)
 
     def send_bytes(self, message):
         texte = message
-        texte = bytes(str(len(texte)) + "a", "utf-8") + texte
+        #texte = bytes(str(len(texte)) + "a", "utf-8") + texte
         self.request.sendall(texte)
 
-    def get_music_envoi(self, musique, qualite="max"):
+    def get_music_envoi(self, pseudo, musique, qualite="max"):
         """
         qualite = qualité à renvoyer
         = "max (320kbps)" ou "moyen ()" ou "min (160kbps)"
@@ -46,7 +45,7 @@ class request_manager(socketserver.BaseRequestHandler):
         assert "data.db" in os.listdir(), "la base de donnée n'existe pas, créez là avec init_db()"
         database = sqlite3.connect("data.db")
         cursor = database.cursor()
-        cursor.execute("SELECT ? FROM Musiques WHERE nom == ?", (qualite, musique))
+        cursor.execute("SELECT " + qualite + " FROM Musiques WHERE nom == ?", (musique,))
         resultat = cursor.fetchall()
         cursor.close()
         database.close()
@@ -205,21 +204,46 @@ class request_manager(socketserver.BaseRequestHandler):
         database.close()
         return fichier_read
 
+    def check_quality(self, pseudo, musique, quality):
+        # création dico
+        dico_quality = {"min":0, "moyen":1, "max":2}
+        dico_index = {0:"min", 1:"moyen", 2:"max"}
+        assert quality in dico_quality.keys(), "qualité invalide : " + str(quality)
+
+        database = sqlite3.connect("data.db")
+        cursor = database.cursor()
+        cursor.execute("SELECT min, moyen, max FROM Musiques WHERE nom == ?", (musique,))
+        resultat = cursor.fetchall()
+        qualites = [resultat[0][0], resultat[0][1], resultat[0][2]]
+        index_quality = dico_quality[quality]
+
+        quality_final = "None"
+        boucle = True
+        while boucle:
+            if index_quality == -1:
+                boucle = False
+            elif index_quality == 0 and not qualites[index_quality] == "?":
+                quality_final = dico_index[index_quality]
+            elif index_quality == 1 and not qualites[index_quality] == "?":
+                quality_final = dico_index[index_quality]
+            elif index_quality == 2 and not qualites[index_quality] == "?":
+                quality_final = dico_index[index_quality]
+            index_quality -= 1
+        cursor.close()
+        database.close()
+        return quality_final
+
     def handle(self):
         self.request.settimeout(20)
 
         # récupération des données envoyées par le client
-        nb_bytes = ""
-        data = None
-        while not data == "a":  # a est le séparateur
-            data = str(self.request.recv(1), "utf-8")
-            if data == "":
-                raise ConnectionError("le client n'a rien envoyé")
-            elif not data == "a":
-                nb_bytes = nb_bytes + data
+        data = ""
+        reception = "truc"
+        while not "#" in data:  # le client ne ferme pas le socket afin de recevoir une réponse
+            reception = self.request.recv(1024)
+            data = data + str(reception, "utf-8")
 
-        nb_bytes = int(nb_bytes)
-        data = str(self.request.recv(nb_bytes), "utf-8")
+        data = data.replace("#", "")
         data = self.transfo_liste(data)
 
         type_data = data[0]
@@ -227,8 +251,8 @@ class request_manager(socketserver.BaseRequestHandler):
 
         # test du type
         if type_data == "ask music":
-            musique = self.get_music_envoi(data[0], data[1])
-            self.request.sendall(musique)
+            musique = self.get_music_envoi(data[0], data[1], data[2])
+            self.send_bytes(musique)
 
         elif type_data == "connect":
             resultat = self.check_exist(data[0], data[1])
@@ -261,6 +285,10 @@ class request_manager(socketserver.BaseRequestHandler):
         elif type_data == "ask music image":
             resultat = self.get_music_image(data[0], data[1])
             self.send_bytes(resultat)
+
+        elif type_data == "check quality":
+            resultat = self.check_quality(data[0], data[1], data[2])
+            self.send_message([resultat])
 
 print("que voulez-vous faire ?")
 print("1 : créer nouvelle base de données")

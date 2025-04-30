@@ -43,7 +43,7 @@ class Accueil:
             
             for event in pygame.event.get():
                 # tous les listen entry (internal_state compris)
-                if internal_state.state_actuel.listen_entry() == "crash":
+                if internal_state.state_actuel.listen_entry(event) == "crash":
                     self.game_state.state_actuel = "Connexion"
                     return None
 
