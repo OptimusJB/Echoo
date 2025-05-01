@@ -4,6 +4,7 @@ from PlayerView import player
 from NotifManager import notif_manager
 import sys
 from InternalState import internal_state
+from User import user
 import pygame
 pygame.init()
 

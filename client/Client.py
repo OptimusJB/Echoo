@@ -43,6 +43,8 @@ class Client:
         resize_screen.blit(texte, texte_rect.topleft)
 
     def crash(self):
+        if pygame.mixer.music.get_busy():
+            pygame.mixer.music.stop()
         pygame.event.get()  # retrait du "ne répond pas" pour que flip marche
         self.texte_fond("échec de la connexion au serveur, retour au menu")
         resize_screen.flip()

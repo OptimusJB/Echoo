@@ -29,7 +29,7 @@ class PlaylistView:
 
     def delete_cache_png(self):
         for element in os.listdir("cache/"):
-            if element[len(element)-4:] == ".png":
+            if element[len(element)-4:] == ".png" and not element == "cache.png":
                 os.remove("cache/" + element)
 
     def charger_playlist(self):

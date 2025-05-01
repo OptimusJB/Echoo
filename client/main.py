@@ -10,6 +10,7 @@ resize_screen.set_mode((largeur, hauteur), pygame.RESIZABLE)
 from Connexion import Connexion
 from Accueil import Accueil
 import os
+from User import user
 
 class State:
     def __init__(self):
@@ -17,8 +18,7 @@ class State:
         if not "cache" in os.listdir():
             os.mkdir("cache")
             print("dossier cache créé")
-        for element in os.listdir("cache/"):
-            os.remove("cache/" + element)
+        user.remove_cache()
 
         pygame.display.set_caption("Spoutoufy")
         pygame.display.set_icon(pygame.transform.smoothscale(pygame.image.load("assets/Spoutoufy logo.png"), (32, 32)))
