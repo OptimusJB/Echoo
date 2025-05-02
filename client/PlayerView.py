@@ -292,6 +292,7 @@ class PlayerView:
                         else:
                             pygame.mixer.music.pause()
                         self.pause = not self.pause
+
                         # mise à jour de la variable pour la barre
                         if self.pause:
                             self.time_pause = pygame.time.get_ticks()
@@ -356,7 +357,10 @@ class PlayerView:
             self.icone_base = pygame.transform.smoothscale(self.icone_base, (80, 80))
         return self.icone_base
 
-    def play(self, index_music:int):
+    def play(self, index_music:int, disable_loop=False):
+        if disable_loop:
+            # on enlève la boucle pour éviter le blocage si aucune musique ne supporte la qualité choisie
+            self.loop = "false"
         self.sound_length = None
         self.pause = False
         if pygame.mixer.music.get_busy():
@@ -369,33 +373,8 @@ class PlayerView:
             pygame.mixer.music.load("cache/cache.ogg")
             pygame.mixer.music.play()
             self.time_music = pygame.time.get_ticks()
+            self.music_loaded = True
             return None
-
-        self.piste_infos = None
-        # récupération des infos de la musique
-        resultat = client.send_message(["get music infos", user.username, self.playlist[index_music]])
-        if resultat == "crash":
-            return "crash"
-        self.piste_infos = [None] + resultat
-
-        # récupération de l'image de la musique
-        musique = self.playlist[index_music]
-        if user.load_images:
-            resultat = client.ask_music_image(user.username, musique)
-            if resultat == "crash":
-                return "crash"
-
-            # écriture du fichier dans le cache
-            #print("ecriture")
-            fichier = open("cache/cache.png", "wb")
-            fichier.write(resultat)
-            fichier.close()
-
-            # chargement dans le dictionnaire
-            self.piste_infos[0] = pygame.image.load("cache/" + musique + ".png").convert_alpha()
-            self.piste_infos[0] = pygame.transform.smoothscale(self.piste_infos[0], (80, 80))
-        else:
-            self.piste_infos[0] = self.get_icone_base()
 
         # récupération de la musique
         resultat = client.send_message(["check quality", user.username, self.playlist[index_music], user.quality])
@@ -403,6 +382,9 @@ class PlayerView:
             return "crash"
         elif resultat[0] == "None":
             notif_manager.add_notif("musique non disponible (pas de qualités en dessous de " + user.quality + "), passage à la musique suivante")
+            if self.next_music() == "crash":
+                return "crash"
+            return None
         else:
             if resultat[0] != user.quality:
                 notif_manager.add_notif("qualité " + user.quality + " non disponible. qualité actuelle : " + resultat[0])
@@ -418,6 +400,34 @@ class PlayerView:
             fichier = open("cache/cache.ogg", "wb")
             fichier.write(resultat)
             fichier.close()
+
+            # musique
+            self.piste_infos = None
+            # récupération des infos de la musique
+            resultat = client.send_message(["get music infos", user.username, self.playlist[index_music]])
+            if resultat == "crash":
+                return "crash"
+            self.piste_infos = [None] + resultat
+
+            # récupération de l'image de la musique
+            musique = self.playlist[index_music]
+            if user.load_images:
+                resultat = client.ask_music_image(user.username, musique)
+                if resultat == "crash":
+                    return "crash"
+
+                # écriture du fichier dans le cache
+                # print("ecriture")
+                fichier = open("cache/cache.png", "wb")
+                fichier.write(resultat)
+                fichier.close()
+
+                # chargement dans le dictionnaire
+                self.piste_infos[0] = pygame.image.load("cache/" + musique + ".png").convert_alpha()
+                self.piste_infos[0] = pygame.transform.smoothscale(self.piste_infos[0], (80, 80))
+            else:
+                self.piste_infos[0] = self.get_icone_base()
+
             self.get_music_length()  # on charge en mémoire
             pygame.mixer.music.load("cache/cache.ogg")
             pygame.mixer.music.play()
@@ -425,6 +435,8 @@ class PlayerView:
 
             self.old_music = self.playlist[index_music]
             self.old_quality = user.quality
+
+            self.music_loaded = True
 
     def load(self, playlist:list, first:str):
         self.reset()
@@ -434,9 +446,8 @@ class PlayerView:
         self.index_play = self.playlist.index(first)
         self.check_random()
 
-        if self.play(self.index_play) == "crash":
+        if self.play(self.index_play, disable_loop=True) == "crash":
             return "crash"
-        self.music_loaded = True
 
         # lancement de la playlist
 player = PlayerView()
