@@ -58,10 +58,12 @@ class Client:
         for element in liste:
             chaine = chaine + str(element) + separateur
         chaine = chaine[:len(chaine)-len(separateur)]
+        if chaine == "":
+            chaine = "rien"
         return chaine
 
     def transfo_liste(self, chaine:str, separateur="&slchaine&"):
-        if chaine == "":
+        if chaine == "rien":
             return []
         return chaine.split(separateur)
 
@@ -88,10 +90,12 @@ class Client:
                 pygame.event.get()
                 reception = requete.recv(65536)
                 data = data + str(reception, "utf-8")
+            assert data != "", "crash"
             data = self.transfo_liste(data)
             requete.close()
             return data
-        except:
+        except Exception as error:
+            print(error)
             self.crash()
             requete.close()
             return "crash"
@@ -125,6 +129,7 @@ class Client:
                 reception = requete.recv(65536)
                 data = data + reception
             requete.close()
+            assert data != "", "crash"
             return data
         except Exception as error:
             self.crash()
@@ -156,6 +161,7 @@ class Client:
                 reception = requete.recv(65536)
                 data = data + reception
             requete.close()
+            assert data != "", "crash"
             return data
         except Exception as error:
             print(error)

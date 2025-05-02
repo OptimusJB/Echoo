@@ -73,10 +73,12 @@ class request_manager(socketserver.BaseRequestHandler):
         for element in liste:
             chaine = chaine + str(element) + separateur
         chaine = chaine[:len(chaine)-len(separateur)]
+        if chaine == "":
+            chaine = "rien"
         return chaine
 
     def transfo_liste(self, chaine:str, separateur="&slchaine&"):
-        if chaine == "":
+        if chaine == "rien":
             return []
         return chaine.split(separateur)
 
@@ -175,7 +177,7 @@ class request_manager(socketserver.BaseRequestHandler):
         resultat = cursor.fetchall()
 
         # peut crash si le nom de la musique a changé après la création de la playlist (qui se base sur les noms)
-        assert len(resultat) == 1, "len(resultat) != 1 --> " + str(len(resultat))
+        assert len(resultat) == 1, "len(resultat) != 1 --> " + str(len(resultat)) + ", musique " + musique
 
         liste_finale = []
         for element in resultat[0]:
@@ -244,6 +246,9 @@ class request_manager(socketserver.BaseRequestHandler):
             data = data + str(reception, "utf-8")
 
         data = data.replace("#", "")
+        if data == "":
+            print("le client a fermé la connexion")
+            return None
         data = self.transfo_liste(data)
 
         type_data = data[0]

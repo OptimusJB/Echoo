@@ -184,6 +184,7 @@ class PlaylistView:
             # chargement de la playlist
             if self.charger_playlist() == "crash":
                 return "crash"
+            self.blit()
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:

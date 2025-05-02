@@ -56,17 +56,19 @@ class ListPlaylistsView:
         self.create_text.set_largeur_max(575 - 30)
     
     def charger_playlists(self):
+        print("chargement playlists...")
         resultat = client.send_message(["get playlists names", user.username])
         if resultat == "crash":
             return "crash"
         else:
             pass
-
+        
         self.playlists = resultat
         self.playlists_charged = True
         print("playlists chargées : " + str(self.playlists))
 
     def blit(self):
+        self.liste_rects = []   # pour éviter un crash
         mouse_pos = pygame.mouse.get_pos()
         resize_screen.draw_rect("grey20", self.rect_dimensions, 50)
         if not self.playlists_charged:
@@ -78,7 +80,6 @@ class ListPlaylistsView:
             return None
         
         # blit des playlists
-        self.liste_rects = []
         self.y = 120
         for element in self.playlists:
             texte = element
@@ -128,6 +129,7 @@ class ListPlaylistsView:
             # chargement des playlists
             if self.charger_playlists() == "crash":
                 return "crash"
+            self.blit()
 
         self.create_text.work(event)
         if event.type == pygame.MOUSEWHEEL:
