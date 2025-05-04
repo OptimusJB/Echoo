@@ -8,6 +8,10 @@ pygame.init()
 
 class PlaylistView:
     def __init__(self, internal_state, nom_playlist:str, load_via_album:bool):
+        self.selection = None   # pour l'ajout dans une playlist, c'est un str
+        self.selection_move = None # pour le déplacement, c'est un index
+        self.selection_move_image = None
+        self.internal_state = internal_state
         self.y = 0
         self.y_offset = 0
         self.police = pygame.font.Font("assets/police.otf", 40)
@@ -16,6 +20,7 @@ class PlaylistView:
         self.nom_playlist = nom_playlist
         self.playlist = {}  # de la forme {nom:[image, artiste, annee, album]}
         self.rect_dimensions = pygame.rect.Rect(20+600+10, 100, 1920-20-600-20, 900-80)
+        self.rects_cache = [pygame.rect.Rect(20+600+10, 0, 1920-20-600-20, 100), pygame.rect.Rect(20+600+10, 100+900-80, 1920-20-600-20, 30)]
         self.playlist_charged = False
         self.icone_base = None
         self.liste_noms_musiques = []
@@ -26,6 +31,7 @@ class PlaylistView:
         self.rects_artiste = []
         self.rects_play = []
         self.rects_titre = []
+        self.rects_album = []
 
     def delete_cache_png(self):
         for element in os.listdir("cache/"):
@@ -33,15 +39,25 @@ class PlaylistView:
                 os.remove("cache/" + element)
 
     def charger_playlist(self):
+        self.selection = None
+        self.selection_move = None
         self.playlist = {}
         # suppression des potentielles images du cache
         self.delete_cache_png()
 
-        # récupération de la liste des musiques de la playlist
-        resultat = client.send_message(["get playlist content", user.username, self.nom_playlist])
-        if resultat == "crash":
-            return "crash"
-        self.liste_noms_musiques = resultat # c'est une liste
+        # check de load_via_album
+        if self.load_via_album:
+            resultat = client.send_message(["get playlist content via album", user.username, self.nom_playlist])
+            if resultat == "crash":
+                return "crash"
+            self.liste_noms_musiques = resultat # c'est une liste
+
+        else:
+            # récupération de la liste des musiques de la playlist
+            resultat = client.send_message(["get playlist content", user.username, self.nom_playlist])
+            if resultat == "crash":
+                return "crash"
+            self.liste_noms_musiques = resultat # c'est une liste
 
         # chargement des infos des musiques
         for musique in self.liste_noms_musiques:
@@ -84,12 +100,15 @@ class PlaylistView:
         # blit du nom de la playlist
         titre = self.police.render(self.nom_playlist, True, "white")
         titre_rect = titre.get_rect()
-        titre_rect.center = (self.rect_dimensions.centerx, 200)
+        titre_rect.center = (self.rect_dimensions.centerx, 200 + self.y_offset)
         fond_titre = titre_rect.copy()
         fond_titre.size = (fond_titre.width + 80, fond_titre.height + 80)
         fond_titre.topleft = (fond_titre.x - 40, fond_titre.y - 40)
         resize_screen.draw_rect("grey20", fond_titre, 50)
         resize_screen.blit(titre, titre_rect.topleft)
+
+        # blit du cache en haut pour le titre au cas où le offset n'est pas égal à 0
+        resize_screen.draw_rect("grey10", self.rects_cache[0])
 
         if not self.playlist_charged:
             texte = self.police.render("chargement de " + self.nom_playlist + "...", True, "white")
@@ -103,6 +122,7 @@ class PlaylistView:
         self.rects_image = []
         self.rects_artiste = []
         self.rects_titre = []
+        self.rects_album = []
 
         # blit des éléments en haut
         texte = self.police_mid.render("#", True, "white")
@@ -120,10 +140,10 @@ class PlaylistView:
         mouse_pos = resize_screen.get_calcul_mouse_cos(pygame.mouse.get_pos())
         self.y = 350
         compteur = 0
-        for musique in self.playlist.keys():
+        for musique in self.liste_noms_musiques:
             compteur += 1
             # blit du potentiel fond différent
-            rect_titre = pygame.rect.Rect(600 + 20 + 10, self.y - 10, 1920-20-600-20, 80 + 10 + 10 + self.y_offset)
+            rect_titre = pygame.rect.Rect(600 + 20 + 10, self.y - 10 + self.y_offset, 1920-20-600-20, 80 + 10 + 10)
             if rect_titre.collidepoint(mouse_pos):
                 resize_screen.draw_rect("grey65", rect_titre, 20)
             self.rects_titre.append(rect_titre)
@@ -137,7 +157,9 @@ class PlaylistView:
             image_rect = self.playlist[musique][0].get_rect()
             image_rect.topleft = (750, self.y + self.y_offset)
             self.rects_image.append(image_rect)
-            resize_screen.blit(self.playlist[musique][0], image_rect)
+
+            if image_rect.colliderect(self.rect_dimensions):
+                resize_screen.blit(self.playlist[musique][0], image_rect)
 
             # titre
             titre_final = musique
@@ -146,8 +168,10 @@ class PlaylistView:
 
             titre = self.police_mid.render(titre_final, True, "white")
             titre_rect = titre.get_rect()
-            titre_rect.midleft = (image_rect.centerx + 50, image_rect.centery-10 + self.y_offset)
-            resize_screen.blit(titre, titre_rect.topleft)
+            titre_rect.midleft = (image_rect.centerx + 50, image_rect.centery-10)
+
+            if titre_rect.colliderect(self.rect_dimensions):
+                resize_screen.blit(titre, titre_rect.topleft)
 
             # artiste
             artiste_final = self.playlist[musique][1]
@@ -155,9 +179,11 @@ class PlaylistView:
                 artiste_final = artiste_final[:35] + "..."
             artiste = self.police_small.render(artiste_final, True, "white")
             artiste_rect = artiste.get_rect()
-            artiste_rect.topleft = (titre_rect.x, titre_rect.bottom + 1 + self.y_offset)
+            artiste_rect.topleft = (titre_rect.x, titre_rect.bottom + 1)
             self.rects_artiste.append(artiste_rect)
-            resize_screen.blit(artiste, artiste_rect.topleft)
+
+            if artiste_rect.colliderect(self.rect_dimensions):
+                resize_screen.blit(artiste, artiste_rect.topleft)
 
             # album
             album_final = self.playlist[musique][3]
@@ -165,8 +191,11 @@ class PlaylistView:
                 album_final = album_final[:28] + "..."
             album = self.police_mid.render(album_final, True, "white")
             album_rect = album.get_rect()
-            album_rect.midleft = (1350, image_rect.centery + self.y_offset)
-            resize_screen.blit(album, album_rect.topleft)
+            album_rect.midleft = (1350, image_rect.centery)
+            self.rects_album.append(album_rect)
+
+            if album_rect.colliderect(self.rect_dimensions):
+                resize_screen.blit(album, album_rect.topleft)
 
             # bouton play (ne s'affiche que quand on passe la souris sur le titre)
             rect_triangle = triangle.get_rect()
@@ -177,6 +206,16 @@ class PlaylistView:
                 resize_screen.blit(triangle, rect_triangle.topleft)
 
             self.y = self.y + 100
+
+        # blit des caches en haut et en bas
+        resize_screen.draw_rect("grey10", self.rects_cache[0])
+        resize_screen.draw_rect("grey10", self.rects_cache[1])
+
+        # test pour la sélection de déplacement
+        if pygame.mouse.get_pressed()[0] and self.selection_move != None:
+            rect_selection = self.selection_move_image.get_rect()
+            rect_selection.center = resize_screen.get_calcul_mouse_cos(pygame.mouse.get_pos())
+            resize_screen.blit(self.selection_move_image, rect_selection.topleft)
 
     def listen_entry(self, event):
         # check du chargement de la playlist
@@ -194,3 +233,79 @@ class PlaylistView:
                         index_rect = self.rects_play.index(rect)
                         if player.load(self.liste_noms_musiques, self.liste_noms_musiques[index_rect]) == "crash":
                             return "crash"
+                        return None
+
+                # test des rects album
+                for rect in self.rects_album:
+                    if rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
+                        index_rect = self.rects_album.index(rect)
+                        # on charge la playlist en lien avec l'album
+                        self.internal_state.state_actuel = PlaylistView(self.internal_state, self.playlist[self.liste_noms_musiques[index_rect]][3], True)
+                        return None
+
+                # test des rects artistes
+                for rect in self.rects_artiste:
+                    if rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
+                        index_rect = self.rects_artiste.index(rect)
+                        # on charge la page de l'artiste
+                        pass # à continuer
+                        return None
+
+                # test des rects de fond pour le déplacement si les deux autres n'ont rien retourné
+                for rect in self.rects_titre:
+                    if rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
+                        index_rect = self.rects_titre.index(rect)
+                        self.selection_move = index_rect
+                        self.selection_move_image = pygame.image.load("cache/" + str(self.liste_noms_musiques[index_rect]) + ".png").convert_alpha()
+                        self.selection_move_image = pygame.transform.smoothscale(self.selection_move_image, (80, 80))
+                        self.selection_move_image.set_alpha(255//2)
+
+            elif event.button == 3:
+                # test des rects de fond
+                if not self.load_via_album:
+                    for rect in self.rects_titre:
+                        if rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
+                            index_rect = self.rects_titre.index(rect)
+                            # on supprime la playlist et on recharge
+                            nom_musique = self.liste_noms_musiques[index_rect]
+                            resultat = client.send_message(["delete from playlist", user.username, self.nom_playlist, index_rect])
+                            if resultat == "crash":
+                                return "crash"
+                            self.playlist_charged = False
+                            return None
+
+            elif event.button == 2:
+                # test des rects de fond
+                for rect in self.rects_titre:
+                    if rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
+                        index_rect = self.rects_titre.index(rect)
+                        self.selection = self.liste_noms_musiques[index_rect]
+
+        elif event.type == pygame.MOUSEBUTTONUP:
+            if event.button == 1:
+                if self.selection_move != None:
+                    # test du rect touché
+                    for rect in self.rects_titre:
+                        if rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
+                            index_rect = self.rects_titre.index(rect)
+
+                            # envoi du move au serveur
+                            resultat = client.send_message(["deplacement", user.username, self.nom_playlist, self.selection_move, index_rect])
+                            if resultat == "crash":
+                                return "crash"
+                            self.playlist_charged = False
+                    return None
+
+        elif event.type == pygame.MOUSEWHEEL:
+            if self.rect_dimensions.collidepoint(resize_screen.get_calcul_mouse_cos(pygame.mouse.get_pos())):
+                #print(self.y, self.y_offset, self.rect_dimensions.height)
+                if event.y < 0:
+                    for i in range(abs(event.y)):
+                        if self.y + self.y_offset > self.rect_dimensions.height + 100:
+                        #if self.rects_image[len(self.rects_image)-1].y + 80 > self.rect_dimensions.height + 100:
+                            self.y_offset -= 45
+
+                elif event.y > 0:
+                    for i in range(abs(event.y)):
+                        if self.y_offset < 0:
+                            self.y_offset += 45

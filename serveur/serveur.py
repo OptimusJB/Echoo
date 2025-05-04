@@ -78,7 +78,7 @@ class request_manager(socketserver.BaseRequestHandler):
         return chaine
 
     def transfo_liste(self, chaine:str, separateur="&slchaine&"):
-        if chaine == "rien":
+        if chaine == "rien" or chaine == "":
             return []
         return chaine.split(separateur)
 
@@ -167,6 +167,20 @@ class request_manager(socketserver.BaseRequestHandler):
         database.close()
         return self.transfo_liste(resultat[0][0])
 
+    def get_playlist_content_via_album(self, pseudo, nom_playlist):
+        database = sqlite3.connect("data.db")
+        cursor = database.cursor()
+        cursor.execute("SELECT nom FROM Musiques WHERE album == ? ORDER BY position_album ASC", (nom_playlist,))
+        resultat = cursor.fetchall()
+        assert len(resultat) > 0, "longueur résultat inférieur à 1, pas normal"
+        cursor.close()
+        database.close()
+
+        liste_finale = []
+        for element in resultat:
+            liste_finale.append(element[0])
+        return liste_finale
+
     def get_music_infos(self, pseudo:str, musique:str):
         """
         retourne une liste de la forme [artiste, annee, album]
@@ -235,6 +249,69 @@ class request_manager(socketserver.BaseRequestHandler):
         database.close()
         return quality_final
 
+    def insert_to_playlist(self, pseudo, nom_playlist, nom_musique):
+        database = sqlite3.connect("data.db")
+        cursor = database.cursor()
+        # on récupère la playlist
+        playlist = self.get_playlist_content(pseudo, nom_playlist)
+        playlist.append(nom_musique)
+        playlist_txt = self.transfo_chaine(playlist)
+
+        # récupération de l'id du pseudo
+        cursor.execute("SELECT id FROM Utilisateurs WHERE username==?", (pseudo,))
+        resultat = cursor.fetchall()
+        assert len(resultat) > 0, "pseudo non trouvé"
+        id_pseudo = resultat[0][0]
+
+        cursor.execute("UPDATE Playlists SET musiques=? WHERE nom==? AND id_utilisateur==?",(playlist_txt, nom_playlist, id_pseudo))
+        database.commit()
+        cursor.close()
+        database.close()
+
+    def delete_from_playlist(self, pseudo, nom_playlist, index_musique):
+        database = sqlite3.connect("data.db")
+        cursor = database.cursor()
+
+        # on récupère la playlist
+        playlist = self.get_playlist_content(pseudo, nom_playlist)
+        playlist.pop(index_musique)
+        playlist_txt = self.transfo_chaine(playlist)
+
+        # récupération de l'id du pseudo
+        cursor.execute("SELECT id FROM Utilisateurs WHERE username==?", (pseudo,))
+        resultat = cursor.fetchall()
+        assert len(resultat) > 0, "pseudo non trouvé"
+        id_pseudo = resultat[0][0]
+
+        cursor.execute("UPDATE Playlists SET musiques=? WHERE nom==? AND id_utilisateur==?",(playlist_txt, nom_playlist, id_pseudo))
+
+        database.commit()
+        cursor.close()
+        database.close()
+
+    def deplacement(self, pseudo, nom_playlist, index_musique1, index_musique2):
+        # c'est pas un échange, c'est la musique 1 qui va au dessus de la musique 2
+        database = sqlite3.connect("data.db")
+        cursor = database.cursor()
+
+        # on récupère la playlist
+        playlist = self.get_playlist_content(pseudo, nom_playlist)
+        musique = playlist.pop(index_musique1)
+        playlist.insert(index_musique2, musique)
+        playlist_txt = self.transfo_chaine(playlist)
+
+        # récupération de l'id du pseudo
+        cursor.execute("SELECT id FROM Utilisateurs WHERE username==?", (pseudo,))
+        resultat = cursor.fetchall()
+        assert len(resultat) > 0, "pseudo non trouvé"
+        id_pseudo = resultat[0][0]
+
+        cursor.execute("UPDATE Playlists SET musiques=? WHERE nom==? AND id_utilisateur==?",(playlist_txt, nom_playlist, id_pseudo))
+
+        database.commit()
+        cursor.close()
+        database.close()
+
     def handle(self):
         self.request.settimeout(20)
 
@@ -283,6 +360,10 @@ class request_manager(socketserver.BaseRequestHandler):
             resultat = self.get_playlist_content(data[0], data[1])  # renvoie une liste
             self.send_message(resultat)
 
+        elif type_data == "get playlist content via album":
+            resultat = self.get_playlist_content_via_album(data[0], data[1])    # renvoie une liste
+            self.send_message(resultat)
+
         elif type_data == "get music infos":
             resultat = self.get_music_infos(data[0], data[1])   # renvoie une liste
             self.send_message(resultat)
@@ -294,6 +375,18 @@ class request_manager(socketserver.BaseRequestHandler):
         elif type_data == "check quality":
             resultat = self.check_quality(data[0], data[1], data[2])
             self.send_message([resultat])
+
+        elif type_data == "insert to playlist":
+            resultat = self.insert_to_playlist(data[0], data[1], data[2])
+            self.send_message(["ok"])
+
+        elif type_data == "delete from playlist":
+            resultat = self.delete_from_playlist(data[0], data[1], int(data[2]))
+            self.send_message(["ok"])
+
+        elif type_data == "deplacement":
+            resultat = self.deplacement(data[0], data[1], int(data[2]), int(data[3]))
+            self.send_message(["ok"])
 
 print("que voulez-vous faire ?")
 print("1 : créer nouvelle base de données")
@@ -309,3 +402,5 @@ elif reponse == "2":
     serveur.request_queue_size = 50
     print("serveur lancé")
     serveur.serve_forever()
+
+# cache.png et cache.ogg --> nom interdit

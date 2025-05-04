@@ -63,7 +63,7 @@ class Client:
         return chaine
 
     def transfo_liste(self, chaine:str, separateur="&slchaine&"):
-        if chaine == "rien":
+        if chaine == "rien" or chaine == "":
             return []
         return chaine.split(separateur)
 

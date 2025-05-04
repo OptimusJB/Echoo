@@ -4,7 +4,7 @@ pygame.init()
 class Screen:
     """
     système permettant de simplement changer la résolution du jeu en temps réel (en supposant que le tag pygame.RESIZABLE soit mis)
-    permet également de sauvegarder des surfaces pour les recharger plus tard (utilisé lors de l'animation des cartes qui arrivent dans le combat)
+    permet également de sauvegarder des surfaces pour les recharger plus tard
     """
     def __init__(self, dimensions_calcul):
         """

@@ -93,14 +93,17 @@ class ListPlaylistsView:
             # test de si ça doit s'afficher ou pas
             if texte_rect.colliderect(self.rect_fond_playlists):
                 color = "grey15"
-                # affichage du fond en bleu si la playlist est sélectionnée
+                # on affiche la playlist en gris clair si la souris est dessus
+                if texte_rect.collidepoint(resize_screen.get_calcul_mouse_cos(mouse_pos)):
+                    color = "grey65"
+
+                # affichage du fond en bleu si la playlist est sélectionnée ou en vert s'il y a une sélection
                 if type(internal_state.state_actuel) == PlaylistView:
                     if internal_state.state_actuel.nom_playlist == element and not internal_state.state_actuel.load_via_album:
                         color = "dodgerblue3"
 
-                # on affiche la playlist en gris clair si la souris est dessus
-                if texte_rect.collidepoint(resize_screen.get_calcul_mouse_cos(mouse_pos)):
-                    color = "grey65"
+                    if internal_state.state_actuel.selection != None:
+                        color = "darkolivegreen4"
 
                 resize_screen.draw_rect(color, texte_rect, 20)
                 resize_screen.blit(texte, (texte_rect.x + 10, texte_rect.y + 10))
@@ -135,16 +138,35 @@ class ListPlaylistsView:
         if event.type == pygame.MOUSEWHEEL:
             if self.rect_fond_playlists.collidepoint(resize_screen.get_calcul_mouse_cos(pygame.mouse.get_pos())):
                 if event.y < 0:
-                    if self.y + self.y_offset > 0:
-                        self.y_offset += event.y * 45
+                    for i in range(abs(event.y)):
+                        if self.y + self.y_offset > self.rect_fond_playlists.height:
+                            self.y_offset -= 45
 
                 elif event.y > 0:
-                    if self.y_offset < 0:
-                        self.y_offset += event.y * 45
+                    for i in range(abs(event.y)):
+                        if self.y_offset < 0:
+                            self.y_offset += 45
 
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
-                # on check d'abord la création de playlist
+                # on check d'abord l'insertion d'un titre dans une playlist
+                if type(internal_state.state_actuel) == PlaylistView:
+                    if internal_state.state_actuel.selection != None:
+                        # test de collision
+                        for rect in self.liste_rects:
+                            if rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
+                                playlist_choisie = self.playlists[self.liste_rects.index(rect)]
+                                resultat = client.send_message(["insert to playlist", user.username, playlist_choisie, internal_state.state_actuel.selection])
+                                if resultat == "crash":
+                                    return "crash"
+                                internal_state.state_actuel.playlist_charged = False
+                                #internal_state.state_actuel.selection = None
+                                return None
+                        #internal_state.state_actuel.playlist_charged = False
+                        internal_state.state_actuel.selection = None
+                        return None
+
+                # on check la création de playlist
                 if self.create_btn_rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
                     if len(self.create_text.get_text()) > 0:
                         resultat = client.send_message(["create playlist", user.username, self.create_text.get_text()])
