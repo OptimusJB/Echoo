@@ -2,6 +2,7 @@ from Screen import resize_screen
 from ListPlaylistsView import playlist_manager
 from PlayerView import player
 from NotifManager import notif_manager
+from RechercherBtn import rechercher_btn
 import sys
 from InternalState import internal_state
 from User import user
@@ -12,7 +13,7 @@ class Accueil:
     def __init__(self, game_state_manager):
         self.game_state = game_state_manager
         self.police = pygame.font.Font("assets/police.otf", 50)
-        self.work_elements = [playlist_manager, player]
+        self.work_elements = [playlist_manager, player, rechercher_btn]
 
     def run(self):
         print("accueil")
@@ -40,7 +41,7 @@ class Accueil:
 
             notif_manager.work()
             resize_screen.flip()
-            clock.tick(30)
+            clock.tick(user.fps)
             
             for event in pygame.event.get():
                 # tous les listen entry (internal_state compris)

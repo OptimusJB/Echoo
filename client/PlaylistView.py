@@ -275,6 +275,8 @@ class PlaylistView:
                             resultat = client.send_message(["delete from playlist", user.username, self.nom_playlist, index_rect])
                             if resultat == "crash":
                                 return "crash"
+                            self.selection = None
+                            self.selection_move = None
                             self.playlist_charged = False
                             return None
 
@@ -298,7 +300,7 @@ class PlaylistView:
                             if resultat == "crash":
                                 return "crash"
                             self.playlist_charged = False
-                    return None
+                            return None
 
         elif event.type == pygame.MOUSEWHEEL:
             if self.rect_dimensions.collidepoint(resize_screen.get_calcul_mouse_cos(pygame.mouse.get_pos())):

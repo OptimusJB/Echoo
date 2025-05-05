@@ -253,6 +253,12 @@ class Connexion:
                                         User.user.password = password.get_text()
                                         notif_manager.add_notif("connexion réussie : bienvenue " + username.get_text() + " !")
                                         self.game_state.state_actuel = "Accueil"
+
+                                        # mise en place des fps
+                                        pygame.event.get()
+                                        if pygame.key.get_pressed()[pygame.K_F4]:
+                                            User.user.fps = 1
+                                            print("mode 1 fps lancé")
                                         return None
 
                                     elif resultat[0] == "non":

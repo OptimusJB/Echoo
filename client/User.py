@@ -31,6 +31,8 @@ class User:
         pygame.mixer.music.set_volume(self.volume)
         assert self.quality in ["min", "moyen", "max"], "qualité invalide"
 
+        self.fps = 30
+
         self.username = None
         self.password = None
 

@@ -23,34 +23,38 @@ class Rechercher:
         # blit du fond
         resize_screen.draw_rect("grey35", self.rect_dimensions, 50)
 
-        if self.mode == "selection":
-            # blit des boutons
-            resize_screen.draw_rect("grey25", self.bouton1, 50)
-            rect_image = self.titre_image.get_rect()
-            rect_image.center = (self.bouton1.centerx, self.bouton1.centery - 50)
-            resize_screen.blit(self.titre_image, rect_image.topleft)
+        # blit des boutons
+        color = {"selection":"grey25", "titre":"dodgerblue3", "artiste":"grey25"}[self.mode]
+        resize_screen.draw_rect(color, self.bouton1, 50)
+        rect_image = self.titre_image.get_rect()
+        rect_image.center = (self.bouton1.centerx, self.bouton1.centery - 50)
+        resize_screen.blit(self.titre_image, rect_image.topleft)
 
-            texte = self.police.render("chercher un titre", True, "white")
-            texte_rect = texte.get_rect()
-            texte_rect.midbottom = (self.bouton1.centerx, self.bouton1.bottom - 20)
-            resize_screen.blit(texte, texte_rect)
-            
-            resize_screen.draw_rect("grey25", self.bouton2, 50)
-            rect_image = self.artiste_image.get_rect()
-            rect_image.center = (self.bouton2.centerx, self.bouton2.centery - 35)
-            resize_screen.blit(self.artiste_image, rect_image.topleft)
+        texte = self.police.render("chercher un titre", True, "white")
+        texte_rect = texte.get_rect()
+        texte_rect.midbottom = (self.bouton1.centerx, self.bouton1.bottom - 20)
+        resize_screen.blit(texte, texte_rect)
 
-            texte = self.police.render("chercher un artiste", True, "white")
-            texte_rect = texte.get_rect()
-            texte_rect.midbottom = (self.bouton2.centerx, self.bouton2.bottom - 20)
-            resize_screen.blit(texte, texte_rect)
+        color = {"selection": "grey25", "titre": "grey25", "artiste": "dodgerblue3"}[self.mode]
+        resize_screen.draw_rect(color, self.bouton2, 50)
+        rect_image = self.artiste_image.get_rect()
+        rect_image.center = (self.bouton2.centerx, self.bouton2.centery - 35)
+        resize_screen.blit(self.artiste_image, rect_image.topleft)
+
+        texte = self.police.render("chercher un artiste", True, "white")
+        texte_rect = texte.get_rect()
+        texte_rect.midbottom = (self.bouton2.centerx, self.bouton2.bottom - 20)
+        resize_screen.blit(texte, texte_rect)
             
-        elif self.mode == "titre":
+        if self.mode == "titre":
             pass
         elif self.mode == "artiste":
             pass
-        else:
-            raise ValueError("self.mode invalide")
 
     def listen_entry(self, event):
-        pass
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                if self.bouton1.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
+                    self.mode = "titre"
+                elif self.bouton2.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
+                    self.mode = "artiste"
