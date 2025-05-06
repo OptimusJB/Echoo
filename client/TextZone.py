@@ -69,6 +69,9 @@ class TextZone:
             texte = texte + "|"
 
         return self.police.render(texte, True, self.color)
+    
+    def get_rect(self):
+        return self.rect
 
     def get_text(self):
         return self.texte

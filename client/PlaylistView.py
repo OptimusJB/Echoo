@@ -7,7 +7,8 @@ import pygame
 pygame.init()
 
 class PlaylistView:
-    def __init__(self, internal_state, nom_playlist:str, load_via_album:bool):
+    def __init__(self, internal_state, nom_playlist:str, load_via_album=False, load_via_recherche=False):
+        # load_via_album = True ou load_via_recherche != True, pas les deux (load_via_recherche est un str)
         self.selection = None   # pour l'ajout dans une playlist, c'est un str
         self.selection_move = None # pour le déplacement, c'est un index
         self.selection_move_image = None
@@ -25,6 +26,7 @@ class PlaylistView:
         self.icone_base = None
         self.liste_noms_musiques = []
         self.load_via_album = load_via_album # détermine si la playlist est chargée via une playlist ou via un nom d'album
+        self.load_via_recherche = load_via_recherche    # égal à True ou un str représentant la recherche
 
         # définition rects cliquables
         self.rects_image = []
@@ -45,8 +47,15 @@ class PlaylistView:
         # suppression des potentielles images du cache
         self.delete_cache_png()
 
+        # check de load_via_recherche
+        if not self.load_via_recherche == False:
+            resultat = client.send_message(["get musics with", user.username, self.load_via_recherche])
+            if resultat == "crash":
+                return "crash"
+            self.liste_noms_musiques = resultat # c'est une liste
+
         # check de load_via_album
-        if self.load_via_album:
+        elif self.load_via_album:
             resultat = client.send_message(["get playlist content via album", user.username, self.nom_playlist])
             if resultat == "crash":
                 return "crash"

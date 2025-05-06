@@ -180,6 +180,9 @@ class request_manager(socketserver.BaseRequestHandler):
         for element in resultat:
             liste_finale.append(element[0])
         return liste_finale
+    
+    def get_playlist_content_via_recherche(self, pseudo, recherche_joueur):
+        pass  # à continuer
 
     def get_music_infos(self, pseudo:str, musique:str):
         """
@@ -386,6 +389,10 @@ class request_manager(socketserver.BaseRequestHandler):
 
         elif type_data == "deplacement":
             resultat = self.deplacement(data[0], data[1], int(data[2]), int(data[3]))
+            self.send_message(["ok"])
+        
+        elif type_data == "get musics with":
+            resultat = self.get_playlist_content_via_recherche(data[0], data[1], data[2])
             self.send_message(["ok"])
 
 print("que voulez-vous faire ?")

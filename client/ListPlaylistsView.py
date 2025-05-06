@@ -99,7 +99,7 @@ class ListPlaylistsView:
 
                 # affichage du fond en bleu si la playlist est sélectionnée ou en vert s'il y a une sélection
                 if type(internal_state.state_actuel) == PlaylistView:
-                    if internal_state.state_actuel.nom_playlist == element and not internal_state.state_actuel.load_via_album:
+                    if internal_state.state_actuel.nom_playlist == element and not internal_state.state_actuel.load_via_album and not internal_state.state_actuel.load_via_recherche:
                         color = "dodgerblue3"
 
                     if internal_state.state_actuel.selection != None:

@@ -25,7 +25,7 @@ class RechercherBtn:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                 if self.btn_rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
-                    internal_state.state_actuel = Rechercher()
+                    internal_state.state_actuel = Rechercher(internal_state)
 
     def reset(self):
         pass

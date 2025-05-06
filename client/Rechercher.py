@@ -1,13 +1,24 @@
 from Screen import resize_screen
 from TextZone import TextZone
+from Client import client
+from PlaylistView import PlaylistView
 import pygame
 pygame.init()
 
 class Rechercher:
-    def __init__(self):
+    def __init__(self, internal_state):
+        self.internal_state = internal_state
         self.mode = "selection" # = selection, titre, artiste
         self.rect_dimensions = pygame.rect.Rect(20+600+10, 100, 1920-20-600-20, 900-80)
         self.police = pygame.font.Font("assets/police.otf", 30)
+        self.recherche = TextZone(self.police)
+        self.recherche.set_rect(pygame.rect.Rect(1920//2 - 300, 1080//2 + 200, 1000, 65))
+        self.recherche.set_prefixe("rechercher : ")
+        self.recherche.set_largeur_max(960)
+
+        # chargement bouton rechercher
+        self.rechercher_btn_rect = pygame.rect.Rect(0, 0, 200, 65)
+        self.rechercher_btn_rect.midleft = (self.recherche.get_rect().right + 10, self.recherche.get_rect().centery)
 
         # chargement des images
         self.artiste_image = pygame.image.load("assets/username_image.png").convert_alpha()
@@ -46,15 +57,29 @@ class Rechercher:
         texte_rect.midbottom = (self.bouton2.centerx, self.bouton2.bottom - 20)
         resize_screen.blit(texte, texte_rect)
             
-        if self.mode == "titre":
-            pass
-        elif self.mode == "artiste":
-            pass
+        if self.mode != "selection":
+            # blit de la barre de recherche
+            resize_screen.draw_rect("grey50", self.recherche.get_rect(), 20)
+            rect_image = self.recherche.get_rect()
+            resize_screen.blit(self.recherche.get_image(), (rect_image.x + 10, rect_image.y + 10))
+
+            # blit du bouton rechercher
+            resize_screen.draw_rect("grey50", self.rechercher_btn_rect, 20)
+            resize_screen.blit(self.police.render("recherche", True, "white"), (self.rechercher_btn_rect.x + 25, self.rechercher_btn_rect.y + 10))
+
 
     def listen_entry(self, event):
+        self.recherche.work(event)
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                 if self.bouton1.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
                     self.mode = "titre"
+                    self.recherche.texte = ""
                 elif self.bouton2.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
                     self.mode = "artiste"
+                    self.recherche.texte = ""
+
+                elif self.rechercher_btn_rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
+                    if self.mode == "titre":
+                        # chargement de la playlist de recherche
+                        self.internal_state.state_actuel = PlaylistView(self.internal_state, "la recherche", False, self.recherche.texte)   # True pour éviter le bleu des playlists
