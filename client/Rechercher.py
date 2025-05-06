@@ -2,6 +2,7 @@ from Screen import resize_screen
 from TextZone import TextZone
 from Client import client
 from PlaylistView import PlaylistView
+from ListArtisteView import ListArtisteView
 import pygame
 pygame.init()
 
@@ -82,4 +83,8 @@ class Rechercher:
                 elif self.rechercher_btn_rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
                     if self.mode == "titre":
                         # chargement de la playlist de recherche
-                        self.internal_state.state_actuel = PlaylistView(self.internal_state, "la recherche", False, self.recherche.texte)   # True pour éviter le bleu des playlists
+                        self.internal_state.state_actuel = PlaylistView(self.internal_state, "recherche", False, self.recherche.texte)   # True pour éviter le bleu des playlists
+
+                    elif self.mode == "artiste":
+                        # chargement du screen d'affichage des artistes
+                        self.internal_state.state_actuel = ListArtisteView(self.internal_state, self.recherche.texte)

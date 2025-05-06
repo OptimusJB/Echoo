@@ -182,7 +182,18 @@ class request_manager(socketserver.BaseRequestHandler):
         return liste_finale
     
     def get_playlist_content_via_recherche(self, pseudo, recherche_joueur):
-        pass  # à continuer
+        database = sqlite3.connect("data.db")
+        cursor = database.cursor()
+        # LIKE est insensible à la casse (on s'en fout des majuscules)
+        cursor.execute("SELECT nom FROM Musiques WHERE nom LIKE ? OR album LIKE ?", ("%" + recherche_joueur + "%", "%" + recherche_joueur + "%"))
+        resultat = cursor.fetchall()
+
+        liste_musiques = []
+        for element in resultat:
+            liste_musiques.append(element[0])
+        cursor.close()
+        database.close()
+        return liste_musiques
 
     def get_music_infos(self, pseudo:str, musique:str):
         """
@@ -315,6 +326,32 @@ class request_manager(socketserver.BaseRequestHandler):
         cursor.close()
         database.close()
 
+    def get_artistes(self, pseudo, recherche_joueur):
+        database = sqlite3.connect("data.db")
+        cursor = database.cursor()
+        cursor.execute("SELECT DISTINCT artiste FROM Musiques WHERE artiste LIKE ?", ("%" + recherche_joueur + "%",))
+        resultat = cursor.fetchall()
+
+        liste = []
+        for element in resultat:
+            liste.append(element[0])
+        cursor.close()
+        database.close()
+        return liste
+
+    def get_playlists_of_artiste(self, pseudo, artiste):
+        database = sqlite3.connect("data.db")
+        cursor = database.cursor()
+        cursor.execute("SELECT DISTINCT album FROM Musiques WHERE artiste == ?", (artiste,))
+        resultat = cursor.fetchall()
+
+        liste = []
+        for element in resultat:
+            liste.append(element[0])
+        cursor.close()
+        database.close()
+        return liste
+
     def handle(self):
         self.request.settimeout(20)
 
@@ -392,8 +429,16 @@ class request_manager(socketserver.BaseRequestHandler):
             self.send_message(["ok"])
         
         elif type_data == "get musics with":
-            resultat = self.get_playlist_content_via_recherche(data[0], data[1], data[2])
-            self.send_message(["ok"])
+            resultat = self.get_playlist_content_via_recherche(data[0], data[1])    # retourne une liste
+            self.send_message(resultat)
+
+        elif type_data == "get artistes":
+            resultat = self.get_artistes(data[0], data[1])  # retourne une liste
+            self.send_message(resultat)
+
+        elif type_data == "get playlists of artiste":
+            resultat = self.get_playlists_of_artiste(data[0], data[1])  # retourne une liste
+            self.send_message(resultat)
 
 print("que voulez-vous faire ?")
 print("1 : créer nouvelle base de données")
