@@ -39,11 +39,17 @@ class ListArtisteView:
             texte_rect.size = (texte_rect.width + 20, texte_rect.height + 20)
             texte_rect.centerx = self.rect_dimensions.centerx
             texte_rect.y = self.y + self.y_offset
-            resize_screen.draw_rect("grey15", texte_rect, 20)
             self.rects_artistes.append(texte_rect)
-            resize_screen.blit(texte, (texte_rect.x + 10, texte_rect.y + 10))
+
+            if texte_rect.colliderect(self.rect_dimensions):
+                resize_screen.draw_rect("grey15", texte_rect, 20)
+                resize_screen.blit(texte, (texte_rect.x + 10, texte_rect.y + 10))
 
             self.y = self.y + 100
+
+        # blit des caches en haut et en bas
+        resize_screen.draw_rect("grey10", self.rects_cache[0])
+        resize_screen.draw_rect("grey10", self.rects_cache[1])
 
     def charger_artistes(self):
         resultat = client.send_message(["get artistes", user.username, self.recherche])
@@ -65,7 +71,7 @@ class ListArtisteView:
                 # print(self.y, self.y_offset, self.rect_dimensions.height)
                 if event.y < 0:
                     for i in range(abs(event.y)):
-                        if self.y - 100 + self.y_offset > self.rect_dimensions.height:
+                        if self.y + self.y_offset > self.rect_dimensions.bottom - 20:
                             self.y_offset -= 45
 
                 elif event.y > 0:

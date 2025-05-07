@@ -1,6 +1,7 @@
 from Screen import resize_screen
 from Client import client
 from User import user
+from PlaylistView import PlaylistView
 import pygame
 pygame.init()
 
@@ -48,11 +49,17 @@ class ArtisteView:
             texte_rect.size = (texte_rect.width + 20, texte_rect.height + 20)
             texte_rect.centerx = self.rect_dimensions.centerx
             texte_rect.y = self.y + self.y_offset
-            resize_screen.draw_rect("grey15", texte_rect, 20)
             self.rects_playlists.append(texte_rect)
-            resize_screen.blit(texte, (texte_rect.x + 10, texte_rect.y + 10))
+
+            if texte_rect.colliderect(self.rect_dimensions):
+                resize_screen.draw_rect("grey15", texte_rect, 20)
+                resize_screen.blit(texte, (texte_rect.x + 10, texte_rect.y + 10))
 
             self.y = self.y + 100
+
+        # blit des caches en haut et en bas
+        resize_screen.draw_rect("grey10", self.rects_cache[0])
+        resize_screen.draw_rect("grey10", self.rects_cache[1])
 
     def charger_playlists(self):
         resultat = client.send_message(["get playlists of artiste", user.username, self.artiste])
@@ -74,10 +81,19 @@ class ArtisteView:
                 # print(self.y, self.y_offset, self.rect_dimensions.height)
                 if event.y < 0:
                     for i in range(abs(event.y)):
-                        if self.y - 100 + self.y_offset > self.rect_dimensions.height:  # pas encore configuré
+                        if self.y + self.y_offset > self.rect_dimensions.bottom - 20:  # pas encore configuré
                             self.y_offset -= 45
 
                 elif event.y > 0:
                     for i in range(abs(event.y)):
                         if self.y_offset < 0:
                             self.y_offset += 45
+
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                if self.rect_dimensions.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
+                    for rect in self.rects_playlists:
+                        if rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
+                            index_rect = self.rects_playlists.index(rect)
+                            playlist_choisie = self.liste_playlists[index_rect]
+                            self.internal_state.state_actuel = PlaylistView(self.internal_state, playlist_choisie, True, False)

@@ -162,7 +162,7 @@ class request_manager(socketserver.BaseRequestHandler):
         cursor = database.cursor()
         cursor.execute("SELECT musiques FROM Playlists JOIN Utilisateurs ON Utilisateurs.id = Playlists.id_utilisateur WHERE Utilisateurs.username == ? AND Playlists.nom == ?", (pseudo, nom_playlist))
         resultat = cursor.fetchall()
-        assert len(resultat) == 1, "problème : nombre d'enregistrements pas égal 1 : " + str(len(resultat))
+        assert len(resultat) == 1, "problème : nombre d'enregistrements pas égal à 1 : " + str(len(resultat))
         cursor.close()
         database.close()
         return self.transfo_liste(resultat[0][0])

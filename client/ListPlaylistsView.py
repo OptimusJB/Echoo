@@ -139,7 +139,7 @@ class ListPlaylistsView:
             if self.rect_fond_playlists.collidepoint(resize_screen.get_calcul_mouse_cos(pygame.mouse.get_pos())):
                 if event.y < 0:
                     for i in range(abs(event.y)):
-                        if self.y + self.y_offset > self.rect_fond_playlists.height:
+                        if self.y + self.y_offset > self.rect_fond_playlists.bottom - 20:
                             self.y_offset -= 45
 
                 elif event.y > 0:

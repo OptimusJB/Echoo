@@ -261,17 +261,18 @@ class PlaylistView:
                         return None
 
                 # test des rects de fond pour le déplacement si les deux autres n'ont rien retourné
-                for rect in self.rects_titre:
-                    if self.rect_dimensions.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
-                        if rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
-                            index_rect = self.rects_titre.index(rect)
-                            self.selection_move = index_rect
-                            if user.load_images:
-                                self.selection_move_image = pygame.image.load("cache/" + str(self.liste_noms_musiques[index_rect]) + ".png").convert_alpha()
-                            else:
-                                self.selection_move_image = self.get_icone_base()
-                            self.selection_move_image = pygame.transform.smoothscale(self.selection_move_image, (80, 80))
-                            self.selection_move_image.set_alpha(255//2)
+                if not self.internal_state.state_actuel.load_via_album and self.internal_state.state_actuel.load_via_recherche == False:
+                    for rect in self.rects_titre:
+                        if self.rect_dimensions.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
+                            if rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
+                                index_rect = self.rects_titre.index(rect)
+                                self.selection_move = index_rect
+                                if user.load_images:
+                                    self.selection_move_image = pygame.image.load("cache/" + str(self.liste_noms_musiques[index_rect]) + ".png").convert_alpha()
+                                else:
+                                    self.selection_move_image = self.get_icone_base()
+                                self.selection_move_image = pygame.transform.smoothscale(self.selection_move_image, (80, 80))
+                                self.selection_move_image.set_alpha(255//2)
 
             elif event.button == 3:
                 # test des rects de fond
@@ -304,19 +305,21 @@ class PlaylistView:
                         if rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
                             index_rect = self.rects_titre.index(rect)
 
-                            # envoi du move au serveur
-                            resultat = client.send_message(["deplacement", user.username, self.nom_playlist, self.selection_move, index_rect])
-                            if resultat == "crash":
-                                return "crash"
-                            self.playlist_charged = False
-                            return None
+                            if not index_rect == self.selection_move:
+                                # envoi du move au serveur
+                                resultat = client.send_message(["deplacement", user.username, self.nom_playlist, self.selection_move, index_rect])
+                                if resultat == "crash":
+                                    return "crash"
+                                self.playlist_charged = False
+                                return None
+                    self.selection_move = None
 
         elif event.type == pygame.MOUSEWHEEL:
             if self.rect_dimensions.collidepoint(resize_screen.get_calcul_mouse_cos(pygame.mouse.get_pos())):
                 #print(self.y, self.y_offset, self.rect_dimensions.height)
                 if event.y < 0:
                     for i in range(abs(event.y)):
-                        if self.y + self.y_offset > self.rect_dimensions.height + 100:
+                        if self.y + self.y_offset > self.rect_dimensions.bottom - 20:
                         #if self.rects_image[len(self.rects_image)-1].y + 80 > self.rect_dimensions.height + 100:
                             self.y_offset -= 45
 
