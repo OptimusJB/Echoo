@@ -1,7 +1,6 @@
 from Screen import resize_screen
 from Client import client
 from User import user
-from PlaylistView import PlaylistView
 import pygame
 pygame.init()
 
@@ -96,4 +95,4 @@ class ArtisteView:
                         if rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
                             index_rect = self.rects_playlists.index(rect)
                             playlist_choisie = self.liste_playlists[index_rect]
-                            self.internal_state.state_actuel = PlaylistView(self.internal_state, playlist_choisie, True, False)
+                            self.internal_state.load_playlist(playlist_choisie, True, False)

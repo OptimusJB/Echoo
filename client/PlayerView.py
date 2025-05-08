@@ -1,8 +1,10 @@
 from Screen import resize_screen
 from NotifManager import notif_manager
 from Client import client
+from InternalState import internal_state
 import random
 from User import user
+from KeyManager import key_manager
 import pygame
 pygame.init()
 
@@ -286,7 +288,11 @@ class PlayerView:
         if self.music_loaded:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    if self.buttons_rect["play"].collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
+                    if pygame.rect.Rect(110, 1029, 204, 30).collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
+                        # artiste touché, on charge sa page
+                        internal_state.load_artiste(self.piste_infos[1])
+
+                    elif self.buttons_rect["play"].collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
                         if self.pause:
                             pygame.mixer.music.unpause()
                         else:

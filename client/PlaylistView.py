@@ -1,7 +1,6 @@
 from User import user
 from Client import client
 from Screen import resize_screen
-from PlayerView import player
 import os
 import pygame
 pygame.init()
@@ -236,34 +235,36 @@ class PlaylistView:
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
-                # test des rects play
-                for rect in self.rects_play:
-                    if rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
-                        index_rect = self.rects_play.index(rect)
-                        if player.load(self.liste_noms_musiques, self.liste_noms_musiques[index_rect]) == "crash":
-                            return "crash"
-                        return None
+                if self.rect_dimensions.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
+                    # test des rects play
+                    for rect in self.rects_play:
+                        if rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
+                            index_rect = self.rects_play.index(rect)
 
-                # test des rects album
-                for rect in self.rects_album:
-                    if rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
-                        index_rect = self.rects_album.index(rect)
-                        # on charge la playlist en lien avec l'album
-                        self.internal_state.state_actuel = PlaylistView(self.internal_state, self.playlist[self.liste_noms_musiques[index_rect]][3], True)
-                        return None
+                            from PlayerView import player   # chargement ici pour éviter le circular import
+                            if player.load(self.liste_noms_musiques, self.liste_noms_musiques[index_rect]) == "crash":
+                                return "crash"
+                            return None
 
-                # test des rects artistes
-                for rect in self.rects_artiste:
-                    if rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
-                        index_rect = self.rects_artiste.index(rect)
-                        # on charge la page de l'artiste
-                        pass # à continuer
-                        return None
+                    # test des rects album
+                    for rect in self.rects_album:
+                        if rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
+                            index_rect = self.rects_album.index(rect)
+                            # on charge la playlist en lien avec l'album
+                            self.internal_state.state_actuel = PlaylistView(self.internal_state, self.playlist[self.liste_noms_musiques[index_rect]][3], True)
+                            return None
 
-                # test des rects de fond pour le déplacement si les deux autres n'ont rien retourné
-                if not self.internal_state.state_actuel.load_via_album and self.internal_state.state_actuel.load_via_recherche == False:
-                    for rect in self.rects_titre:
-                        if self.rect_dimensions.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
+                    # test des rects artistes
+                    for rect in self.rects_artiste:
+                        if rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
+                            index_rect = self.rects_artiste.index(rect)
+                            # on charge la page de l'artiste
+                            self.internal_state.load_artiste(self.playlist[self.liste_noms_musiques[index_rect]][1])
+                            return None
+
+                    # test des rects de fond pour le déplacement si les deux autres n'ont rien retourné
+                    if not self.internal_state.state_actuel.load_via_album and self.internal_state.state_actuel.load_via_recherche == False:
+                        for rect in self.rects_titre:
                             if rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
                                 index_rect = self.rects_titre.index(rect)
                                 self.selection_move = index_rect

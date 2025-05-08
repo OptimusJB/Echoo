@@ -4,6 +4,8 @@ from Screen import resize_screen
 import socket
 pygame.init()
 
+debit = 65536   # débit de réception, 65536 = 2**16
+
 class Client:
     """
     le contenu de server ip.txt doit être de la forme 'ip:port'
@@ -88,7 +90,7 @@ class Client:
             reception = "truc"
             while reception:
                 pygame.event.get()
-                reception = requete.recv(65536)
+                reception = requete.recv(debit)
                 data = data + str(reception, "utf-8")
             assert data != "", "crash"
             data = self.transfo_liste(data)
@@ -126,7 +128,7 @@ class Client:
             reception = "truc"
             while reception:
                 pygame.event.get()
-                reception = requete.recv(65536)
+                reception = requete.recv(debit)
                 data = data + reception
             requete.close()
             assert data != "", "crash"
@@ -158,7 +160,7 @@ class Client:
             reception = "truc"
             while reception:
                 pygame.event.get()
-                reception = requete.recv(65536)
+                reception = requete.recv(debit)
                 data = data + reception
             requete.close()
             assert data != "", "crash"

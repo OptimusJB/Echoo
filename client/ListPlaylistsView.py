@@ -4,7 +4,6 @@ from User import user
 from TextZone import TextZone
 from NotifManager import notif_manager
 from InternalState import internal_state
-from PlaylistView import PlaylistView
 import pygame
 pygame.init()
 
@@ -98,7 +97,7 @@ class ListPlaylistsView:
                     color = "grey65"
 
                 # affichage du fond en bleu si la playlist est sélectionnée ou en vert s'il y a une sélection
-                if type(internal_state.state_actuel) == PlaylistView:
+                if type(internal_state.state_actuel) == internal_state.get_playlist_type():
                     if internal_state.state_actuel.nom_playlist == element and not internal_state.state_actuel.load_via_album and not internal_state.state_actuel.load_via_recherche:
                         color = "dodgerblue3"
 
@@ -150,7 +149,7 @@ class ListPlaylistsView:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                 # on check d'abord l'insertion d'un titre dans une playlist
-                if type(internal_state.state_actuel) == PlaylistView:
+                if type(internal_state.state_actuel) == internal_state.get_playlist_type():
                     if internal_state.state_actuel.selection != None:
                         # test de collision
                         for rect in self.liste_rects:
@@ -187,7 +186,7 @@ class ListPlaylistsView:
                         for rect in self.liste_rects:
                             if rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
                                 playlist_choisie = self.playlists[self.liste_rects.index(rect)]
-                                internal_state.state_actuel = PlaylistView(internal_state, playlist_choisie, False)
+                                internal_state.load_playlist(playlist_choisie, False)
 
             elif event.button == 3:
                 if not self.rect_surface_creation.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):

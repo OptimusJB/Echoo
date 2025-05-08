@@ -1,7 +1,6 @@
 from Screen import resize_screen
 from Client import client
 from User import user
-from ArtisteView import ArtisteView
 import pygame
 pygame.init()
 
@@ -85,4 +84,4 @@ class ListArtisteView:
                     if rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
                         index_rect = self.rects_artistes.index(rect)
                         artiste = self.liste_artistes[index_rect]
-                        self.internal_state.state_actuel = ArtisteView(self.internal_state, artiste)
+                        self.internal_state.load_artiste(artiste)

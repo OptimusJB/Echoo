@@ -3,6 +3,8 @@ from ListPlaylistsView import playlist_manager
 from PlayerView import player
 from NotifManager import notif_manager
 from RechercherBtn import rechercher_btn
+from SettingsBtn import settings_btn
+from KeyManager import key_manager
 import sys
 from InternalState import internal_state
 from User import user
@@ -13,7 +15,7 @@ class Accueil:
     def __init__(self, game_state_manager):
         self.game_state = game_state_manager
         self.police = pygame.font.Font("assets/police.otf", 50)
-        self.work_elements = [playlist_manager, player, rechercher_btn]
+        self.work_elements = [playlist_manager, player, rechercher_btn, settings_btn]
 
     def run(self):
         print("accueil")
@@ -44,6 +46,9 @@ class Accueil:
             clock.tick(user.fps)
             
             for event in pygame.event.get():
+                # récupération des potentielles touches pressées
+                key_manager.work(event)
+
                 # tous les listen entry (internal_state compris)
                 if internal_state.state_actuel.listen_entry(event) == "crash":
                     self.game_state.state_actuel = "Connexion"

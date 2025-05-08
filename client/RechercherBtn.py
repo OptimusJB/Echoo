@@ -1,6 +1,5 @@
 from Screen import resize_screen
 from InternalState import internal_state
-from Rechercher import Rechercher
 import pygame
 pygame.init()
 
@@ -16,7 +15,7 @@ class RechercherBtn:
 
     def blit(self):
         color = "grey35"
-        if type(internal_state.state_actuel) == Rechercher:
+        if type(internal_state.state_actuel) == internal_state.get_rechercher_type():
             color = "dodgerblue3"
         resize_screen.draw_rect(color, self.btn_rect, 20)
         resize_screen.blit(self.btn_image, (self.btn_rect.x + 10, self.btn_rect.y + 10))
@@ -25,7 +24,7 @@ class RechercherBtn:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                 if self.btn_rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
-                    internal_state.state_actuel = Rechercher(internal_state)
+                    internal_state.load_rechercher()
 
     def reset(self):
         pass
