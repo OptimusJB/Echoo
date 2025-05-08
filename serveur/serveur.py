@@ -1,6 +1,8 @@
 import socketserver
 import os
 import sqlite3
+import pygame
+pygame.init()
 
 def init_db():
     """
@@ -14,7 +16,7 @@ def init_db():
         database = sqlite3.connect("data.db")
         cursor = database.cursor()
         cursor.execute("CREATE TABLE Utilisateurs(id INTEGER, username TEXT, password TEXT, PRIMARY KEY (id AUTOINCREMENT))")
-        cursor.execute("CREATE TABLE Musiques(id INTEGER, nom TEXT, genre TEXT, annee INTEGER, artiste TEXT, album TEXT, position_album INTEGER, image TEXT, min TEXT, moyen TEXT, max TEXT, PRIMARY KEY (id AUTOINCREMENT))")
+        cursor.execute("CREATE TABLE Musiques(nom TEXT, genre TEXT, annee INTEGER, artiste TEXT, album TEXT, position_album INTEGER, image TEXT, min TEXT, moyen TEXT, max TEXT, PRIMARY KEY (nom))")
         cursor.execute("CREATE TABLE Playlists(id INTEGER, nom TEXT, musiques LONGTEXT, id_utilisateur INTEGER, PRIMARY KEY (id AUTOINCREMENT), FOREIGN KEY (id_utilisateur) REFERENCES Utilisateurs(id))")
         #cursor.execute("INSERT INTO Utilisateurs(username, password) VALUES('jb', 'jb123')")
         #database.commit()
@@ -205,7 +207,7 @@ class request_manager(socketserver.BaseRequestHandler):
         resultat = cursor.fetchall()
 
         # peut crash si le nom de la musique a changé après la création de la playlist (qui se base sur les noms)
-        assert len(resultat) == 1, "len(resultat) != 1 --> " + str(len(resultat)) + ", musique " + musique
+        assert len(resultat) == 1, "len(resultat) != 1 --> " + str(len(resultat)) + ", musique " + musique + ", la musique a peut-être été supprimée"
 
         liste_finale = []
         for element in resultat[0]:
@@ -254,10 +256,13 @@ class request_manager(socketserver.BaseRequestHandler):
                 boucle = False
             elif index_quality == 0 and not qualites[index_quality] == "?":
                 quality_final = dico_index[index_quality]
+                boucle = False
             elif index_quality == 1 and not qualites[index_quality] == "?":
                 quality_final = dico_index[index_quality]
+                boucle = False
             elif index_quality == 2 and not qualites[index_quality] == "?":
                 quality_final = dico_index[index_quality]
+                boucle = False
             index_quality -= 1
         cursor.close()
         database.close()
@@ -440,19 +445,203 @@ class request_manager(socketserver.BaseRequestHandler):
             resultat = self.get_playlists_of_artiste(data[0], data[1])  # retourne une liste
             self.send_message(resultat)
 
+def player_input(texte, type_attendu, reponse_attendue=None):
+    if reponse_attendue == None:
+        reponse_attendue = []
+    reponse = None
+    while not reponse in reponse_attendue:
+        print(texte)
+        try:
+            reponse = type_attendu(input("réponse : "))
+        except KeyboardInterrupt:
+            raise KeyboardInterrupt
+        except:
+            print("réponse incorrecte")
+            continue
+
+        if len(reponse_attendue) == 0:
+            reponse_attendue.append(reponse)
+    return reponse
+
+def ajouter_musique():
+    musique = []    # différentes infos de la musique
+    database = sqlite3.connect("data.db")
+    cursor = database.cursor()
+
+    # nom
+    boucle = True
+    while boucle:
+        nom = player_input("nom de la musique", str, [])
+
+        # vérification que le nom de la musique n'est pas déjà utilisée
+        cursor.execute("SELECT * FROM Musiques WHERE nom==?", (nom,))
+        resultat = cursor.fetchall()
+        if len(resultat) > 0:
+            print("le nom est déjà utilisé")
+        else:
+            boucle = False
+    musique.append(nom)
+
+    # genre
+    genre = player_input("genre de la musique", str, [])
+    musique.append(genre)
+
+    # année
+    annee = player_input("année de la musique", int, [])
+    musique.append(annee)
+
+    # artiste
+    artiste = player_input("nom de l'artiste", str, [])
+    musique.append(artiste)
+
+    # album
+    album = player_input("album de la musique", str, [])
+    musique.append(album)
+
+    # position album
+    position_album = player_input(f"position de la musique dans l'album '{album}'", int, [])
+    musique.append(position_album)
+
+    # image
+    boucle = True
+    while boucle:
+        image = player_input("chemin de l'image", str, [])
+
+        # on test si l'image est ouvrable et dans le bon format
+        if image[len(image) - 4:] == ".png":
+            try:
+                test = pygame.image.load(image)
+                boucle = False
+            except:
+                print("le fichier ne semble ne pas fonctionner ou ne pas exister")
+        else:
+            print("l'image doit être sous format png")
+    musique.append(image)
+
+    # qualités
+    for qualite in ["minimum", "moyenne", "maximale"]:
+        boucle = True
+        while boucle:
+            chemin_musique = player_input(f"chemin du fichier audio pour la qualité {qualite} (mettre ? pour ne rien mettre)", str, [])
+            if chemin_musique == "?":
+                boucle = False
+            else:
+                if chemin_musique[len(chemin_musique) - 4:] == ".ogg":
+                    try:
+                        pygame.mixer.music.load(chemin_musique)
+                        boucle = False
+                    except:
+                        print("le fichier semble pas fonctionner ou ne pas exister")
+                else:
+                    print("l'audio doit être sous format ogg")
+        musique.append(chemin_musique)
+
+    # ajout de la musique
+    cursor.execute("INSERT INTO Musiques VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", tuple(musique))
+
+    database.commit()
+    cursor.close()
+    database.close()
+    print("musique ajoutée")
+
+def transfo_chaine(liste, separateur="&slchaine&"):
+    chaine = ""
+    for element in liste:
+        chaine = chaine + str(element) + separateur
+    chaine = chaine[:len(chaine)-len(separateur)]
+    if chaine == "":
+        chaine = "rien"
+    return chaine
+
+def transfo_liste(chaine:str, separateur="&slchaine&"):
+    if chaine == "rien" or chaine == "":
+        return []
+    return chaine.split(separateur)
+
+def suppression_des_playlists(musique_a_supprimer):
+    """
+    supprime de l'ensemble des playlists la musique passée en paramètre
+    """
+    database = sqlite3.connect("data.db")
+    cursor = database.cursor()
+
+    cursor.execute("SELECT id, musiques FROM Playlists")
+    resultat = cursor.fetchall()
+    for element in resultat:
+        id_playlist = element[0]
+        liste_musiques = transfo_liste(element[1])
+
+        # vérification de la présence de la musique à supprimer
+        if musique_a_supprimer in liste_musiques:
+            liste_musiques.remove(musique_a_supprimer)
+            # mise à jour de la table
+            cursor.execute("UPDATE Playlists SET musiques = ? WHERE id==?", (transfo_chaine(liste_musiques), id_playlist))
+
+    database.commit()
+    cursor.close()
+    database.close()
+
+def supprimer_musique():
+    print("notez que la suppression d'une musique entrainera le non fonctionnement des playlists où était la musique (le serveur va crash en disant qu'il y a 0 résultat)")
+    database = sqlite3.connect("data.db")
+    cursor = database.cursor()
+
+    boucle = True
+    while boucle:
+        musique_a_supprimer = player_input("musique a supprimer", str, [])
+
+        # vérification que la musique existe
+        cursor.execute("SELECT * FROM Musiques WHERE nom==?", (musique_a_supprimer,))
+        resultat = cursor.fetchall()
+        if len(resultat) == 0:
+            print("cette musique n'existe pas")
+        else:
+            boucle = False
+
+    # suppression de la musique
+    cursor.execute("DELETE FROM Musiques WHERE nom==?", (musique_a_supprimer,))
+
+    database.commit()
+    cursor.close()
+    database.close()
+    print("musique supprimée")
+    
+    # suppression de la musique dans les playlists
+    texte = """supprimer la musique des playlists pour éviter les problèmes ?
+1 : oui
+2 : non"""
+    resultat = player_input(texte, int, (1, 2))
+    if resultat == 1:
+        suppression_des_playlists(musique_a_supprimer)
+        print("la musique a été supprimée des playlists")
+
+def data_gestion():
+    texte = """
+1 : ajouter musique
+2 : supprimer musique"""
+    resultat = player_input(texte, int, (1, 2))
+    if resultat == 1:
+        ajouter_musique()
+    elif resultat == 2:
+        supprimer_musique()
+
 print("que voulez-vous faire ?")
 print("1 : créer nouvelle base de données")
-print("2 : lancer serveur")
+print("2 : gestion base de données")
+print("3 : lancer serveur ")
 reponse = ""
-while not reponse in ("1", "2"):
+while not reponse in ("1", "2", "3"):
     reponse = input("réponse : ")
 if reponse == "1":
     init_db()
-elif reponse == "2":
+elif reponse == "3":
     assert "data.db" in os.listdir(), "la base de donnée n'existe pas, créez là avec init_db()"
     serveur = socketserver.TCPServer(("0.0.0.0", 25565), request_manager)
     serveur.request_queue_size = 50
     print("serveur lancé")
     serveur.serve_forever()
+elif reponse == "2":
+    assert "data.db" in os.listdir(), "la base de donnée n'existe pas, créez là avec init_db()"
+    data_gestion()
 
 # cache.png et cache.ogg --> nom interdit

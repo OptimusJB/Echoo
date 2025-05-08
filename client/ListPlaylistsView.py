@@ -55,7 +55,7 @@ class ListPlaylistsView:
         self.create_text.set_largeur_max(575 - 30)
     
     def charger_playlists(self):
-        print("chargement playlists...")
+        #print("chargement playlists...")
         resultat = client.send_message(["get playlists names", user.username])
         if resultat == "crash":
             return "crash"
@@ -64,7 +64,7 @@ class ListPlaylistsView:
         
         self.playlists = resultat
         self.playlists_charged = True
-        print("playlists chargées : " + str(self.playlists))
+        #print("playlists chargées : " + str(self.playlists))
 
     def blit(self):
         self.liste_rects = []   # pour éviter un crash
