@@ -509,11 +509,14 @@ def ajouter_musique():
 
         # on test si l'image est ouvrable et dans le bon format
         if image[len(image) - 4:] == ".png":
-            try:
-                test = pygame.image.load(image)
-                boucle = False
-            except:
-                print("le fichier ne semble ne pas fonctionner ou ne pas exister")
+            if not "cache.png" in image:   # noms interdits
+                try:
+                    test = pygame.image.load(image)
+                    boucle = False
+                except:
+                    print("le fichier ne semble ne pas fonctionner ou ne pas exister")
+            else:
+                print("nom interdit")
         else:
             print("l'image doit être sous format png")
     musique.append(image)
@@ -527,11 +530,14 @@ def ajouter_musique():
                 boucle = False
             else:
                 if chemin_musique[len(chemin_musique) - 4:] == ".ogg":
-                    try:
-                        pygame.mixer.music.load(chemin_musique)
-                        boucle = False
-                    except:
-                        print("le fichier semble pas fonctionner ou ne pas exister")
+                    if not "cache.ogg" in chemin_musique:  # noms interdits
+                        try:
+                            pygame.mixer.music.load(chemin_musique)
+                            boucle = False
+                        except:
+                            print("le fichier semble pas fonctionner ou ne pas exister")
+                    else:
+                        print("nom interdit")
                 else:
                     print("l'audio doit être sous format ogg")
         musique.append(chemin_musique)

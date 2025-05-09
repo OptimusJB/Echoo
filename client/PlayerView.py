@@ -288,7 +288,11 @@ class PlayerView:
         if self.music_loaded:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    if pygame.rect.Rect(110, 1029, 204, 30).collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
+                    artiste_final = self.piste_infos[1]
+                    if len(artiste_final) > 30:
+                        artiste_final = artiste_final[:30] + "..."
+
+                    if pygame.rect.Rect((110, 1029), self.police_small.size(artiste_final)).collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
                         # artiste touché, on charge sa page
                         internal_state.load_artiste(self.piste_infos[1])
 
