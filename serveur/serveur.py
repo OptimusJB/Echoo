@@ -650,4 +650,6 @@ elif reponse == "2":
     assert "data.db" in os.listdir(), "la base de donnée n'existe pas, créez là avec init_db()"
     data_gestion()
 
+input("appuyez sur entrée pour terminer le programme")
+
 # cache.png et cache.ogg --> nom interdit
