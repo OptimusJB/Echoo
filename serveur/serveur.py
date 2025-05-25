@@ -621,15 +621,75 @@ def supprimer_musique():
         suppression_des_playlists(musique_a_supprimer)
         print("la musique a été supprimée des playlists")
 
+def get_open_value(chemin_fichier):
+    if not chemin_fichier[len(chemin_fichier)-4:] == ".png":
+        fichier = open(chemin_fichier, "r")
+        fichier_read = fichier.read()
+        fichier.close()
+        return fichier_read
+    else:
+        return chemin_fichier
+
+def ajout_multiple():
+    texte = """
+entrez le chemin du dossier où se trouvent les musiques en .ogg
+des fichiers nommés artiste.txt, annee.txt, album.txt, genre.txt, cover.png doivent être présents dans le dossier"""
+    chemin_musiques = player_input(texte, str, [])
+    if chemin_musiques[len(chemin_musiques) - 1] != "/":
+        print("le chemin doit se terminer par un /")
+        ajout_multiple()
+        return None
+
+    liste_musiques = []
+    requis = {"artiste.txt":False, "annee.txt":False, "album.txt":False, "cover.png":False, "genre.txt":False}
+    for fichier in sorted(os.listdir(chemin_musiques)): # les noms sont triés
+        if fichier in requis.keys():
+            if not requis[fichier] == False:
+                print("il y a plusieurs fichiers nommés " + fichier)
+                return None
+            requis[fichier] = get_open_value(chemin_musiques + fichier)
+
+        else:
+            if not fichier[len(fichier)-4:] == ".ogg":
+                print("le fichier " + fichier + " n'est pas valide")
+                return None
+            liste_musiques.append(fichier)
+    if False in requis.values():
+        print("il manque un fichier")
+        return None
+
+    texte = """
+qualité des musiques :
+1 : min
+2 : moyen
+3 : max"""
+    qualite = player_input(texte, int, [1, 2, 3])
+    print("ajout des musiques en cours...")
+    database = sqlite3.connect("data.db")
+    cursor = database.cursor()
+
+    position_album = 1
+    for element in liste_musiques:  # pas le chemin complet
+        liste_qualite = ("?",) * (qualite - 1) + (chemin_musiques + element,) + ("?",) * (2 - (qualite - 1))
+        cursor.execute("INSERT INTO Musiques VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (element[:len(element)-4], requis["genre.txt"], requis["annee.txt"], requis["artiste.txt"], requis["album.txt"], position_album, requis["cover.png"]) + liste_qualite)
+        position_album += 1
+    database.commit()
+    cursor.close()
+    database.close()
+    print("ajout terminé")
+
 def data_gestion():
     texte = """
 1 : ajouter musique
-2 : supprimer musique"""
-    resultat = player_input(texte, int, (1, 2))
+2 : supprimer musique
+3 : ajout multiple"""
+    resultat = player_input(texte, int, (1, 2, 3))
     if resultat == 1:
         ajouter_musique()
     elif resultat == 2:
         supprimer_musique()
+    elif resultat == 3:
+        ajout_multiple()
 
 print("que voulez-vous faire ?")
 print("1 : créer nouvelle base de données")
