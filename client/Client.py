@@ -76,8 +76,8 @@ class Client:
         requete = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         texte = self.transfo_chaine(liste)
-        assert not "#" in texte, "# interdit"
-        texte = bytes(texte + "#", "utf-8")
+        assert not "#fin du message" in texte, "#fin du message interdit"
+        texte = bytes(texte + "#fin du message", "utf-8")
 
         try:
 
@@ -119,8 +119,8 @@ class Client:
             requete.connect((self.ip_serveur, self.port_serveur))
 
             texte = self.transfo_chaine(["ask music", str(pseudo), str(nom_musique), str(qualite)])
-            assert not "#" in texte, "# interdit"
-            texte = bytes(texte + "#", "utf-8")
+            assert not "#fin du message" in texte, "#fin du message interdit"
+            texte = bytes(texte + "#fin du message", "utf-8")
             #texte = bytes(str(len(texte)) + "a", "utf-8") + texte
             requete.sendall(texte)
 
@@ -152,8 +152,8 @@ class Client:
             requete.connect((self.ip_serveur, self.port_serveur))
 
             texte = self.transfo_chaine(["ask music image", str(pseudo), str(nom_musique)])
-            assert not "#" in texte, "# interdit"
-            texte = bytes(texte + "#", "utf-8")
+            assert not "#fin du message" in texte, "#fin du message interdit"
+            texte = bytes(texte + "#fin du message", "utf-8")
             #texte = bytes(str(len(texte)) + "a", "utf-8") + texte
             requete.sendall(texte)
             data = bytes("", "utf-8")

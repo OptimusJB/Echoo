@@ -363,11 +363,11 @@ class request_manager(socketserver.BaseRequestHandler):
         # récupération des données envoyées par le client
         data = ""
         reception = "truc"
-        while not "#" in data:  # le client ne ferme pas le socket afin de recevoir une réponse
+        while not "#fin du message" in data:  # le client ne ferme pas le socket afin de recevoir une réponse
             reception = self.request.recv(1024)
             data = data + str(reception, "utf-8")
 
-        data = data.replace("#", "")
+        data = data.replace("#fin du message", "")
         if data == "":
             print("le client a fermé la connexion")
             return None
