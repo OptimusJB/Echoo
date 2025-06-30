@@ -15,6 +15,7 @@ class Screen:
         self.dimensions_screen_calcul = dimensions_calcul
         self.screen = None
         self.saves = {}
+        self.active_eco = True  # si True, l'écran ne se met pas à jour quand la fenêtre est minimisée
 
     def set_mode(self, dimensions, flag=None):
         """
@@ -27,6 +28,9 @@ class Screen:
         else:
             self.screen = pygame.display.set_mode(dimensions)
         self.dimensions_screen = dimensions
+
+    def set_active_eco(self, valeur:bool):
+        self.active_eco = valeur
 
     def blit(self, surface, cos):
         self.screen_calcul.blit(surface, cos)
@@ -41,8 +45,13 @@ class Screen:
         """
         équivalent de pygame.display.flip()
         """
+        if not pygame.display.get_active() and self.active_eco:
+            #print("pas de flip")
+            return None
+
         infos = pygame.display.Info()
-        self.screen.blit(pygame.transform.smoothscale(self.screen_calcul, (infos.current_w, infos.current_h)), (0,0))
+        new_surface = pygame.transform.smoothscale(self.screen_calcul, (infos.current_w, infos.current_h))
+        self.screen.blit(new_surface, (0,0))
         pygame.display.flip()
 
     def get_calcul_mouse_cos(self, mouse_cos):

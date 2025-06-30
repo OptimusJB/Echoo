@@ -650,13 +650,23 @@ des fichiers nommés artiste.txt, annee.txt, album.txt, genre.txt, cover.png doi
             requis[fichier] = get_open_value(chemin_musiques + fichier)
 
         else:
+            # test ogg
             if not fichier[len(fichier)-4:] == ".ogg":
                 print("le fichier " + fichier + " n'est pas valide")
                 return None
+
+            # test nom interdit
+            if fichier == "cache.ogg":
+                print("cache.ogg est un nom interdit")
+                return None
+
             liste_musiques.append(fichier)
     if False in requis.values():
         print("il manque un fichier")
         return None
+
+    # nb caractères à enlever à chaque nom de musique
+    nb_prefix_remove = abs(player_input("nombre de caractères à enlever au début", int))
 
     texte = """
 qualité des musiques :
@@ -670,8 +680,20 @@ qualité des musiques :
 
     position_album = 1
     for element in liste_musiques:  # pas le chemin complet
+
+        # changement du nom
+        nom_musique = element[nb_prefix_remove:]    # pas de crash, même si nb_prefix_remove est au dessus de l'index max
+        nom_musique = nom_musique[:len(nom_musique)-4]
+
+        # vérification que le nom de la musique n'est pas déjà utilisée
+        cursor.execute("SELECT * FROM Musiques WHERE nom==?", (nom_musique,))
+        resultat = cursor.fetchall()
+        if len(resultat) > 0:
+            print(str(nom_musique) + " est déjà présent dans la base de données, skip")
+            continue
+
         liste_qualite = ("?",) * (qualite - 1) + (chemin_musiques + element,) + ("?",) * (2 - (qualite - 1))
-        cursor.execute("INSERT INTO Musiques VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (element[:len(element)-4], requis["genre.txt"], requis["annee.txt"], requis["artiste.txt"], requis["album.txt"], position_album, requis["cover.png"]) + liste_qualite)
+        cursor.execute("INSERT INTO Musiques VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (nom_musique, requis["genre.txt"], requis["annee.txt"], requis["artiste.txt"], requis["album.txt"], position_album, requis["cover.png"]) + liste_qualite)
         position_album += 1
     database.commit()
     cursor.close()
