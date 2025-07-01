@@ -4,7 +4,8 @@ from Screen import resize_screen
 import socket
 pygame.init()
 
-debit = 65536   # débit de réception, 65536 = 2**16
+debit = 2**22   # débit de réception, 65536 = 2**16
+log = True # si True, affiche le temps qu'a pris ask_music() pour s'exécuter (en ms)
 
 class Client:
     """
@@ -109,6 +110,9 @@ class Client:
         qualite = qualité à renvoyer
         = "max (320kbps)" ou "moyen ()" ou "min (160kbps)"
         """
+        if log:
+            a = pygame.time.get_ticks()
+            
         assert qualite in ["min", "moyen", "max"], "qualité invalide"
         self.texte_fond("communication avec le serveur en cours...")
         resize_screen.flip()
@@ -132,6 +136,9 @@ class Client:
                 data = data + reception
             requete.close()
             assert data != "", "crash"
+            
+            if log:
+                print(pygame.time.get_ticks() - a)
             return data
         except Exception as error:
             self.crash()
