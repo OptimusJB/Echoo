@@ -357,6 +357,16 @@ class request_manager(socketserver.BaseRequestHandler):
         database.close()
         return liste
 
+    def get_cover_name(self, pseudo, musique):
+        database = sqlite3.connect("data.db")
+        cursor = database.cursor()
+        cursor.execute("SELECT image FROM Musiques WHERE nom == ?", (musique,))
+        resultat = cursor.fetchall()
+        assert len(resultat) > 0, "pas de résultat trouvé"
+        cursor.close()
+        database.close()
+        return resultat[0][0]
+
     def handle(self):
         self.request.settimeout(20)
 
@@ -444,6 +454,10 @@ class request_manager(socketserver.BaseRequestHandler):
         elif type_data == "get playlists of artiste":
             resultat = self.get_playlists_of_artiste(data[0], data[1])  # retourne une liste
             self.send_message(resultat)
+
+        elif type_data == "get cover name":
+            resultat = self.get_cover_name(data[0], data[1]) # retourne un str
+            self.send_message([resultat])
 
 def player_input(texte, type_attendu, reponse_attendue=None):
     if reponse_attendue == None:

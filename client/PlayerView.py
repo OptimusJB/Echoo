@@ -83,7 +83,7 @@ class PlayerView:
         self.pause = False
         self.old_random = None
         self.time_music = 0
-        self.sound_length = None
+        #self.sound_length = None
 
     def get_music_length(self):
         if self.sound_length == None:
@@ -371,7 +371,6 @@ class PlayerView:
         if disable_loop:
             # on enlève la boucle pour éviter le blocage si aucune musique ne supporte la qualité choisie
             self.loop = "false"
-        self.sound_length = None
         self.pause = False
         if pygame.mixer.music.get_busy():
             pygame.mixer.music.stop()
@@ -386,13 +385,14 @@ class PlayerView:
             self.music_loaded = True
             return None
 
+        self.sound_length = None
         # récupération de la musique
         resultat = client.send_message(["check quality", user.username, self.playlist[index_music], user.quality])
         if resultat == "crash":
             return "crash"
         elif resultat[0] == "None":
             notif_manager.add_notif("musique non disponible (pas de qualités en dessous de " + user.quality + "), passage à la musique suivante")
-            if self.next_music() == "crash":
+            if self.next_music() == "crash":    # note : le logiciel peut crash recursion limit si la playlist est trop grande
                 return "crash"
             return None
         else:
@@ -410,6 +410,7 @@ class PlayerView:
             fichier = open("cache/cache.ogg", "wb")
             fichier.write(resultat)
             fichier.close()
+            resultat = None  # on libère la mémoire
 
             # musique
             self.piste_infos = None
@@ -431,9 +432,10 @@ class PlayerView:
                 fichier = open("cache/cache.png", "wb")
                 fichier.write(resultat)
                 fichier.close()
+                resultat = None  # on libère la mémoire
 
                 # chargement dans le dictionnaire
-                self.piste_infos[0] = pygame.image.load("cache/" + musique + ".png").convert_alpha()
+                self.piste_infos[0] = pygame.image.load("cache/cache.png").convert_alpha()
                 self.piste_infos[0] = pygame.transform.smoothscale(self.piste_infos[0], (80, 80))
             else:
                 self.piste_infos[0] = self.get_icone_base()

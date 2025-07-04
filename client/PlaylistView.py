@@ -27,6 +27,9 @@ class PlaylistView:
         self.load_via_album = load_via_album # détermine si la playlist est chargée via une playlist ou via un nom d'album
         self.load_via_recherche = load_via_recherche    # égal à True ou un str représentant la recherche
 
+        self.dico_cover = {}    # clé = nom cover, valeur = tuple (image_de_base, image_dimension_80_80)
+        self.musics_cover = {}  # clé = musique, valeur = nom cover
+
         # définition rects cliquables
         self.rects_image = []
         self.rects_artiste = []
@@ -40,6 +43,8 @@ class PlaylistView:
                 os.remove("cache/" + element)
 
     def charger_playlist(self):
+        self.dico_cover = {}
+        self.musics_cover = {}
         self.selection = None
         self.selection_move = None
         self.playlist = {}
@@ -68,6 +73,7 @@ class PlaylistView:
             self.liste_noms_musiques = resultat # c'est une liste
 
         # chargement des infos des musiques
+        time = 0
         for musique in self.liste_noms_musiques:
             resultat = client.send_message(["get music infos", user.username, musique])
             if resultat == "crash":
@@ -79,18 +85,31 @@ class PlaylistView:
 
             # chargement de l'image (stocké dans cache avec le nom de la musique)
             if user.load_images:
-                resultat = client.ask_music_image(user.username, musique)
-                if resultat == "crash":
+                # récupération nom de l'image
+                nom_image = "'" + client.send_message(["get cover name", user.username, musique])[0] + "'"
+                nom_image = nom_image.replace("/", "&sl&")
+                if nom_image == "crash":
                     return "crash"
 
-                # écriture du fichier dans le cache
-                fichier = open("cache/" + musique + ".png", "wb")
-                fichier.write(resultat)
-                fichier.close()
+                if not nom_image in self.dico_cover.keys():
+                    print("nouvelle image")
+                    resultat = client.ask_music_image(user.username, musique)
+                    if resultat == "crash":
+                        return "crash"
+
+                    # écriture du fichier dans le cache
+                    fichier = open("cache/" + nom_image + ".png", "wb")
+                    fichier.write(resultat)
+                    fichier.close()
+                    resultat = None # on libère la mémoire
+
+                    self.dico_cover[nom_image] = pygame.image.load("cache/" + nom_image + ".png").convert_alpha()
+                    self.dico_cover[nom_image] = (self.dico_cover[nom_image], pygame.transform.smoothscale(self.dico_cover[nom_image], (80, 80)))
+
+                self.musics_cover[musique] = nom_image
 
                 # chargement dans le dictionnaire
-                self.playlist[musique][0] = pygame.image.load("cache/" + musique + ".png").convert_alpha()
-                self.playlist[musique][0] = pygame.transform.smoothscale(self.playlist[musique][0], (80, 80))
+                self.playlist[musique][0] = self.dico_cover[nom_image][1]
             else:
                 self.playlist[musique][0] = self.get_icone_base()
 
@@ -269,7 +288,7 @@ class PlaylistView:
                                 index_rect = self.rects_titre.index(rect)
                                 self.selection_move = index_rect
                                 if user.load_images:
-                                    self.selection_move_image = pygame.image.load("cache/" + str(self.liste_noms_musiques[index_rect]) + ".png").convert_alpha()
+                                    self.selection_move_image = self.dico_cover[self.musics_cover[self.liste_noms_musiques[index_rect]]][1]
                                 else:
                                     self.selection_move_image = self.get_icone_base()
                                 self.selection_move_image = pygame.transform.smoothscale(self.selection_move_image, (80, 80))
