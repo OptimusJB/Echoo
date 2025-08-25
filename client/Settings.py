@@ -97,7 +97,7 @@ class Settings:
         resize_screen.blit(self.vider_cache_txt, (self.rect_vider_cache.x + 10, self.rect_vider_cache.y + 10))
 
         # blit du volume de données et de cache utilisé
-        cache_txt = self.police_petit.render("cache utilisé : " + str(self.cache_volume) + "Mio", True, "white")
+        cache_txt = self.police_petit.render("taille du cache : " + str(self.cache_volume) + "Mio", True, "white")
         cache_rect = cache_txt.get_rect()
 
         data_txt = self.police_petit.render("données utilisées : " + str(self.data_volume) + "Mio", True, "white")
@@ -122,3 +122,7 @@ class Settings:
                     user.save_settings()
                     notif_manager.add_notif("paramètres sauvegardés")
                     self.internal_state.load_rechercher()
+
+                elif self.rect_vider_cache.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
+                    user.safe_remove_cache()
+                    self.calcul_stats()

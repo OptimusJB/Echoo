@@ -21,7 +21,7 @@ class State:
         if not "cache" in os.listdir():
             os.mkdir("cache")
             print("dossier cache créé")
-        user.remove_cache()
+        #user.remove_cache()
 
         self.state_actuel = "Connexion"
         self.states = {"Connexion":Connexion(self),

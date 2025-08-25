@@ -2,6 +2,7 @@ from User import user
 from Client import client
 from Screen import resize_screen
 import os
+from Scroller import Scroller
 import pygame
 pygame.init()
 
@@ -37,6 +38,12 @@ class PlaylistView:
         self.rects_play = []
         self.rects_titre = []
         self.rects_album = []
+
+        # temps offset
+        self.temps_offset = 0
+
+        # scroller
+        self.scroller = Scroller(pygame.rect.Rect(1920 - 50, 0, 25, 50), self.rect_dimensions.top + 15, self.rect_dimensions.bottom - 40)
 
     def delete_cache_png(self):
         for element in os.listdir("cache/"):
@@ -131,7 +138,35 @@ class PlaylistView:
             self.icone_base = pygame.transform.smoothscale(self.icone_base, (80, 80))
         return self.icone_base
 
+    def maj_offset(self):
+        if self.temps_offset > 0:
+            for i in range((abs(self.temps_offset) // 5 + 1)):
+                if self.y_offset < 0:   # condition scroll
+                    self.y_offset += 25
+            for i in range((abs(self.temps_offset) // 5) + 1):
+                if self.temps_offset > 0:
+                    self.temps_offset -= 1
+
+        elif self.temps_offset < 0:
+            for i in range((abs(self.temps_offset) // 5 + 1)):
+                if self.y + self.y_offset > self.rect_dimensions.bottom - 20:   # condition scroll
+                    self.y_offset -= 25
+            for i in range((abs(self.temps_offset) // 5) + 1):
+                if self.temps_offset < 0:
+                    self.temps_offset += 1
+
+
     def blit(self):
+        # mise à jour du offset
+        if self.scroller.clicked:
+            self.temps_offset = 0
+            pourcentage = self.scroller.get_pourcentage_scroll()
+            minimum = 0
+            maximum = max(self.y - (self.rect_dimensions.bottom - 20), 0)   # ça met 0 si l'autre est négatif (pas assez de musiques)
+            self.y_offset = round(maximum / 100 * pourcentage * -1, 0)
+
+        self.maj_offset()
+
         resize_screen.draw_rect("grey30", self.rect_dimensions, 50) # fond
 
         # blit du nom de la playlist
@@ -187,8 +222,9 @@ class PlaylistView:
 
             # blit des infos
             # compteur
-            texte = self.police_mid.render(str(compteur), True, "white")
-            resize_screen.blit(texte, (650, self.y + 20 + self.y_offset))
+            if not rect_titre.collidepoint(mouse_pos):
+                texte = self.police_mid.render(str(compteur), True, "white")
+                resize_screen.blit(texte, (650, self.y + 20 + self.y_offset))
 
             # image
             image_rect = self.playlist[musique][0].get_rect()
@@ -254,6 +290,12 @@ class PlaylistView:
             rect_selection.center = resize_screen.get_calcul_mouse_cos(pygame.mouse.get_pos())
             resize_screen.blit(self.selection_move_image, rect_selection.topleft)
 
+        # blit du scroller
+        #print(self.y, self.y_offset)
+        if not self.scroller.clicked:
+            self.scroller.pourcentage_to_scroll(self.scroller.get_pourcentage_scroll(0, max(self.y - (self.rect_dimensions.bottom - 20), 0), max(self.y_offset * -1, 0)))
+        self.scroller.blit()
+
     def listen_entry(self, event):
         # check du chargement de la playlist
         if not self.playlist_charged:
@@ -262,8 +304,11 @@ class PlaylistView:
                 return "crash"
             self.blit()
 
+        # listen_entry du scroller
+        self.scroller.listen_entry(event)
+
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1:
+            if event.button == 1 and not self.scroller.clicked:
                 if self.rect_dimensions.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
                     # test des rects play
                     for rect in self.rects_play:
@@ -351,9 +396,11 @@ class PlaylistView:
                     for i in range(abs(event.y)):
                         if self.y + self.y_offset > self.rect_dimensions.bottom - 20:
                         #if self.rects_image[len(self.rects_image)-1].y + 80 > self.rect_dimensions.height + 100:
-                            self.y_offset -= 45
+                            self.temps_offset -= 5
+                            #self.y_offset -= 45
 
                 elif event.y > 0:
                     for i in range(abs(event.y)):
                         if self.y_offset < 0:
-                            self.y_offset += 45
+                            self.temps_offset += 5
+                            #self.y_offset += 45

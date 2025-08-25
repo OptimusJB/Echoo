@@ -44,6 +44,7 @@ class Accueil:
             notif_manager.work()
             resize_screen.flip()
             clock.tick(user.fps)
+            #print(clock.get_fps())
             
             for event in pygame.event.get():
                 # récupération des potentielles touches pressées

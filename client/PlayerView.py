@@ -1,3 +1,5 @@
+import os
+
 from Screen import resize_screen
 from NotifManager import notif_manager
 from Client import client
@@ -7,6 +9,8 @@ from User import user
 from KeyManager import key_manager
 import pygame
 pygame.init()
+
+log = True
 
 class PlayerView:
     def __init__(self):
@@ -438,16 +442,43 @@ class PlayerView:
             # récupération de l'image de la musique
             musique = self.playlist[index_music]
             if user.load_images:
-                resultat = client.ask_music_image(user.username, musique)
+                # check si une image du même nom est dans le cache (économie de données)
+                resultat = client.send_message(["get cover name", user.username, musique])
                 if resultat == "crash":
                     return "crash"
 
-                # écriture du fichier dans le cache
-                # print("ecriture")
-                fichier = open("cache/cache.png", "wb")
-                fichier.write(resultat)
-                fichier.close()
-                resultat = None  # on libère la mémoire
+                # modification de la chaine de caractère comme dans PlaylistView
+                resultat = "'" + resultat[0] + "'" + ".png"
+                resultat = resultat.replace("/", "&sl&")
+
+                if resultat in os.listdir("cache/"):
+                    if log:
+                        print("utilisation du fichier au même nom présent dans le cache")
+                    # on copie le fichier et on l'appelle "cache.png"
+                    fichier = open("cache/" + resultat, "rb")
+                    fichier_read = fichier.read()
+                    fichier.close()
+
+                    fichier = open("cache/cache.png", "wb")
+                    fichier.write(fichier_read)
+                    fichier.close()
+
+                    resultat = None  # on libère la mémoire
+                    fichier_read = None
+
+                else:
+                    if log:
+                        print("récupération de l'image de la musique jouée sur le serveur")
+                    resultat = client.ask_music_image(user.username, musique)
+                    if resultat == "crash":
+                        return "crash"
+
+                    # écriture du fichier dans le cache
+                    # print("ecriture")
+                    fichier = open("cache/cache.png", "wb")
+                    fichier.write(resultat)
+                    fichier.close()
+                    resultat = None  # on libère la mémoire
 
                 # chargement dans le dictionnaire
                 self.piste_infos[0] = pygame.image.load("cache/cache.png").convert_alpha()
