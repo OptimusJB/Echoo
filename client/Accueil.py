@@ -18,7 +18,7 @@ class Accueil:
         self.work_elements = [playlist_manager, player, rechercher_btn, settings_btn]
 
     def run(self):
-        print("accueil")
+        #print("accueil")
         # réinitialisation des différents composants de l'interface
         for element in self.work_elements:
             element.reset()

@@ -10,6 +10,7 @@ pygame.init()
 
 class PlayerView:
     def __init__(self):
+        self.mutagen_works = True
         self.rect_dimensions = pygame.rect.Rect(0, 950, 1920, 1080-950)
         self.police = pygame.font.Font("assets/police.otf", 30)
         self.police_small = pygame.font.Font("assets/police.otf", 20)
@@ -86,6 +87,20 @@ class PlayerView:
         #self.sound_length = None
 
     def get_music_length(self):
+        # test avec mutagen d'abord (beaucoup plus rapide que pygame)
+        try:
+            if self.mutagen_works:
+                from mutagen.oggvorbis import OggVorbis
+                if self.sound_length == None:
+                    self.sound_length = OggVorbis("cache/cache.ogg")
+                return self.sound_length.info.length * 1000 # return un temps en ms
+
+        except Exception as error:
+            print("échec de la récupération de la longueur avec mutagen : " + str(error))
+            print("utilisation de pygame à la place")
+            self.mutagen_works = False
+            self.sound_length = None
+
         if self.sound_length == None:
             self.sound_length = pygame.mixer.Sound("cache/cache.ogg")
         return self.sound_length.get_length()*1000

@@ -5,6 +5,7 @@ import os
 import pygame
 pygame.init()
 
+log = True
 class PlaylistView:
     def __init__(self, internal_state, nom_playlist:str, load_via_album=False, load_via_recherche=False):
         # load_via_album = True ou load_via_recherche != True, pas les deux (load_via_recherche est un str)
@@ -48,8 +49,9 @@ class PlaylistView:
         self.selection = None
         self.selection_move = None
         self.playlist = {}
+
         # suppression des potentielles images du cache
-        self.delete_cache_png()
+        #self.delete_cache_png()
 
         # check de load_via_recherche
         if not self.load_via_recherche == False:
@@ -92,16 +94,24 @@ class PlaylistView:
                     return "crash"
 
                 if not nom_image in self.dico_cover.keys():
-                    print("nouvelle image")
-                    resultat = client.ask_music_image(user.username, musique)
-                    if resultat == "crash":
-                        return "crash"
+                    # check si l'image est toujours dans le cache
+                    if log:
+                        print(nom_image + " :")
+                    if nom_image + ".png" in os.listdir("cache/"):
+                        if log:
+                            print("image déjà dans le cache")
+                    else:
+                        if log:
+                            print("importation image")
+                        resultat = client.ask_music_image(user.username, musique)
+                        if resultat == "crash":
+                            return "crash"
 
-                    # écriture du fichier dans le cache
-                    fichier = open("cache/" + nom_image + ".png", "wb")
-                    fichier.write(resultat)
-                    fichier.close()
-                    resultat = None # on libère la mémoire
+                        # écriture du fichier dans le cache
+                        fichier = open("cache/" + nom_image + ".png", "wb")
+                        fichier.write(resultat)
+                        fichier.close()
+                        resultat = None # on libère la mémoire
 
                     self.dico_cover[nom_image] = pygame.image.load("cache/" + nom_image + ".png").convert_alpha()
                     self.dico_cover[nom_image] = (self.dico_cover[nom_image], pygame.transform.smoothscale(self.dico_cover[nom_image], (80, 80)))

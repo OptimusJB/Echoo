@@ -1,6 +1,7 @@
 import pygame
 import os
 from Screen import resize_screen
+from User import user
 import socket
 pygame.init()
 
@@ -20,6 +21,12 @@ class Client:
         self.port_serveur = int(fichier_read[1])
         fichier.close()
         self.police = pygame.font.Font("assets/police.otf", 20)
+
+    def add_octets_to_compteur(self, chaine_bytes):
+        """
+        chaine_bytes est une chaine de bytes
+        """
+        user.data_used = user.data_used + len(chaine_bytes)
 
     def reset_server_ip_file(self):
         fichier = open("server ip.txt", "w")
@@ -87,6 +94,8 @@ class Client:
             requete.connect((self.ip_serveur, self.port_serveur))
             requete.sendall(texte)
 
+            self.add_octets_to_compteur(texte)
+
             data = ""
             reception = "truc"
             while reception:
@@ -94,6 +103,9 @@ class Client:
                 reception = requete.recv(debit)
                 data = data + str(reception, "utf-8")
             assert data != "", "crash"
+
+            self.add_octets_to_compteur(data)
+
             data = self.transfo_liste(data)
             requete.close()
             return data
@@ -128,6 +140,8 @@ class Client:
             #texte = bytes(str(len(texte)) + "a", "utf-8") + texte
             requete.sendall(texte)
 
+            self.add_octets_to_compteur(texte)
+
             data = bytes("", "utf-8")
             reception = "truc"
             while reception:
@@ -136,9 +150,11 @@ class Client:
                 data = data + reception
             requete.close()
             assert data != "", "crash"
+
+            self.add_octets_to_compteur(data)
             
             if log:
-                print(pygame.time.get_ticks() - a)
+                print("temps récupération musique : " + str(pygame.time.get_ticks() - a))
             return data
         except Exception as error:
             self.crash()
@@ -163,6 +179,9 @@ class Client:
             texte = bytes(texte + "#fin du message", "utf-8")
             #texte = bytes(str(len(texte)) + "a", "utf-8") + texte
             requete.sendall(texte)
+
+            self.add_octets_to_compteur(texte)
+
             data = bytes("", "utf-8")
             reception = "truc"
             while reception:
@@ -171,6 +190,9 @@ class Client:
                 data = data + reception
             requete.close()
             assert data != "", "crash"
+
+            self.add_octets_to_compteur(data)
+
             return data
         except Exception as error:
             print(error)

@@ -54,9 +54,10 @@ class TextZone:
                 else:
                     texte = "." * len(self.prefixe + self.texte)
                 if self.police.size(texte)[0] < self.largeur_max:
-                    if event.key == pygame.K_SPACE:
-                        self.texte = self.texte + " "
-                    elif len(pygame.key.name(event.key)) == 1:
+                    if event.key == pygame.K_BACKSPACE:
+                        if len(self.texte) > 0:
+                            self.texte = self.texte[:len(self.texte) - 1]
+                    elif event.unicode.lower() in "azertyuiopmlkjhgfdsqwxcvbn012346789*-+.:!&é'(-è_çà)='" + '"':
                         self.texte = self.texte + event.unicode
 
     def get_image(self):

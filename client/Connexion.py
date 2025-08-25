@@ -29,19 +29,19 @@ class Connexion:
         """
         # chargement du fond
         resize_screen.load_screen("fond connexion")   # pour enlever les potentiels messages dynamiques
-        resize_screen.draw_rect("grey15", pygame.rect.Rect((1920 // 2 - 400, 1080 // 2 - 300, 800, 600)), 50)
+        resize_screen.draw_rect("grey15", pygame.rect.Rect((10, 1080 // 2 - 300, 1920 - 20, 600)), 50)
 
         texte_ip = TextZone(self.police)
         texte_port = TextZone(self.police)
-        texte_ip.set_largeur_max(570)
-        texte_port.set_largeur_max(570)
+        texte_ip.set_largeur_max(1920 - 40 - 50)
+        texte_port.set_largeur_max(1920 - 40 - 50)
         texte_ip.set_prefixe("ip : ")
         texte_port.set_prefixe("port : ")
         texte_ip.texte = client.ip_serveur
         texte_port.texte = str(client.port_serveur)
 
-        ip_rect = pygame.rect.Rect(1920 // 2 - 350, 1080 // 2 - 250 + 100, 700, 100)
-        port_rect = pygame.rect.Rect(1920 // 2 - 350, 1080 // 2 - 120 + 100, 700, 100)
+        ip_rect = pygame.rect.Rect(20, 1080 // 2 - 250 + 100, 1920 - 40, 100)
+        port_rect = pygame.rect.Rect(20, 1080 // 2 - 120 + 100, 1920 - 40, 100)
         texte_ip.set_rect(ip_rect)
         texte_port.set_rect(port_rect)
 

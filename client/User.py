@@ -4,8 +4,19 @@ pygame.init()
 
 class User:
     def remove_cache(self):
+        """
+        supprime l'intégralité du cache
+        """
         for element in os.listdir("cache/"):
             os.remove("cache/" + element)
+
+    def safe_remove_cache(self):
+        """
+        supprime tout le cache sauf cache.png et cache.ogg
+        """
+        for element in os.listdir("cache/"):
+            if not element in ["cache.png", "cache.ogg"]:
+                os.remove("cache/" + element)
 
     def save_settings(self):
         fichier = open("settings.txt", "w")
@@ -35,5 +46,7 @@ class User:
 
         self.username = None
         self.password = None
+
+        self.data_used = 0  # en bytes (octets)
 
 user = User()
