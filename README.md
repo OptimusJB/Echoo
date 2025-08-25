@@ -22,7 +22,6 @@ pour lancer le client :
 cd client
 python main.py
 ```
-note : pour le client, vous pouvez également lancer l'exécutable dans le dossier exe
 
 ## Comment utiliser
 - après avoir lancé le serveur, on a le choix entre lancer le serveur, créer une base de données, et gérer la base de données. La première chose à faire est de créer une base de données. Vous pourrez ensuite ajouter et supprimer des musiques, et enfin lancer le serveur.
