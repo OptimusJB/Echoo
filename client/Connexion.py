@@ -103,7 +103,7 @@ class Connexion:
 
                                 # changement fichier
                                 fichier = open("server ip.txt", "w")
-                                fichier.write(texte_ip.get_text() + ":" + texte_port.get_text())
+                                fichier.write(texte_ip.get_text() + "&sl:&" + texte_port.get_text())
                             except:
                                 notif_manager.add_notif("port invalide")
 

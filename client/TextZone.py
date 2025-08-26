@@ -57,7 +57,7 @@ class TextZone:
                     if event.key == pygame.K_BACKSPACE:
                         if len(self.texte) > 0:
                             self.texte = self.texte[:len(self.texte) - 1]
-                    elif event.unicode.lower() in " azertyuiopmlkjhgfdsqwxcvbn012346789*-+.:!&é'(-è_çà)='" + '"':
+                    elif event.unicode.lower() in " azertyuiopmlkjhgfdsqwxcvbn0123456789*-+.:!?/§&é'(-è_çà)='" + '"':
                         self.texte = self.texte + event.unicode
 
     def get_image(self):

@@ -43,7 +43,7 @@ class PlaylistView:
         self.temps_offset = 0
 
         # scroller
-        self.scroller = Scroller(pygame.rect.Rect(1920 - 50, 0, 25, 50), self.rect_dimensions.top + 15, self.rect_dimensions.bottom - 40)
+        self.scroller = Scroller(pygame.rect.Rect(1920 - 50, 0, 25, 50), self.rect_dimensions.top + 25 + 15, self.rect_dimensions.bottom - 40)
 
     def delete_cache_png(self):
         for element in os.listdir("cache/"):
@@ -162,8 +162,8 @@ class PlaylistView:
             self.temps_offset = 0
             pourcentage = self.scroller.get_pourcentage_scroll()
             minimum = 0
-            maximum = max(self.y - (self.rect_dimensions.bottom - 20), 0)   # ça met 0 si l'autre est négatif (pas assez de musiques)
-            self.y_offset = round(maximum / 100 * pourcentage * -1, 0)
+            maximum = max(self.y - (self.rect_dimensions.bottom - 20), 0)  # ça met 0 si l'autre est négatif (pas assez de musiques)
+            self.y_offset = maximum / 100 * pourcentage * -1
 
         self.maj_offset()
 
@@ -351,7 +351,7 @@ class PlaylistView:
 
             elif event.button == 3:
                 # test des rects de fond
-                if not self.load_via_album:
+                if not self.load_via_album and not self.load_via_recherche:
                     for rect in self.rects_titre:
                         if rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
                             index_rect = self.rects_titre.index(rect)

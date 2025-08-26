@@ -36,6 +36,10 @@ class PlayerView:
         self.rect_barre_fond = pygame.rect.Rect(0, 0, 650, 10)
         self.rect_barre_fond.center = (self.rect_dimensions.centerx, self.rect_dimensions.centery + 30)
 
+        self.rect_hitbox_barre = self.rect_barre_fond.copy()
+        self.rect_hitbox_barre.height = 30  # à changer au besoin
+        self.rect_hitbox_barre.center = (self.rect_dimensions.centerx, self.rect_dimensions.centery + 30)
+
         self.old_music = None   # utilisé par self.play() (pour ne pas recharger exactement la même musique)
         self.old_quality = None
 
@@ -243,7 +247,7 @@ class PlayerView:
 
             # test de si la souris est sur l'écran
             color = "white"
-            if self.rect_barre_fond.collidepoint(resize_screen.get_calcul_mouse_cos(pygame.mouse.get_pos())):
+            if self.rect_hitbox_barre.collidepoint(resize_screen.get_calcul_mouse_cos(pygame.mouse.get_pos())):
                 color = "dodgerblue3"
             resize_screen.draw_rect(color, rect_barre, 50)
 
@@ -302,7 +306,49 @@ class PlayerView:
                 # la musique est finie
                 if self.next_music() == "crash":
                     return "crash"
-    
+
+    def mise_en_pause(self):
+        if self.pause:
+            pygame.mixer.music.unpause()
+        else:
+            pygame.mixer.music.pause()
+        self.pause = not self.pause
+
+        # mise à jour de la variable pour la barre
+        if self.pause:
+            self.time_pause = pygame.time.get_ticks()
+        else:
+            self.time_music = self.time_music + (pygame.time.get_ticks() - self.time_pause)
+            self.time_pause = 0
+
+    def switch_random(self):
+        self.random = not self.random
+        self.check_random()
+
+    def switch_loop(self):
+        if self.loop == "false":
+            self.loop = "music"
+        elif self.loop == "music":
+            self.loop = "playlist"
+        elif self.loop == "playlist":
+            self.loop = "false"
+        else:
+            raise ValueError("problème avec la valeur de self.loop")
+
+    def volume_plus(self):
+        user.volume = round(user.volume + 0.1, 2)
+        if user.volume > 1:
+            user.volume = 1.0
+        user.save_settings()
+        pygame.mixer.music.set_volume(user.volume)
+
+    def volume_moins(self):
+        user.volume = round(user.volume - 0.1, 2)
+        if user.volume < 0:
+            user.volume = 0.0
+        user.save_settings()
+        pygame.mixer.music.set_volume(user.volume)
+
     def listen_entry(self, event):
         if self.music_loaded:
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -316,32 +362,13 @@ class PlayerView:
                         internal_state.load_artiste(self.piste_infos[1])
 
                     elif self.buttons_rect["play"].collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
-                        if self.pause:
-                            pygame.mixer.music.unpause()
-                        else:
-                            pygame.mixer.music.pause()
-                        self.pause = not self.pause
-
-                        # mise à jour de la variable pour la barre
-                        if self.pause:
-                            self.time_pause = pygame.time.get_ticks()
-                        else:
-                            self.time_music = self.time_music + (pygame.time.get_ticks() - self.time_pause)
-                            self.time_pause = 0
+                        self.mise_en_pause()
 
                     elif self.buttons_rect["random_false"].collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
-                        self.random = not self.random
-                        self.check_random()
+                        self.switch_random()
 
                     elif self.buttons_rect["loop_false"].collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
-                        if self.loop == "false":
-                            self.loop = "music"
-                        elif self.loop == "music":
-                            self.loop = "playlist"
-                        elif self.loop == "playlist":
-                            self.loop = "false"
-                        else:
-                            raise ValueError("problème avec la valeur de self.loop")
+                        self.switch_loop()
 
                     elif self.buttons_rect["next"].collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
                         if self.next_music() == "crash":
@@ -351,7 +378,7 @@ class PlayerView:
                         if self.previous_music() == "crash":
                             return "crash"
 
-                    elif self.rect_barre_fond.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
+                    elif self.rect_hitbox_barre.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
                         # changement de la position
                         mouse_pos_x = resize_screen.get_calcul_mouse_cos(event.pos)[0]
                         barre_x = mouse_pos_x - self.rect_barre_fond.x
@@ -367,18 +394,28 @@ class PlayerView:
                         self.affichage_full_screen()
 
                     elif self.buttons_rect["plus"].collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
-                        user.volume = round(user.volume + 0.1, 2)
-                        if user.volume > 1:
-                            user.volume = 1.0
-                        user.save_settings()
-                        pygame.mixer.music.set_volume(user.volume)
+                        self.volume_plus()
 
                     elif self.buttons_rect["moins"].collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
-                        user.volume = round(user.volume - 0.1, 2)
-                        if user.volume < 0:
-                            user.volume = 0.0
-                        user.save_settings()
-                        pygame.mixer.music.set_volume(user.volume)
+                        self.volume_moins()
+
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RIGHT:
+                    if self.next_music() == "crash":
+                        return "crash"
+                elif event.key == pygame.K_LEFT:
+                    if self.previous_music() == "crash":
+                        return "crash"
+                elif event.key == pygame.K_UP:
+                    self.volume_plus()
+                elif event.key == pygame.K_DOWN:
+                    self.volume_moins()
+                elif event.key == pygame.K_SPACE:
+                    self.mise_en_pause()
+                elif event.key == pygame.K_r:
+                    self.switch_random()
+                elif event.key == pygame.K_l:
+                    self.switch_loop()
 
     def get_icone_base(self):
         if self.icone_base == None:

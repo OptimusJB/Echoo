@@ -4,6 +4,7 @@ from User import user
 from TextZone import TextZone
 from NotifManager import notif_manager
 from InternalState import internal_state
+from Scroller import Scroller
 import pygame
 pygame.init()
 
@@ -14,6 +15,7 @@ class ListPlaylistsView:
     def __init__(self):
         self.y = 0
         self.y_offset = 0
+        self.temps_offset = 0
         self.playlists = []
         self.liste_rects = []   # rect des playlists (même ordre que self.playlists)
         self.playlists_charged = False   # à mettre sur False s'il y a une mise à jour au niveau des playlists (ajout, suppression, modification du nom...)
@@ -45,6 +47,8 @@ class ListPlaylistsView:
         self.create_btn_rect.center = (20 + self.rect_dimensions.width//2, 870) # à changer au besoin
 
         self.create_text = TextZone(self.police)    # pour la création de la playlist
+
+        self.scroller = Scroller(pygame.rect.Rect(self.rect_fond_playlists.right - 25, 0, 25, 50), self.rect_fond_playlists.top + 80, self.rect_fond_playlists.bottom - 25)
     
     def reset(self):
         self.playlists = []
@@ -66,7 +70,31 @@ class ListPlaylistsView:
         self.playlists_charged = True
         #print("playlists chargées : " + str(self.playlists))
 
+    def maj_offset(self):
+        if self.temps_offset > 0:
+            for i in range((abs(self.temps_offset) // 5 + 1)):
+                if self.y_offset < 0:   # condition scroll
+                    self.y_offset += 25
+            for i in range((abs(self.temps_offset) // 5) + 1):
+                if self.temps_offset > 0:
+                    self.temps_offset -= 1
+
+        elif self.temps_offset < 0:
+            for i in range((abs(self.temps_offset) // 5 + 1)):
+                if self.y + self.y_offset > self.rect_fond_playlists.bottom - 20:   # condition scroll
+                    self.y_offset -= 25
+            for i in range((abs(self.temps_offset) // 5) + 1):
+                if self.temps_offset < 0:
+                    self.temps_offset += 1
+
     def blit(self):
+        if not self.scroller.clicked:
+            self.maj_offset()
+        else:
+            self.temps_offset = 0
+            maximum = max(0, self.y - (self.rect_fond_playlists.bottom - 20))   # doit être positif
+            self.y_offset = -1 * maximum / 100 * self.scroller.get_pourcentage_scroll()
+
         self.liste_rects = []   # pour éviter un crash
         mouse_pos = pygame.mouse.get_pos()
         resize_screen.draw_rect("grey20", self.rect_dimensions, 50)
@@ -77,7 +105,7 @@ class ListPlaylistsView:
             texte_rect.center = self.rect_dimensions.center
             resize_screen.blit(texte, texte_rect.topleft)
             return None
-        
+
         # blit des playlists
         self.y = 120
         for element in self.playlists:
@@ -125,6 +153,11 @@ class ListPlaylistsView:
         resize_screen.blit(self.create_text.get_image(), (self.create_text.rect.x + 10, self.create_text.rect.y + 10))
         resize_screen.draw_rect("dodgerblue3", self.create_btn_rect, 20)
         resize_screen.blit(self.create_btn, (self.create_btn_rect.x + 10, self.create_btn_rect.y + 10))
+
+        # blit de la scrollbar
+        if not self.scroller.clicked:
+            self.scroller.pourcentage_to_scroll(self.scroller.get_pourcentage_scroll(0, max(self.y - (self.rect_fond_playlists.bottom - 20), 0), max(self.y_offset * -1, 0)))
+        self.scroller.blit()
     
     def listen_entry(self, event):
         if not self.playlists_charged:
@@ -133,21 +166,22 @@ class ListPlaylistsView:
                 return "crash"
             self.blit()
 
+        self.scroller.listen_entry(event)
         self.create_text.work(event)
         if event.type == pygame.MOUSEWHEEL:
             if self.rect_fond_playlists.collidepoint(resize_screen.get_calcul_mouse_cos(pygame.mouse.get_pos())):
                 if event.y < 0:
                     for i in range(abs(event.y)):
                         if self.y + self.y_offset > self.rect_fond_playlists.bottom - 20:
-                            self.y_offset -= 45
+                            self.temps_offset -= 5
 
                 elif event.y > 0:
                     for i in range(abs(event.y)):
                         if self.y_offset < 0:
-                            self.y_offset += 45
+                            self.temps_offset += 5
 
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1:
+            if event.button == 1 and not self.scroller.clicked:
                 # on check d'abord l'insertion d'un titre dans une playlist
                 if type(internal_state.state_actuel) == internal_state.get_playlist_type():
                     if internal_state.state_actuel.selection != None:
@@ -200,4 +234,9 @@ class ListPlaylistsView:
                             elif resultat == ["ok"]:
                                 notif_manager.add_notif("playlist supprimée")
                                 self.playlists_charged = False
+
+                                # on onlève la playlist ouverte si c'est celle supprimée
+                                if type(internal_state.state_actuel) == internal_state.get_playlist_type():
+                                    if internal_state.state_actuel.nom_playlist == nom_playlist:
+                                        internal_state.reset()
 playlist_manager = ListPlaylistsView()

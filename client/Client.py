@@ -16,7 +16,7 @@ class Client:
         if not "server ip.txt" in os.listdir():
             self.reset_server_ip_file()
         fichier = open("server ip.txt", "r")
-        fichier_read = fichier.read().rstrip().split(":")
+        fichier_read = fichier.read().rstrip().split("&sl:&")
         self.ip_serveur = fichier_read[0]
         self.port_serveur = int(fichier_read[1])
         fichier.close()
@@ -30,7 +30,7 @@ class Client:
 
     def reset_server_ip_file(self):
         fichier = open("server ip.txt", "w")
-        fichier.write("0.0.0.0:25565")
+        fichier.write("0.0.0.0&sl:&25565")
         fichier.close()
 
     def change_ip(self, ip:str, port:int):
