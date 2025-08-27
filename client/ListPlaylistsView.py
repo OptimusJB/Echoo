@@ -192,8 +192,11 @@ class ListPlaylistsView:
                                 resultat = client.send_message(["insert to playlist", user.username, playlist_choisie, internal_state.state_actuel.selection])
                                 if resultat == "crash":
                                     return "crash"
-                                internal_state.state_actuel.playlist_charged = False
-                                #internal_state.state_actuel.selection = None
+
+                                # on recharge la playlist si c'est celle actuellement ouverte
+                                if playlist_choisie == internal_state.state_actuel.nom_playlist:
+                                    internal_state.state_actuel.playlist_charged = False
+                                internal_state.state_actuel.selection = None
                                 return None
                         #internal_state.state_actuel.playlist_charged = False
                         internal_state.state_actuel.selection = None
