@@ -38,4 +38,4 @@ note : il est possible de cliquer sur le nom de l'artiste pour accéder à sa pa
 - l : activer / désactiver la répétition
 
 ## Note importante
-si le fichier 'server ip.txt' a été créé par une version antérieure à la version 1.1.0 de Spoutoufy, il est nécessaire de le supprimer lors de la mise à jour (crash au lancement sinon)
+si le fichier 'server ip.txt' a été créé par une version antérieure à la version 1.1.0 de Spoutoufy, il est nécessaire de le supprimer lors de la mise à jour vers les versions 1.1.0 et au dessus (crash au lancement sinon)
