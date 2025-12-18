@@ -73,11 +73,11 @@ class Client:
         return chaine
 
     def transfo_liste(self, chaine:str, separateur="&slchaine&"):
-        if chaine == "rien" or chaine == "":
+        if chaine == "rien" or chaine == "" or chaine == bytes("", "utf-8"):
             return []
         return chaine.split(separateur)
 
-    def send_message(self, liste:list): # liste de str
+    def send_message(self, liste:list, return_bytes=False): # liste de str
         assert type(liste) == list, "pas une liste"
         self.texte_fond("communication avec le serveur en cours...")
         resize_screen.flip()
@@ -96,19 +96,31 @@ class Client:
 
             self.add_octets_to_compteur(texte)
 
-            data = ""
+            if not return_bytes:
+                data = ""
+            else:
+                data = bytes("", "utf-8")
+
             reception = "truc"
             while reception:
                 pygame.event.get()
                 reception = requete.recv(debit)
-                data = data + str(reception, "utf-8")
-            assert data != "", "crash"
+                if not return_bytes:
+                    data = data + str(reception, "utf-8")
+                else:
+                    data = data + reception
+            assert data, "crash"
 
             self.add_octets_to_compteur(data)
 
-            data = self.transfo_liste(data)
+            separateur = "&slchaine&"
+            if return_bytes:
+                separateur = bytes("&slchaine&", "utf-8")
+
+            data = self.transfo_liste(data, separateur)
             requete.close()
             return data
+
         except Exception as error:
             print(error)
             self.crash()

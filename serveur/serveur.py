@@ -33,7 +33,12 @@ class request_manager(socketserver.BaseRequestHandler):
         self.request.sendall(texte)
 
     def send_bytes(self, message):
+        """
+        message peut être sous forme de bytes ou sous forme de liste de bytes
+        """
         texte = message
+        if type(message) == list:
+            texte = bytes("&slchaine&", "utf-8").join(message)
         #texte = bytes(str(len(texte)) + "a", "utf-8") + texte
         self.request.sendall(texte)
 
@@ -182,7 +187,16 @@ class request_manager(socketserver.BaseRequestHandler):
         for element in resultat:
             liste_finale.append(element[0])
         return liste_finale
-    
+
+    def opti_get_playlist_content(self, pseudo, recherche, fonction_recherche):
+        # ça envoie directement toutes les infos en une seule requête
+        liste_musiques = fonction_recherche(pseudo, recherche)
+        liste_infos = []
+        for musique in liste_musiques:
+            liste_infos.append("&slinfo&".join([musique] + self.get_music_infos(pseudo, musique) + [("'" + self.get_cover_name(pseudo, musique) + "'").replace("/", "&sl&")]))
+
+        return liste_infos
+
     def get_playlist_content_via_recherche(self, pseudo, recherche_joueur):
         database = sqlite3.connect("data.db")
         cursor = database.cursor()
@@ -197,9 +211,10 @@ class request_manager(socketserver.BaseRequestHandler):
         database.close()
         return liste_musiques
 
-    def get_music_infos(self, pseudo:str, musique:str):
+    def get_music_infos(self, pseudo:str, musique:str, date_str=False):
         """
         retourne une liste de la forme [artiste, annee, album]
+        date_str : si True, retourne la date en str, en int sinon
         """
         database = sqlite3.connect("data.db")
         cursor = database.cursor()
@@ -212,9 +227,25 @@ class request_manager(socketserver.BaseRequestHandler):
         liste_finale = []
         for element in resultat[0]:
             liste_finale.append(element)
+        liste_finale[1] = str(liste_finale[1])
         cursor.close()
         database.close()
         return liste_finale
+
+    def get_images_opti(self, pseudo, images):
+        # attention les images ont des ' ' et des &sl& donc il faut les convertir
+        images_convert = []
+        for chemin_image in images:
+            images_convert.append(chemin_image[1:len(chemin_image)-1].replace("&sl&", "/"))
+
+        liste_images = []
+        for chemin_image in images_convert:
+            assert chemin_image[len(chemin_image) - 4:] == ".png", "les images doivent être sous format png"
+            fichier = open(chemin_image, "rb")
+            fichier_read = fichier.read()
+            fichier.close()
+            liste_images.append(fichier_read)
+        return liste_images
 
     def get_music_image(self, pseudo, nom_musique):
         """
@@ -415,8 +446,16 @@ class request_manager(socketserver.BaseRequestHandler):
             resultat = self.get_playlist_content(data[0], data[1])  # renvoie une liste
             self.send_message(resultat)
 
+        elif type_data == "get playlist content opti":
+            resultat = self.opti_get_playlist_content(data[0], data[1], self.get_playlist_content)
+            self.send_message(resultat)
+
         elif type_data == "get playlist content via album":
             resultat = self.get_playlist_content_via_album(data[0], data[1])    # renvoie une liste
+            self.send_message(resultat)
+
+        elif type_data == "get playlist content via album opti":
+            resultat = self.opti_get_playlist_content(data[0], data[1], self.get_playlist_content_via_album)
             self.send_message(resultat)
 
         elif type_data == "get music infos":
@@ -425,6 +464,10 @@ class request_manager(socketserver.BaseRequestHandler):
 
         elif type_data == "ask music image":
             resultat = self.get_music_image(data[0], data[1])
+            self.send_bytes(resultat)
+
+        elif type_data == "get images opti":
+            resultat = self.get_images_opti(data[0], data[1:])
             self.send_bytes(resultat)
 
         elif type_data == "check quality":
@@ -445,6 +488,10 @@ class request_manager(socketserver.BaseRequestHandler):
         
         elif type_data == "get musics with":
             resultat = self.get_playlist_content_via_recherche(data[0], data[1])    # retourne une liste
+            self.send_message(resultat)
+
+        elif type_data == "get musics with opti":
+            resultat = self.opti_get_playlist_content(data[0], data[1], self.get_playlist_content_via_recherche)
             self.send_message(resultat)
 
         elif type_data == "get artistes":

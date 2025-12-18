@@ -114,6 +114,9 @@ class PlayerView:
         return self.sound_length.get_length()*1000
 
     def affichage_full_screen(self):
+        # on check si user.load_image est à True et si l'image existe (important si user.load_image était auparavant à False (cache.png pas forcément chargé)
+        if not user.load_images or not "cache/cache.png" in os.listdir():
+            return
         image = pygame.image.load("cache/cache.png").convert_alpha()
         image = pygame.transform.smoothscale(image, (700, 700))
         rect_image = image.get_rect()

@@ -50,7 +50,7 @@ class PlaylistView:
             if element[len(element)-4:] == ".png" and not element == "cache.png":
                 os.remove("cache/" + element)
 
-    def charger_playlist(self):
+    def old_charger_playlist(self):
         self.dico_cover = {}
         self.musics_cover = {}
         self.selection = None
@@ -129,6 +129,106 @@ class PlaylistView:
                 self.playlist[musique][0] = self.dico_cover[nom_image][1]
             else:
                 self.playlist[musique][0] = self.get_icone_base()
+
+        self.playlist_charged = True
+
+    def check_images_opti(self):
+        """
+        fonction qui demande et charge automatiquement les images des musiques de la playlist
+        """
+        a_charger = []
+        # on check s'il y a des images à demander par requête
+        if user.load_images:
+            for musique in self.liste_noms_musiques:
+                nom_image = self.playlist[musique][4]
+                if not nom_image in self.dico_cover.keys() and not nom_image in a_charger:
+                    # check si l'image est toujours dans le cache
+                    if log:
+                        print(nom_image + " :")
+                    if nom_image + ".png" in os.listdir("cache/"):
+                        if log:
+                            print("image déjà dans le cache, donc on l'importe directement dans dico cover")
+                        self.dico_cover[nom_image] = pygame.image.load("cache/" + nom_image + ".png").convert_alpha()
+                        self.dico_cover[nom_image] = (self.dico_cover[nom_image],pygame.transform.smoothscale(self.dico_cover[nom_image],(80, 80)))
+                    else:
+                        if log:
+                            print("importation image")
+                        a_charger.append(nom_image)
+
+            # on envoie la requête
+            if len(a_charger) > 0:
+                if log:
+                    print("envoi d'une requête pour récupérer les images manquantes")
+                    print(a_charger)
+                resultat = client.send_message(["get images opti", user.username] + a_charger, True)
+                if resultat == "crash":
+                    return "crash"
+
+                # on charge les images
+                for i in range(len(a_charger)):
+                    # écriture du fichier dans le cache
+                    fichier = open("cache/" + a_charger[i] + ".png", "wb")
+                    fichier.write(resultat[i])
+                    fichier.close()
+
+                    self.dico_cover[a_charger[i]] = pygame.image.load("cache/" + a_charger[i] + ".png").convert_alpha()
+                    self.dico_cover[a_charger[i]] = (self.dico_cover[a_charger[i]], pygame.transform.smoothscale(self.dico_cover[a_charger[i]], (80, 80)))
+
+            resultat = None  # on libère la mémoire
+
+        # on refait un parcours pour charger les images
+        for musique in self.liste_noms_musiques:
+            if user.load_images:
+                nom_image = self.playlist[musique][4]
+
+                self.musics_cover[musique] = nom_image
+
+                # chargement dans le dictionnaire
+                self.playlist[musique][0] = self.dico_cover[nom_image][1]
+            else:
+                self.playlist[musique][0] = self.get_icone_base()
+
+    def charger_playlist(self):
+        self.dico_cover = {}
+        self.musics_cover = {}
+        self.selection = None
+        self.selection_move = None
+        self.playlist = {}
+
+        # check de load_via_recherche
+        if not self.load_via_recherche == False:
+            resultat = client.send_message(["get musics with opti", user.username, self.load_via_recherche])
+            if resultat == "crash":
+                return "crash"
+
+        # check de load_via_album
+        elif self.load_via_album:
+            resultat = client.send_message(["get playlist content via album opti", user.username, self.nom_playlist])
+            if resultat == "crash":
+                return "crash"
+
+        else:
+            # récupération de la liste des musiques de la playlist
+            resultat = client.send_message(["get playlist content opti", user.username, self.nom_playlist])
+            if resultat == "crash":
+                return "crash"
+
+        for i in range(len(resultat)):
+            resultat[i] = resultat[i].split("&slinfo&")
+
+        self.liste_noms_musiques = []
+
+        # on met les infos dans self.playlist
+        for musique in resultat:
+            self.liste_noms_musiques.append(musique[0])
+
+            # date str --> int
+            musique[2] = int(musique[2])
+            self.playlist[musique[0]] = [None] + musique[1:]
+
+        # on charge les images
+        if self.check_images_opti() == "crash":
+            return "crash"
 
         self.playlist_charged = True
 
