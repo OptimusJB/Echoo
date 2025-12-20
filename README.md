@@ -29,6 +29,7 @@ python main.py
 note : il est possible de cliquer sur le nom de l'artiste pour accéder à sa page, pareil pour le nom de l'album
 
 ## Touches actions rapides
+shift + 
 - espace : mettre en pause
 - flèche gauche : musique précédente
 - flèche droite : musique suivante
