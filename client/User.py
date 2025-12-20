@@ -43,6 +43,7 @@ class User:
         assert self.quality in ["min", "moyen", "max"], "qualité invalide"
 
         self.fps = 30
+        self.fps_1 = False  # détermine si les fps ne doivent pas dépasser 1
 
         self.username = None
         self.password = None

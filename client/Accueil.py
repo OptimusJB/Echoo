@@ -47,6 +47,13 @@ class Accueil:
             #print(clock.get_fps())
             
             for event in pygame.event.get():
+                # on check si le focus a été gagné ou perdu (1 fps si perdu économiser le temps cpu)
+                if not user.fps_1:
+                    if event.type == pygame.WINDOWFOCUSGAINED:
+                        user.fps = 30
+                    elif event.type == pygame.WINDOWFOCUSLOST:
+                        user.fps = 1
+
                 # récupération des potentielles touches pressées
                 key_manager.work(event)
 

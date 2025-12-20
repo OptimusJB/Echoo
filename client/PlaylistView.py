@@ -39,6 +39,8 @@ class PlaylistView:
         self.rects_titre = []
         self.rects_album = []
 
+        self.faux_rect = pygame.rect.Rect(-2, -2, 1, 1) # en dehors de l'écran
+
         # temps offset
         self.temps_offset = 0
 
@@ -312,72 +314,81 @@ class PlaylistView:
         mouse_pos = resize_screen.get_calcul_mouse_cos(pygame.mouse.get_pos())
         self.y = 350
         compteur = 0
+
         for musique in self.liste_noms_musiques:
             compteur += 1
-            # blit du potentiel fond différent
-            rect_titre = pygame.rect.Rect(600 + 20 + 10, self.y - 10 + self.y_offset, 1920-20-600-20, 80 + 10 + 10)
-            if rect_titre.collidepoint(mouse_pos):
-                resize_screen.draw_rect("grey65", rect_titre, 20)
-            self.rects_titre.append(rect_titre)
 
-            # blit des infos
-            # compteur
-            if not rect_titre.collidepoint(mouse_pos):
-                texte = self.police_mid.render(str(compteur), True, "white")
-                resize_screen.blit(texte, (650, self.y + 20 + self.y_offset))
+            if 0 <= self.y + self.y_offset <= 1080: # optimisation, on l'affiche seulement si c'est dans l'écran
+                # blit du potentiel fond différent
+                rect_titre = pygame.rect.Rect(600 + 20 + 10, self.y - 10 + self.y_offset, 1920-20-600-20, 80 + 10 + 10)
+                if rect_titre.collidepoint(mouse_pos):
+                    resize_screen.draw_rect("grey65", rect_titre, 20)
+                self.rects_titre.append(rect_titre)
 
-            # image
-            image_rect = self.playlist[musique][0].get_rect()
-            image_rect.topleft = (750, self.y + self.y_offset)
-            self.rects_image.append(image_rect)
+                # blit des infos
+                # compteur
+                if not rect_titre.collidepoint(mouse_pos):
+                    texte = self.police_mid.render(str(compteur), True, "white")
+                    resize_screen.blit(texte, (650, self.y + 20 + self.y_offset))
 
-            if image_rect.colliderect(self.rect_dimensions):
-                resize_screen.blit(self.playlist[musique][0], image_rect)
+                # image
+                image_rect = self.playlist[musique][0].get_rect()
+                image_rect.topleft = (750, self.y + self.y_offset)
+                self.rects_image.append(image_rect)
 
-            # titre
-            titre_final = musique
-            if len(musique) > 25:
-                titre_final = titre_final[:25] + "..."
+                if image_rect.colliderect(self.rect_dimensions):
+                    resize_screen.blit(self.playlist[musique][0], image_rect)
 
-            titre = self.police_mid.render(titre_final, True, "white")
-            titre_rect = titre.get_rect()
-            titre_rect.midleft = (image_rect.centerx + 50, image_rect.centery-10)
+                # titre
+                titre_final = musique
+                if len(musique) > 25:
+                    titre_final = titre_final[:25] + "..."
 
-            if titre_rect.colliderect(self.rect_dimensions):
-                resize_screen.blit(titre, titre_rect.topleft)
+                titre = self.police_mid.render(titre_final, True, "white")
+                titre_rect = titre.get_rect()
+                titre_rect.midleft = (image_rect.centerx + 50, image_rect.centery-10)
 
-            # artiste
-            artiste_final = self.playlist[musique][1]
-            if len(artiste_final) > 35:
-                artiste_final = artiste_final[:35] + "..."
-            artiste = self.police_small.render(artiste_final, True, "white")
-            artiste_rect = artiste.get_rect()
-            artiste_rect.topleft = (titre_rect.x, titre_rect.bottom + 1)
-            self.rects_artiste.append(artiste_rect)
+                if titre_rect.colliderect(self.rect_dimensions):
+                    resize_screen.blit(titre, titre_rect.topleft)
 
-            if artiste_rect.colliderect(self.rect_dimensions):
-                resize_screen.blit(artiste, artiste_rect.topleft)
+                # artiste
+                artiste_final = self.playlist[musique][1]
+                if len(artiste_final) > 35:
+                    artiste_final = artiste_final[:35] + "..."
+                artiste = self.police_small.render(artiste_final, True, "white")
+                artiste_rect = artiste.get_rect()
+                artiste_rect.topleft = (titre_rect.x, titre_rect.bottom + 1)
+                self.rects_artiste.append(artiste_rect)
 
-            # album
-            album_final = self.playlist[musique][3]
-            if len(album_final) > 28:
-                album_final = album_final[:28] + "..."
-            album = self.police_mid.render(album_final, True, "white")
-            album_rect = album.get_rect()
-            album_rect.midleft = (1350, image_rect.centery)
-            self.rects_album.append(album_rect)
+                if artiste_rect.colliderect(self.rect_dimensions):
+                    resize_screen.blit(artiste, artiste_rect.topleft)
 
-            if album_rect.colliderect(self.rect_dimensions):
-                resize_screen.blit(album, album_rect.topleft)
+                # album
+                album_final = self.playlist[musique][3]
+                if len(album_final) > 28:
+                    album_final = album_final[:28] + "..."
+                album = self.police_mid.render(album_final, True, "white")
+                album_rect = album.get_rect()
+                album_rect.midleft = (1350, image_rect.centery)
+                self.rects_album.append(album_rect)
 
-            # bouton play (ne s'affiche que quand on passe la souris sur le titre)
-            rect_triangle = triangle.get_rect()
-            rect_triangle.midright = (image_rect.x - 25, image_rect.centery)
-            self.rects_play.append(rect_triangle)
+                if album_rect.colliderect(self.rect_dimensions):
+                    resize_screen.blit(album, album_rect.topleft)
 
-            if rect_titre.collidepoint(mouse_pos):
-                resize_screen.blit(triangle, rect_triangle.topleft)
+                # bouton play (ne s'affiche que quand on passe la souris sur le titre)
+                rect_triangle = triangle.get_rect()
+                rect_triangle.midright = (image_rect.x - 25, image_rect.centery)
+                self.rects_play.append(rect_triangle)
 
+                if rect_titre.collidepoint(mouse_pos):
+                    resize_screen.blit(triangle, rect_triangle.topleft)
+            else:
+                # on ajoute des faux rects dans les listes
+                self.rects_titre.append(self.faux_rect)
+                self.rects_image.append(self.faux_rect)
+                self.rects_artiste.append(self.faux_rect)
+                self.rects_album.append(self.faux_rect)
+                self.rects_play.append(self.faux_rect)
             self.y = self.y + 100
 
         # blit des caches en haut et en bas

@@ -398,6 +398,9 @@ class request_manager(socketserver.BaseRequestHandler):
         database.close()
         return resultat[0][0]
 
+    def shutdown_server(self):
+        self.server.shutdown()
+
     def handle(self):
         self.request.settimeout(20)
 
@@ -505,6 +508,13 @@ class request_manager(socketserver.BaseRequestHandler):
         elif type_data == "get cover name":
             resultat = self.get_cover_name(data[0], data[1]) # retourne un str
             self.send_message([resultat])
+
+        elif type_data == "stop server":
+            if self.client_address[0] == "127.0.0.1":
+                print("demande d'arrêt reçu, arrêt du serveur...")
+                import threading
+                threading.Thread(target=self.shutdown_server).start()
+                self.send_message(["ok"])
 
 def player_input(texte, type_attendu, reponse_attendue=None):
     if reponse_attendue == None:
@@ -783,12 +793,16 @@ while not reponse in ("1", "2", "3"):
     reponse = input("réponse : ")
 if reponse == "1":
     init_db()
+
 elif reponse == "3":
     assert "data.db" in os.listdir(), "la base de donnée n'existe pas, créez là avec init_db()"
     serveur = socketserver.TCPServer(("0.0.0.0", 25565), request_manager)
     serveur.request_queue_size = 50
     print("serveur lancé")
     serveur.serve_forever()
+    serveur.server_close()
+    print("serveur arrêté")
+
 elif reponse == "2":
     assert "data.db" in os.listdir(), "la base de donnée n'existe pas, créez là avec init_db()"
     data_gestion()

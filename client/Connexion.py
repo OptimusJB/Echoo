@@ -64,11 +64,19 @@ class Connexion:
         retour_btn_rect.size = (retour_btn_rect.width + 20, retour_btn_rect.height + 20)
         retour_btn_rect.topleft = (1000, 680)
 
-        # blit des deux boutons
+        # génération bouton arrêt serveur
+        arret_btn = self.police.render("arrêt serveur", True, "white")
+        arret_btn_rect = arret_btn.get_rect()
+        arret_btn_rect.size = (arret_btn_rect.width + 20, arret_btn_rect.height + 20)
+        arret_btn_rect.topleft = (10, 10)
+
+        # blit des trois boutons
         resize_screen.draw_rect("dodgerblue3", valider_btn_rect, 20)
         resize_screen.blit(valider_btn, (valider_btn_rect.x + 10, valider_btn_rect.y + 10))
         resize_screen.draw_rect("dodgerblue3", retour_btn_rect, 20)
         resize_screen.blit(retour_btn, (retour_btn_rect.x + 10, retour_btn_rect.y + 10))
+        resize_screen.draw_rect("dodgerblue3", arret_btn_rect, 20)
+        resize_screen.blit(arret_btn, (arret_btn_rect.x + 10, arret_btn_rect.y + 10))
 
         resize_screen.save_screen("fond changement ip")
 
@@ -91,7 +99,19 @@ class Connexion:
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
-                        if retour_btn_rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
+                        if arret_btn_rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
+                            old_connexion = client.get_ip()
+                            client.change_ip("localhost", "25565")  # attention le port doit être le même que le port local du serveur
+                            resultat = client.send_message(["stop server"])
+                            if resultat == "crash":
+                                print("crash")
+                                notif_manager.add_notif("échec de l'arrêt du serveur")
+                            else:
+                                notif_manager.add_notif("serveur arrêté")
+
+                            client.change_ip(old_connexion[0], old_connexion[1])
+
+                        elif retour_btn_rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
                             boucle_ip = False
                         elif valider_btn_rect.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
                             # vérification port
@@ -258,6 +278,7 @@ class Connexion:
                                         pygame.event.get()
                                         if pygame.key.get_pressed()[pygame.K_F4]:
                                             User.user.fps = 1
+                                            User.user.fps_1 = True
                                             print("mode 1 fps lancé")
                                         return None
 

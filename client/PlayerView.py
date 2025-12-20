@@ -115,7 +115,7 @@ class PlayerView:
 
     def affichage_full_screen(self):
         # on check si user.load_image est à True et si l'image existe (important si user.load_image était auparavant à False (cache.png pas forcément chargé)
-        if not user.load_images or not "cache/cache.png" in os.listdir():
+        if not user.load_images or not "cache.png" in os.listdir("cache/"):
             return
         image = pygame.image.load("cache/cache.png").convert_alpha()
         image = pygame.transform.smoothscale(image, (700, 700))
@@ -403,22 +403,23 @@ class PlayerView:
                         self.volume_moins()
 
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RIGHT:
-                    if self.next_music() == "crash":
-                        return "crash"
-                elif event.key == pygame.K_LEFT:
-                    if self.previous_music() == "crash":
-                        return "crash"
-                elif event.key == pygame.K_UP:
-                    self.volume_plus()
-                elif event.key == pygame.K_DOWN:
-                    self.volume_moins()
-                elif event.key == pygame.K_SPACE:
-                    self.mise_en_pause()
-                elif event.key == pygame.K_r:
-                    self.switch_random()
-                elif event.key == pygame.K_l:
-                    self.switch_loop()
+                if pygame.key.get_pressed()[pygame.K_LSHIFT]:
+                    if event.key == pygame.K_RIGHT:
+                        if self.next_music() == "crash":
+                            return "crash"
+                    elif event.key == pygame.K_LEFT:
+                        if self.previous_music() == "crash":
+                            return "crash"
+                    elif event.key == pygame.K_UP:
+                        self.volume_plus()
+                    elif event.key == pygame.K_DOWN:
+                        self.volume_moins()
+                    elif event.key == pygame.K_SPACE:
+                        self.mise_en_pause()
+                    elif event.key == pygame.K_r:
+                        self.switch_random()
+                    elif event.key == pygame.K_l:
+                        self.switch_loop()
 
     def get_icone_base(self):
         if self.icone_base == None:
