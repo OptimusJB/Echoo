@@ -211,10 +211,13 @@ class request_manager(socketserver.BaseRequestHandler):
         database.close()
         return liste_musiques
 
-    def get_music_infos(self, pseudo:str, musique:str, date_str=False):
+    def get_music_infos_opti(self, pseudo, musique, quality):
+        liste_finale = self.get_music_infos(pseudo, musique) + [self.check_quality(pseudo, musique, quality)] + [self.get_cover_name(pseudo, musique)]
+        return liste_finale
+
+    def get_music_infos(self, pseudo:str, musique:str):
         """
         retourne une liste de la forme [artiste, annee, album]
-        date_str : si True, retourne la date en str, en int sinon
         """
         database = sqlite3.connect("data.db")
         cursor = database.cursor()
@@ -463,6 +466,10 @@ class request_manager(socketserver.BaseRequestHandler):
 
         elif type_data == "get music infos":
             resultat = self.get_music_infos(data[0], data[1])   # renvoie une liste
+            self.send_message(resultat)
+
+        elif type_data == "get music infos opti":
+            resultat = self.get_music_infos_opti(data[0], data[1], data[2])
             self.send_message(resultat)
 
         elif type_data == "ask music image":

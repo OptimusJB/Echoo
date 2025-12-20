@@ -446,57 +446,54 @@ class PlayerView:
             return None
 
         self.sound_length = None
-        # récupération de la musique
-        resultat = client.send_message(["check quality", user.username, self.playlist[index_music], user.quality])
+        # récupération des infos de la musique
+        resultat = client.send_message(["get music infos opti", user.username, self.playlist[index_music], user.quality])   # requête qui combine get music infos, check quality, et get cover name
+        # resultat sous la forme [artiste, annee, album, qualité, cover]
         if resultat == "crash":
             return "crash"
-        elif resultat[0] == "None":
+        elif resultat[3] == "None":
             notif_manager.add_notif("musique non disponible (pas de qualités en dessous de " + user.quality + "), passage à la musique suivante")
             if self.next_music() == "crash":    # note : le logiciel peut crash recursion limit si la playlist est trop grande
                 return "crash"
             return None
         else:
-            if resultat[0] != user.quality:
-                notif_manager.add_notif("qualité " + user.quality + " non disponible. qualité actuelle : " + resultat[0])
+            if resultat[3] != user.quality:
+                notif_manager.add_notif("qualité " + user.quality + " non disponible. qualité actuelle : " + resultat[3])
 
-            quality = resultat[0]
+            quality = resultat[3]
+
             # chargement de la musique
-            resultat = client.ask_music(user.username, self.playlist[index_music], quality)
-            if resultat == "crash":
+            musique_bytes = client.ask_music(user.username, self.playlist[index_music], quality)
+            if musique_bytes == "crash":
                 return "crash"
 
             # enregistrement de la musique dans le cache
             pygame.mixer.music.unload()
             fichier = open("cache/cache.ogg", "wb")
-            fichier.write(resultat)
+            fichier.write(musique_bytes)
             fichier.close()
-            resultat = None  # on libère la mémoire
 
             # musique
             self.piste_infos = None
+
             # récupération des infos de la musique
-            resultat = client.send_message(["get music infos", user.username, self.playlist[index_music]])
-            if resultat == "crash":
-                return "crash"
-            self.piste_infos = [None] + resultat
+            self.piste_infos = [None] + resultat[0:3]
 
             # récupération de l'image de la musique
             musique = self.playlist[index_music]
             if user.load_images:
                 # check si une image du même nom est dans le cache (économie de données)
-                resultat = client.send_message(["get cover name", user.username, musique])
-                if resultat == "crash":
-                    return "crash"
+                cover_name = resultat[4]
 
                 # modification de la chaine de caractère comme dans PlaylistView
-                resultat = "'" + resultat[0] + "'" + ".png"
-                resultat = resultat.replace("/", "&sl&")
+                cover_name = "'" + cover_name + "'" + ".png"
+                cover_name = cover_name.replace("/", "&sl&")
 
-                if resultat in os.listdir("cache/"):
+                if cover_name in os.listdir("cache/"):
                     if log:
                         print("utilisation du fichier au même nom présent dans le cache")
                     # on copie le fichier et on l'appelle "cache.png"
-                    fichier = open("cache/" + resultat, "rb")
+                    fichier = open("cache/" + cover_name, "rb")
                     fichier_read = fichier.read()
                     fichier.close()
 
