@@ -47,6 +47,7 @@ class Accueil:
             #print(clock.get_fps())
             
             for event in pygame.event.get():
+                # le check a été aussi copié collé pour l'affichage full screen de la cover
                 # on check si le focus a été gagné ou perdu (1 fps si perdu économiser le temps cpu)
                 if not user.fps_1:
                     if event.type == pygame.WINDOWFOCUSGAINED:

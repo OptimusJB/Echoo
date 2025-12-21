@@ -162,11 +162,11 @@ class Connexion:
 
         # définition texte zone
         username = TextZone(self.police)
-        username.set_rect(pygame.rect.Rect(1920//2-350+5, 1080//2-250, 700, 100))
+        username.set_rect(pygame.rect.Rect(1920//2-350+5, 1080//2-250, 600, 100))
         username.set_largeur_max(570)
 
         password = TextZone(self.police)
-        password.set_rect(pygame.rect.Rect(1920 // 2 - 350 + 10, 1080 // 2 - 120, 700, 100))
+        password.set_rect(pygame.rect.Rect(1920 // 2 - 350 + 10, 1080 // 2 - 120, 600, 100))
         password.set_largeur_max(570)
         password.hide_text()
 

@@ -133,11 +133,18 @@ class PlayerView:
         while boucle:
             resize_screen.flip()
             for event in pygame.event.get():
+                # on check si le focus a été gagné ou perdu (1 fps si perdu économiser le temps cpu)
+                if not user.fps_1:
+                    if event.type == pygame.WINDOWFOCUSGAINED:
+                        user.fps = 30
+                    elif event.type == pygame.WINDOWFOCUSLOST:
+                        user.fps = 1
+
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
                         if not rect_image.collidepoint(resize_screen.get_calcul_mouse_cos(event.pos)):
                             boucle = False
-            clock.tick(30)
+            clock.tick(user.fps)
     def previous_music(self):
         if self.loop == "music" or pygame.time.get_ticks() - self.time_music >= 5000:
             #print("a", self.loop, pygame.time.get_ticks() - self.time_music)
