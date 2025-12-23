@@ -99,7 +99,7 @@ class TextZone:
         texte = self.police.render(texte, True, self.color)
         surface = pygame.surface.Surface((self.rect.size[0], texte.size[1]), pygame.SRCALPHA)
         texte_rect = texte.get_rect()
-        if texte_rect.width > surface.size[0]:
+        if texte_rect.width > surface.size[0] - 20:
             texte_rect.right = surface.width - 20
         else:
             texte_rect.left = 0
