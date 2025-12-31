@@ -60,6 +60,10 @@ class TextZone:
                     self.texte = self._ajouter_element(self.texte, "backspace")
                     self.curseur = max(0, self.curseur - 1)
 
+            elif event.key == pygame.K_DELETE:
+                self.texte = self._ajouter_element(self.texte, "suppr")
+                self.curseur = self.curseur # ça bouge pas
+
             else:
                 if not self.secret:
                     texte = self.texte + self.prefixe
@@ -82,6 +86,9 @@ class TextZone:
             if caractere == "backspace":
                 if self.curseur > 0:
                     texte.pop(self.curseur - 1)
+            elif caractere == "suppr":
+                if self.curseur < len(texte):
+                    texte.pop(self.curseur)
             else:
                 texte.insert(self.curseur, caractere)
             texte = "".join(texte)
