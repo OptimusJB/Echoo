@@ -1,0 +1,80 @@
+[gd_scene format=3 uid="uid://om336lsnkmbo"]
+
+[ext_resource type="Script" uid="uid://cqv2pujj67s73" path="res://back/manager/manager.gd" id="1_gnkgc"]
+[ext_resource type="Script" uid="uid://ckiu1dcrljcuh" path="res://global/fonctions_database.gd" id="2_gy5a5"]
+[ext_resource type="Script" uid="uid://bxh8hm0v3jf01" path="res://back/manager/erreur_ouverture.gd" id="3_fsfll"]
+
+[node name="Manager" type="Control" unique_id=191382699]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+script = ExtResource("1_gnkgc")
+
+[node name="database" type="Node" parent="." unique_id=445489198]
+script = ExtResource("2_gy5a5")
+
+[node name="Fond" type="ColorRect" parent="." unique_id=1557830203]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.13174233, 0.13174233, 0.13174233, 1)
+
+[node name="creation database" type="CenterContainer" parent="." unique_id=831079524]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="creation database" unique_id=2140406657]
+layout_mode = 2
+
+[node name="not found" type="Label" parent="creation database/VBoxContainer" unique_id=2041797285]
+layout_mode = 2
+text = "La base de données n'a pas été trouvée"
+horizontal_alignment = 1
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="creation database/VBoxContainer" unique_id=2045152694]
+layout_mode = 2
+
+[node name="create database" type="Button" parent="creation database/VBoxContainer/AspectRatioContainer" unique_id=2091996015]
+layout_mode = 2
+text = "créer base de données"
+
+[node name="erreur ouverture" type="Label" parent="creation database/VBoxContainer" unique_id=1506880216]
+visible = false
+layout_mode = 2
+text = "Erreur lors de l'ouverture de la base de données"
+vertical_alignment = 1
+script = ExtResource("3_fsfll")
+
+[node name="erreur timer" type="Timer" parent="creation database/VBoxContainer" unique_id=1581957229]
+wait_time = 3.0
+one_shot = true
+
+[node name="App" type="Control" parent="." unique_id=1366334384]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[connection signal="create_database" from="." to="database" method="create_database"]
+[connection signal="test_ouverture_database" from="." to="database" method="test_ouverture_database"]
+[connection signal="db_open_failed" from="database" to="creation database/VBoxContainer/erreur ouverture" method="_on_database_db_open_failed"]
+[connection signal="db_open_success" from="database" to="." method="ouvrir_app"]
+[connection signal="pressed" from="creation database/VBoxContainer/AspectRatioContainer/create database" to="." method="_on_create_database_pressed"]
+[connection signal="timeout" from="creation database/VBoxContainer/erreur timer" to="creation database/VBoxContainer/erreur ouverture" method="_on_erreur_timer_timeout"]

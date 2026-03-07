@@ -1,7 +1,7 @@
 extends Node
 
-var url = "ws://127.0.0.1"
-var port = 25565
+var url = "wss://192.168.1.26"
+var port = 8080
 
 # instance websocket
 var socket = WebSocketPeer.new()
@@ -18,7 +18,10 @@ func check_connected(connexion:WebSocketPeer):
 	while not etat == connexion.STATE_OPEN:
 		connexion.poll()
 		etat = connexion.get_ready_state()
+		#print("état opening : %s", etat==connexion.STATE_CONNECTING)
 		if etat == connexion.STATE_CLOSED or etat == connexion.STATE_CLOSING:
+			print(connexion.get_close_reason())
+			print("closing : %s, closed : %s" % [etat == connexion.STATE_CLOSING, etat == connexion.STATE_CLOSED])
 			return 0
 	return 1
 
@@ -30,11 +33,14 @@ func connexion_serveur():
 		return -2
 	
 	# connexion au serveur
-	err = socket.connect_to_url(url + ":" + str(port))
+	var tls = TLSOptions.client()
+	err = socket.connect_to_url(url + ":" + str(port), tls)
 	if err != OK:
 		push_error("connexion échouée")
 		return -1
 	
-	# connexion partiellement réussie, on met le heartbeat
-	socket.heartbeat_interval = 10
+	# on n'utilise pas heartbeat_interval parce que c'est de la merde
+	# à la place on crée notre propose système de ping
+	#socket.heartbeat_interval = 2
+	print("connexion")
 	return 1

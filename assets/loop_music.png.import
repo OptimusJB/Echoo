@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d2rbvu6urkbjk"
-path="res://.godot/imported/password_image.png-cb07598e8ffe4cb44b3f5133df3de07c.ctex"
+uid="uid://drrwvwve2dbgo"
+path="res://.godot/imported/loop_music.png-1a610238877205fd6a6f4d03f370763c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://client/assets/password_image.png"
-dest_files=["res://.godot/imported/password_image.png-cb07598e8ffe4cb44b3f5133df3de07c.ctex"]
+source_file="res://assets/loop_music.png"
+dest_files=["res://.godot/imported/loop_music.png-1a610238877205fd6a6f4d03f370763c.ctex"]
 
 [params]
 

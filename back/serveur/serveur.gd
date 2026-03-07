@@ -6,6 +6,22 @@ var serveur = TCPServer.new()
 var connexions = {}	# liste des connexions actives de la forme id:connexion
 var last_id = 0
 
+
+"""
+tests réalisés (godot 4.6.1):
+	- put_packet envoie les données, pas besoin de poll() juste après
+	- si le wifi est coupé sur la machine locale, connexion perdu quasi immédiatement
+	- si le wifi est coupé sur l'autre machine, plusieurs put_packet nécessaires avant connexion rompue (potentiellement pas lié au nombre de put_packet, mais plutôt par rapport au temps depuis le premier)
+	- si heartbeat interval activé et pas de réponse (pong) rapidement, connexion rompue, le receveur doit donc poll() souvent
+	note : le receveur semble être prévenu quand la connexion est coupée à cause de heartbeat_interval
+	note 2 : ça paraît évident mais l'envoyeur doit aussi poll() souvent pour recevoir le pong
+	- connect_to_url n'est pas bloquant (pareil pour connect_to_host de tcp)
+	- si tentative de connexion sur serveur ws avec wss, les deux restent à state_connecting à vie
+	
+à tester:
+	- tentative connexion ws sur serveur wss
+	- tentative connexion wss sur serveur wss mais avec certificat pas bon
+	"""
 func lancer_serveur():
 	var err # erreur serveur
 	err = serveur.listen(port)
@@ -44,6 +60,11 @@ func _process(_delta: float) -> void:
 		connexions[last_id] = ws
 		last_id += 1
 		print("nouvelle connexion enregistré avec l'id %d" % last_id)
-		
+		var message
+		message = ws.get_packet()
+		if ws.was_string_packet():
+			message = message.get_string_from_utf8()
+			if message == "quoi":
+				ws.send_text("feur")
 		# on met le heartbeat
 		ws.heartbeat_interval = 10

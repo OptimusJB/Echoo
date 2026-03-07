@@ -3,12 +3,12 @@
 importer="font_data_dynamic"
 type="FontFile"
 uid="uid://csnflw5p3ceff"
-path="res://.godot/imported/police.otf-ddde2347bb5f51d0df042bbd24eb80c3.fontdata"
+path="res://.godot/imported/police.otf-4d5ceb83153ba6cc3493428d60031453.fontdata"
 
 [deps]
 
-source_file="res://client/assets/police.otf"
-dest_files=["res://.godot/imported/police.otf-ddde2347bb5f51d0df042bbd24eb80c3.fontdata"]
+source_file="res://assets/police.otf"
+dest_files=["res://.godot/imported/police.otf-4d5ceb83153ba6cc3493428d60031453.fontdata"]
 
 [params]
 
