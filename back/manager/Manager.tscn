@@ -15,7 +15,7 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 script = ExtResource("1_gnkgc")
 
-[node name="database" type="Node" parent="." unique_id=445489198]
+[node name="database" type="Node" parent="." unique_id=445489198 groups=["database"]]
 script = ExtResource("2_gy5a5")
 
 [node name="Fond" type="ColorRect" parent="." unique_id=1557830203]
@@ -28,7 +28,8 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.13174233, 0.13174233, 0.13174233, 1)
 
-[node name="creation database" type="CenterContainer" parent="." unique_id=831079524]
+[node name="creation database" type="Control" parent="." unique_id=26419766]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -36,34 +37,50 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="creation database" unique_id=2140406657]
+[node name="centre" type="CenterContainer" parent="creation database" unique_id=831079524]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="creation database/centre" unique_id=2140406657]
 layout_mode = 2
 
-[node name="not found" type="Label" parent="creation database/VBoxContainer" unique_id=2041797285]
+[node name="not found" type="Label" parent="creation database/centre/VBoxContainer" unique_id=2041797285]
 layout_mode = 2
 text = "La base de données n'a pas été trouvée"
 horizontal_alignment = 1
 
-[node name="AspectRatioContainer" type="AspectRatioContainer" parent="creation database/VBoxContainer" unique_id=2045152694]
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="creation database/centre/VBoxContainer" unique_id=2045152694]
 layout_mode = 2
 
-[node name="create database" type="Button" parent="creation database/VBoxContainer/AspectRatioContainer" unique_id=2091996015]
+[node name="create database" type="Button" parent="creation database/centre/VBoxContainer/AspectRatioContainer" unique_id=2091996015]
 layout_mode = 2
 text = "créer base de données"
 
-[node name="erreur ouverture" type="Label" parent="creation database/VBoxContainer" unique_id=1506880216]
+[node name="erreur ouverture" type="Label" parent="creation database/centre/VBoxContainer" unique_id=1506880216]
 visible = false
 layout_mode = 2
 text = "Erreur lors de l'ouverture de la base de données"
 vertical_alignment = 1
 script = ExtResource("3_fsfll")
 
-[node name="erreur timer" type="Timer" parent="creation database/VBoxContainer" unique_id=1581957229]
+[node name="erreur timer" type="Timer" parent="creation database/centre/VBoxContainer" unique_id=1581957229]
 wait_time = 3.0
 one_shot = true
 
+[node name="Label" type="Label" parent="creation database" unique_id=1082937354]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 23.0
+grow_horizontal = 2
+text = "note : pour une fermeture propre de la base de données, veuillez utiliser le bouton associé, et non la croix de la fenêtre"
+autowrap_mode = 1
+
 [node name="App" type="Control" parent="." unique_id=1366334384]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -72,9 +89,52 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[connection signal="create_database" from="." to="database" method="create_database"]
-[connection signal="test_ouverture_database" from="." to="database" method="test_ouverture_database"]
-[connection signal="db_open_failed" from="database" to="creation database/VBoxContainer/erreur ouverture" method="_on_database_db_open_failed"]
-[connection signal="db_open_success" from="database" to="." method="ouvrir_app"]
-[connection signal="pressed" from="creation database/VBoxContainer/AspectRatioContainer/create database" to="." method="_on_create_database_pressed"]
-[connection signal="timeout" from="creation database/VBoxContainer/erreur timer" to="creation database/VBoxContainer/erreur ouverture" method="_on_erreur_timer_timeout"]
+[node name="HSplitContainer" type="HSplitContainer" parent="App" unique_id=945937026]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+split_offsets = PackedInt32Array(250)
+drag_area_highlight_in_editor = true
+split_offset = 250
+
+[node name="Artistes" type="MarginContainer" parent="App/HSplitContainer" unique_id=1286723258]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 10
+
+[node name="HSplitContainer" type="HSplitContainer" parent="App/HSplitContainer" unique_id=974841026]
+layout_mode = 2
+split_offsets = PackedInt32Array(250)
+drag_area_highlight_in_editor = true
+split_offset = 250
+
+[node name="Albums" type="MarginContainer" parent="App/HSplitContainer/HSplitContainer" unique_id=366909555]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 10
+
+[node name="Titres" type="MarginContainer" parent="App/HSplitContainer/HSplitContainer" unique_id=723895392]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 10
+
+[node name="SplitContainer" type="SplitContainer" parent="App" unique_id=1898369418]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[connection signal="db_open_failed" from="database" to="creation database/centre/VBoxContainer/erreur ouverture" method="_on_database_db_open_failed"]
+[connection signal="pressed" from="creation database/centre/VBoxContainer/AspectRatioContainer/create database" to="." method="_on_create_database_pressed"]
+[connection signal="timeout" from="creation database/centre/VBoxContainer/erreur timer" to="creation database/centre/VBoxContainer/erreur ouverture" method="_on_erreur_timer_timeout"]

@@ -1,6 +1,6 @@
 extends Control
-signal create_database
-signal test_ouverture_database
+
+var state = "connexion"
 
 func _ready() -> void:
 	get_window().title = "Server Manager"
@@ -11,8 +11,10 @@ func _ready() -> void:
 	# on met le content_scale_factor
 	get_window().content_scale_factor = Settings.get_setting("echelle")
 	
-	# on envoie le signal et on change la page si réussi (ouvrir_app)
-	test_ouverture_database.emit()
+	# on regarde si la db existe et on change la page si oui (ouvrir_app)
+	if get_tree().get_nodes_in_group("database")[0].is_database_exists():
+		get_tree().get_nodes_in_group("database")[0].ouvrir_database()
+		ouvrir_app()
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("echelle_down"):
@@ -24,8 +26,11 @@ func _input(event: InputEvent) -> void:
 
 func _on_create_database_pressed() -> void:
 	# création de la base de données
-	create_database.emit()
+	if get_tree().get_nodes_in_group("database")[0].create_database():
+		ouvrir_app()
+	
 
 func ouvrir_app() -> void:
+	state = "app"
 	$"creation database".visible = false
 	$App.visible = true
