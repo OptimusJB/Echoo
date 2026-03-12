@@ -6,6 +6,7 @@ func _ready() -> void:
 	get_window().title = "Server Manager"
 	
 	# on charge les settings
+	Settings.save_filename = "manager_settings.txt"
 	Settings.load_settings("manager")
 	
 	# on met le content_scale_factor
@@ -34,3 +35,4 @@ func ouvrir_app() -> void:
 	state = "app"
 	$"creation database".visible = false
 	$App.visible = true
+	$App.init()

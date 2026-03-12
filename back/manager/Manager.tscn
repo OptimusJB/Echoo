@@ -3,6 +3,8 @@
 [ext_resource type="Script" uid="uid://cqv2pujj67s73" path="res://back/manager/manager.gd" id="1_gnkgc"]
 [ext_resource type="Script" uid="uid://ckiu1dcrljcuh" path="res://global/fonctions_database.gd" id="2_gy5a5"]
 [ext_resource type="Script" uid="uid://bxh8hm0v3jf01" path="res://back/manager/erreur_ouverture.gd" id="3_fsfll"]
+[ext_resource type="PackedScene" uid="uid://crayficw8dsfh" path="res://back/manager/Artiste.tscn" id="4_5rmsu"]
+[ext_resource type="Script" uid="uid://gapp1sw8g8cd" path="res://back/manager/app.gd" id="4_suclj"]
 
 [node name="Manager" type="Control" unique_id=191382699]
 layout_mode = 3
@@ -28,7 +30,7 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.13174233, 0.13174233, 0.13174233, 1)
 
-[node name="creation database" type="Control" parent="." unique_id=26419766]
+[node name="creation database" type="Control" parent="." unique_id=26419766 groups=["windows"]]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -80,7 +82,7 @@ grow_horizontal = 2
 text = "note : pour une fermeture propre de la base de données, veuillez utiliser le bouton associé, et non la croix de la fenêtre"
 autowrap_mode = 1
 
-[node name="App" type="Control" parent="." unique_id=1366334384]
+[node name="App" type="Control" parent="." unique_id=1366334384 groups=["windows"]]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -88,6 +90,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+script = ExtResource("4_suclj")
 
 [node name="HSplitContainer" type="HSplitContainer" parent="App" unique_id=945937026]
 layout_mode = 1
@@ -102,11 +105,20 @@ split_offset = 250
 
 [node name="Artistes" type="MarginContainer" parent="App/HSplitContainer" unique_id=1286723258]
 layout_mode = 2
-size_flags_vertical = 0
 theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 10
+
+[node name="ScrollContainer" type="ScrollContainer" parent="App/HSplitContainer/Artistes" unique_id=1570242950]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="App/HSplitContainer/Artistes/ScrollContainer" unique_id=2080643284]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Artiste" parent="App/HSplitContainer/Artistes/ScrollContainer/VBoxContainer" unique_id=573505094 instance=ExtResource("4_5rmsu")]
+layout_mode = 2
 
 [node name="HSplitContainer" type="HSplitContainer" parent="App/HSplitContainer" unique_id=974841026]
 layout_mode = 2

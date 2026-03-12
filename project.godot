@@ -20,6 +20,7 @@ config/icon="uid://bmnvu85tquim8"
 [autoload]
 
 Settings="*uid://bqv58q2yiuhrd"
+Notif="*uid://vqojgkpibm0b"
 
 [display]
 
