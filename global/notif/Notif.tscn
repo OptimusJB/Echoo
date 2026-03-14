@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://vqojgkpibm0b"]
 
-[ext_resource type="Script" uid="uid://p37o4lcisbm8" path="res://global/notif.gd" id="1_sc0dr"]
-[ext_resource type="Script" uid="uid://c44m1ow0rkfsy" path="res://global/notif_preset.gd" id="2_nrmkb"]
+[ext_resource type="Script" uid="uid://p37o4lcisbm8" path="res://global/notif/notif.gd" id="1_sc0dr"]
+[ext_resource type="Script" uid="uid://c44m1ow0rkfsy" path="res://global/notif/notif_preset.gd" id="2_nrmkb"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xo4cr"]
 corner_radius_top_left = 5

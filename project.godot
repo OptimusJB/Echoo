@@ -21,6 +21,7 @@ config/icon="uid://bmnvu85tquim8"
 
 Settings="*uid://bqv58q2yiuhrd"
 Notif="*uid://vqojgkpibm0b"
+RessourceLoad="*uid://b67h6mblxyq0c"
 
 [display]
 
@@ -29,6 +30,10 @@ window/stretch/aspect="expand"
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/godot-sqlite/plugin.cfg")
+
+[global_group]
+
+SousMenu="noeud sous-menu"
 
 [input]
 
