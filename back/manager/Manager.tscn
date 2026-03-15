@@ -142,6 +142,7 @@ size_flags_vertical = 4
 text = "charger plus"
 
 [node name="split albums titres" type="HSplitContainer" parent="App/HSplitContainer" unique_id=974841026]
+visible = false
 layout_mode = 2
 split_offsets = PackedInt32Array(250)
 drag_area_highlight_in_editor = true
@@ -186,8 +187,13 @@ layout_mode = 2
 
 [node name="label albums" type="Label" parent="App/HSplitContainer/split albums titres/Albums/VBoxContainer" unique_id=679743890]
 layout_mode = 2
-size_flags_horizontal = 4
+size_flags_horizontal = 0
 text = "Albums :"
+
+[node name="ajouter album" type="Button" parent="App/HSplitContainer/split albums titres/Albums/VBoxContainer" unique_id=1570566702]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "ajouter album"
 
 [node name="ScrollContainer" type="ScrollContainer" parent="App/HSplitContainer/split albums titres/Albums/VBoxContainer" unique_id=381206576]
 layout_mode = 2
@@ -235,3 +241,4 @@ layout_mode = 1
 [connection signal="pressed" from="App/HSplitContainer/Artistes/VBoxContainer/HBoxContainer/rechercher" to="App" method="charger_artistes"]
 [connection signal="pressed" from="App/HSplitContainer/Artistes/VBoxContainer/ajouter artiste" to="App" method="_on_ajouter_artiste_pressed"]
 [connection signal="pressed" from="App/HSplitContainer/Artistes/VBoxContainer/ScrollContainer/liste artistes/charger plus" to="App" method="ajouter_artistes"]
+[connection signal="pressed" from="App/HSplitContainer/split albums titres/Albums/VBoxContainer/ajouter album" to="App" method="_on_ajouter_album_pressed"]

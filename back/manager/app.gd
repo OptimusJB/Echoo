@@ -46,8 +46,8 @@ func _charger_artiste_view(id_artiste):
 		for album in resultat[1]:
 			new_album = noeud_album.instantiate()
 			new_album.id = album["id_album"]
-			new_album.get_node("MarginContainer/HBoxContainer/nom").text = album["nom_album"]
-			new_album.get_node("MarginContainer/HBoxContainer/image").texture = RessourceLoad.easy_get_image(album["image_album"])
+			new_album.get_node("nom").text = album["nom_album"]
+			new_album.get_node("systeme_image/image").texture = RessourceLoad.easy_get_image(album["image_album"])
 			
 			noeud_liste_albums.add_child(new_album)
 			
@@ -58,7 +58,6 @@ func ajouter_artistes():
 	var noeud_liste_artistes = get_tree().get_nodes_in_group("liste artistes")[0]
 	var index_actuel
 	var i=0
-	var image_bytes
 	while (i<artistes_max_affichage and (noeud_liste_artistes.get_child_count() - 1) < len(artistes[1])):
 	#for i in range(min(artistes_max_affichage, len(artistes[1]))):
 		index_actuel = noeud_liste_artistes.get_child_count() - 1
@@ -102,7 +101,7 @@ func charger_artistes():
 func _on_ajouter_artiste_pressed() -> void:
 	# on ajoute l'artiste dans la base de données
 	var database = get_tree().get_nodes_in_group("database")[0]
-	var resultat = database.exec_sql("INSERT INTO Artistes(nom, image) VALUES('nouvel artiste', NULL)", [])
+	var resultat = database.exec_sql("INSERT INTO Artistes(nom) VALUES('nouvel artiste')", [])
 	if not resultat[0]:
 		Notif.add_notif("échec de l'ajout de l'artiste")
 		return
@@ -110,3 +109,16 @@ func _on_ajouter_artiste_pressed() -> void:
 	# on fait une recherche automatique
 	get_tree().get_nodes_in_group("recherche_artiste")[0].text = "nouvel artiste"
 	charger_artistes()
+
+func _on_ajouter_album_pressed() -> void:
+	# on récupère l'id de l'artiste actuellement ouvert
+	var id_artiste_actuel = int(get_tree().get_nodes_in_group("artiste actuel")[0].get_node("id artiste").text)
+	# on ajoute l'album dans la base de données
+	var database = get_tree().get_nodes_in_group("database")[0]
+	var resultat = database.exec_sql("INSERT INTO Albums(id_artiste, nom) VALUES(?, 'nouvel album')", [id_artiste_actuel])
+	if not resultat[0]:
+		Notif.add_notif("échec de l'ajout de l'album")
+		return
+	
+	# on ne connait pas l'id du nouvel album, donc on recharge tout
+	_charger_artiste_view(id_artiste_actuel)

@@ -1,2 +1,2 @@
-extends MarginContainer
+extends HBoxContainer
 var id:int

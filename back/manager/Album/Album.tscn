@@ -2,10 +2,11 @@
 
 [ext_resource type="Texture2D" uid="uid://c7oebmh1trh6k" path="res://icon.svg" id="1_7debn"]
 [ext_resource type="Script" uid="uid://jq27codxw8ca" path="res://back/manager/Album/album.gd" id="1_daije"]
+[ext_resource type="Script" uid="uid://cffpygue8tyab" path="res://back/manager/Album/nom.gd" id="3_tpu0t"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7debn"]
 
-[node name="Album" type="MarginContainer" unique_id=1743724667]
+[node name="Album" type="HBoxContainer" unique_id=126181325]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -13,17 +14,10 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_daije")
 
-[node name="MarginContainer" type="MarginContainer" parent="." unique_id=834924649]
-layout_mode = 2
-theme_override_constants/margin_left = 5
-theme_override_constants/margin_top = 5
-theme_override_constants/margin_right = 5
-theme_override_constants/margin_bottom = 5
-
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer" unique_id=836418114]
+[node name="systeme_image" type="MarginContainer" parent="." unique_id=1923041662]
 layout_mode = 2
 
-[node name="image" type="TextureRect" parent="MarginContainer/HBoxContainer" unique_id=1004532361]
+[node name="image" type="TextureRect" parent="systeme_image" unique_id=1004532361]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 size_flags_horizontal = 0
@@ -31,10 +25,15 @@ size_flags_vertical = 0
 texture = ExtResource("1_7debn")
 expand_mode = 1
 
-[node name="nom" type="Label" parent="MarginContainer/HBoxContainer" unique_id=1486047358]
-layout_mode = 2
-text = "Hollow Knight soundtrack"
-
-[node name="Button" type="Button" parent="." unique_id=1227972511]
+[node name="charger album" type="Button" parent="systeme_image" unique_id=1227972511]
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxEmpty_7debn")
+
+[node name="nom" type="LineEdit" parent="." unique_id=495885796]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Hollow Knight soundtrack"
+script = ExtResource("3_tpu0t")
+
+[connection signal="focus_exited" from="nom" to="nom" method="_on_focus_exited"]
+[connection signal="text_submitted" from="nom" to="nom" method="update_nom"]
