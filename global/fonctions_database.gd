@@ -10,6 +10,7 @@ func is_database_exists() -> int:
 	return FileAccess.file_exists("user://" + database_filename)
 
 func fermer_database():
+	# retourne 1 si fermé correctement, 0 sinon
 	return database.close_db()
 	
 func ouvrir_database():

@@ -163,22 +163,26 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_suclj")
 layout_mode = 2
 theme_override_constants/separation = 7
 
-[node name="HBoxContainer" type="HBoxContainer" parent="App/HSplitContainer/split albums titres/Albums/VBoxContainer" unique_id=913974708]
+[node name="artiste actuel" type="HBoxContainer" parent="App/HSplitContainer/split albums titres/Albums/VBoxContainer" unique_id=913974708 groups=["artiste actuel"]]
 layout_mode = 2
 
-[node name="image artiste" type="TextureRect" parent="App/HSplitContainer/split albums titres/Albums/VBoxContainer/HBoxContainer" unique_id=227958052]
+[node name="image artiste" type="TextureRect" parent="App/HSplitContainer/split albums titres/Albums/VBoxContainer/artiste actuel" unique_id=227958052]
 custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
 texture = ExtResource("4_5rmsu")
 expand_mode = 1
 
-[node name="nom artiste" type="Label" parent="App/HSplitContainer/split albums titres/Albums/VBoxContainer/HBoxContainer" unique_id=1775433762]
+[node name="nom artiste" type="Label" parent="App/HSplitContainer/split albums titres/Albums/VBoxContainer/artiste actuel" unique_id=1775433762]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
 text = "Artiste"
 clip_text = true
 text_overrun_behavior = 3
+
+[node name="id artiste" type="Label" parent="App/HSplitContainer/split albums titres/Albums/VBoxContainer/artiste actuel" unique_id=1849308905]
+visible = false
+layout_mode = 2
 
 [node name="label albums" type="Label" parent="App/HSplitContainer/split albums titres/Albums/VBoxContainer" unique_id=679743890]
 layout_mode = 2
@@ -195,6 +199,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Titres" type="MarginContainer" parent="App/HSplitContainer/split albums titres" unique_id=723895392 groups=["parties"]]
+visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 10

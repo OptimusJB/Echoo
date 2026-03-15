@@ -41,7 +41,7 @@ func creer_sous_menu(ce_noeud, liste_options:Array):
 	visible=true
 
 func _gui_input(event: InputEvent) -> void:
-	if event.is_action_type():
+	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			visible=false
 

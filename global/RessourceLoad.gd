@@ -44,10 +44,10 @@ func charger_ressource(chemin_ressource, data:PackedByteArray):
 		erreur = 1 # tout sauf 0
 		
 	if erreur != OK:
-		Notif.add_notif("échec du chargement de la ressource de chemin " + str(chemin_ressource))
 		loaded[chemin_ressource] = icone_base
 	else:
 		loaded[chemin_ressource] = ressource
+	return erreur
 
 func set_icone_base(chemin_ressource):
 	loaded[chemin_ressource] = icone_base
@@ -60,3 +60,25 @@ func get_file_data(chemin_fichier):
 		push_error("le fichier %s n'existe pas" % chemin_fichier)
 		return "".to_utf8_buffer()
 	return FileAccess.get_file_as_bytes(chemin_fichier)
+
+func easy_get_image(chemin_image):
+	# fonction qui utilise les fonctions au dessus pour charger et retourner une image depuis le disque
+	var image_bytes
+	
+	if not is_loaded(chemin_image):
+		# on check si c'est une image de base
+		if not chemin_image:
+			set_icone_base(chemin_image)
+		else:
+			image_bytes = get_file_data(chemin_image)
+			if image_bytes == "".to_utf8_buffer():
+				Notif.add_notif("échec du chargement du fichier " + chemin_image)
+				set_icone_base(chemin_image)
+			else:
+				if charger_ressource(chemin_image, image_bytes) != OK:	# notif automatique
+					Notif.add_notif("échec de la conversion de la ressource de chemin " + str(chemin_image))
+			if not (get_ressource(chemin_image) is ImageTexture or get_ressource(chemin_image) is Texture2D):	# Texture2D pour l'icône de base
+				set_icone_base(chemin_image)
+				push_error("la ressource d'id %d n'est pas une image" % chemin_image)
+				Notif.add_notif("la ressource d'id %d n'est pas une image" % chemin_image)
+	return get_ressource(chemin_image)

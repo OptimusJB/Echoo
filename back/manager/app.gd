@@ -1,6 +1,7 @@
 extends Control
 var noeud_database
 var noeud_artiste = load("res://back/manager/Artiste/Artiste.tscn")
+var noeud_album = load("res://back/manager/Album/Album.tscn")
 var artistes_max_affichage = 20	# nombre max d'affichages avant le bouton "charger plus"
 var artistes = []
 
@@ -13,8 +14,45 @@ func init():
 
 func _charger_artiste_view(id_artiste):
 	# fonction qui charge la page d'un artiste
-	pass
+	var noeud_artiste_actuel = get_tree().get_nodes_in_group("artiste actuel")[0]
 	
+	# on récupère les infos de l'artiste
+	var resultat = noeud_database.exec_sql("SELECT nom, image FROM Artistes WHERE id=?", [id_artiste])
+	if not resultat[0]:
+		Notif.add_notif("éche de la récupération des infos de l'artiste")
+		return
+	if len(resultat[1]) != 1:
+		push_error("nombre anormal de résultats")
+		return
+		
+	var nom_artiste = resultat[1][0]["nom"]
+	var chemin_image = resultat[1][0]["image"]
+	noeud_artiste_actuel.get_node("image artiste").texture = RessourceLoad.easy_get_image(chemin_image)
+	noeud_artiste_actuel.get_node("nom artiste").text = nom_artiste
+	noeud_artiste_actuel.get_node("id artiste").text = str(id_artiste)
+	
+	var noeud_liste_albums = noeud_artiste_actuel.get_node("../ScrollContainer/liste albums")
+	# on supprime les potentiels anciens albums
+	for enfant in noeud_liste_albums.get_children():
+		enfant.queue_free()
+	
+	# on charge les différents albums
+	resultat = noeud_database.exec_sql("SELECT Albums.id AS id_album, Albums.nom AS nom_album, Albums.image AS image_album FROM Albums JOIN Artistes ON Artistes.id = Albums.id_artiste WHERE Artistes.id=?", [id_artiste])
+	if not resultat[0]:
+		Notif.add_notif("échec de la récupération des albums")
+	else:
+		# on ajoute tous les albums
+		var new_album
+		for album in resultat[1]:
+			new_album = noeud_album.instantiate()
+			new_album.id = album["id_album"]
+			new_album.get_node("MarginContainer/HBoxContainer/nom").text = album["nom_album"]
+			new_album.get_node("MarginContainer/HBoxContainer/image").texture = RessourceLoad.easy_get_image(album["image_album"])
+			
+			noeud_liste_albums.add_child(new_album)
+			
+	get_tree().get_nodes_in_group("parties")[1].get_node("../").visible = true
+
 func ajouter_artistes():
 	var new_artiste
 	var noeud_liste_artistes = get_tree().get_nodes_in_group("liste artistes")[0]
@@ -32,21 +70,7 @@ func ajouter_artistes():
 		
 		# chargement de l'image
 		var chemin_image = artistes[1][index_actuel]["image"]
-		if not RessourceLoad.is_loaded(chemin_image):
-			image_bytes = RessourceLoad.get_file_data(chemin_image)
-			if image_bytes == "".to_utf8_buffer():
-				Notif.add_notif("échec du chargement du fichier " + chemin_image)
-			if image_bytes in ["".to_utf8_buffer(), "base".to_utf8_buffer()]:
-				RessourceLoad.set_icone_base(chemin_image)
-			else:
-				RessourceLoad.charger_ressource(chemin_image, image_bytes)	# notif automatique
-		if RessourceLoad.get_ressource(chemin_image) is ImageTexture or RessourceLoad.get_ressource(chemin_image) is Texture2D:	# Texture2D pour l'icône de base
-			new_artiste.get_node("systeme_image/image").texture = RessourceLoad.get_ressource(chemin_image)
-		else:
-			RessourceLoad.set_icone_base(chemin_image)
-			new_artiste.get_node("systeme_image/image").texture = RessourceLoad.icone_base
-			push_error("la ressource d'id %d n'est pas du bon type" % chemin_image)
-			Notif.add_notif("la ressource d'id %d n'est pas du bon type" % chemin_image)
+		new_artiste.get_node("systeme_image/image").texture = RessourceLoad.easy_get_image(chemin_image)
 		noeud_liste_artistes.add_child(new_artiste)
 		noeud_liste_artistes.move_child(new_artiste, noeud_liste_artistes.get_child_count() - 2)
 		i = i + 1
