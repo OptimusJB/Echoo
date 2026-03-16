@@ -3,7 +3,7 @@ extends Node
 var save_filename="settings.txt"
 var settings = {}
 
-var presets = {"manager":{"echelle":1.0}}
+var presets = {"server_manager":{"echelle":1.0}}
 
 func save_settings() -> int:
 	# sauvegarde

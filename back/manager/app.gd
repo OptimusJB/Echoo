@@ -2,6 +2,7 @@ extends Control
 var noeud_database
 var noeud_artiste = load("res://back/manager/Artiste/Artiste.tscn")
 var noeud_album = load("res://back/manager/Album/Album.tscn")
+var noeud_musique = load("res://back/manager/musique/musique.tscn")
 var artistes_max_affichage = 20	# nombre max d'affichages avant le bouton "charger plus"
 var artistes = []
 
@@ -12,6 +13,56 @@ func init():
 	# fonction appelée par Manager, sert à charger les premiers trucs
 	pass
 
+func to_text(element):
+	# retourne l'element en str, et "" si null
+	if not element:
+		return ""
+	return str(element)
+	
+func _charger_album_view(id_album):
+	# fonction qui charge la page d'un album
+	var noeud_album_actuel = get_tree().get_nodes_in_group("album actuel")[0]
+	
+	# on récupère les infos de l'artiste
+	var resultat = noeud_database.exec_sql("SELECT nom, annee, image, genre FROM Albums WHERE id=?", [id_album])
+	if not resultat[0]:
+		Notif.add_notif("éche de la récupération des infos de l'album")
+		return
+	if len(resultat[1]) != 1:
+		push_error("nombre anormal de résultats")
+		return
+		
+	var nom_album = resultat[1][0]["nom"]
+	var chemin_image = resultat[1][0]["image"]
+	var annee_album = resultat[1][0]["annee"]
+	noeud_album_actuel.get_node("image album").texture = RessourceLoad.easy_get_image(chemin_image)
+	noeud_album_actuel.get_node("infos/nom").text = to_text(nom_album)
+	noeud_album_actuel.get_node("id album").text = to_text(id_album)
+	
+	var noeud_liste_musiques = get_tree().get_nodes_in_group("liste musiques")[0]
+	# on supprime les potentiels anciens albums
+	for enfant in noeud_liste_musiques.get_children():
+		enfant.queue_free()
+	
+	# on charge les différents albums
+	resultat = noeud_database.exec_sql("SELECT Musiques.id AS id_musique, Musiques.nom AS nom_musique, Musiques.min, Musiques.moy, Musiques.max, Musiques.position_album FROM Musiques JOIN Albums ON Albums.id = Musiques.id_album WHERE Albums.id=?", [id_album])
+	if not resultat[0]:
+		Notif.add_notif("échec de la récupération des musiques")
+	else:
+		# on ajoute toutes les musiques
+		var new_musique
+		for musique in resultat[1]:
+			new_musique = noeud_musique.instantiate()
+			new_musique.id = musique["id_musique"]
+			new_musique.get_node("infos/titre").text = to_text(musique["nom_musique"])
+			new_musique.get_node("infos/fichiers/fichier min").text = to_text(musique["min"])
+			new_musique.get_node("infos/fichiers/fichier moy").text = to_text(musique["moy"])
+			new_musique.get_node("infos/fichiers/fichier max").text = to_text(musique["max"])
+			
+			noeud_liste_musiques.add_child(new_musique)
+			
+	get_tree().get_nodes_in_group("parties")[1].get_node("../").visible = true
+	
 func _charger_artiste_view(id_artiste):
 	# fonction qui charge la page d'un artiste
 	var noeud_artiste_actuel = get_tree().get_nodes_in_group("artiste actuel")[0]
@@ -28,10 +79,11 @@ func _charger_artiste_view(id_artiste):
 	var nom_artiste = resultat[1][0]["nom"]
 	var chemin_image = resultat[1][0]["image"]
 	noeud_artiste_actuel.get_node("image artiste").texture = RessourceLoad.easy_get_image(chemin_image)
-	noeud_artiste_actuel.get_node("nom artiste").text = nom_artiste
-	noeud_artiste_actuel.get_node("id artiste").text = str(id_artiste)
+	noeud_artiste_actuel.get_node("nom artiste").text = to_text(nom_artiste)
+	noeud_artiste_actuel.get_node("id artiste").text = to_text(id_artiste)
 	
-	var noeud_liste_albums = noeud_artiste_actuel.get_node("../ScrollContainer/liste albums")
+	#var noeud_liste_albums = noeud_artiste_actuel.get_node("../ScrollContainer/liste albums")
+	var noeud_liste_albums = get_tree().get_nodes_in_group("liste albums")[0]
 	# on supprime les potentiels anciens albums
 	for enfant in noeud_liste_albums.get_children():
 		enfant.queue_free()
@@ -46,10 +98,11 @@ func _charger_artiste_view(id_artiste):
 		for album in resultat[1]:
 			new_album = noeud_album.instantiate()
 			new_album.id = album["id_album"]
-			new_album.get_node("nom").text = album["nom_album"]
+			new_album.get_node("nom").text = to_text(album["nom_album"])
 			new_album.get_node("systeme_image/image").texture = RessourceLoad.easy_get_image(album["image_album"])
 			
 			noeud_liste_albums.add_child(new_album)
+			new_album.get_node("systeme_image/charger album").charger_album.connect(_charger_album_view)
 			
 	get_tree().get_nodes_in_group("parties")[1].get_node("../").visible = true
 
@@ -63,7 +116,7 @@ func ajouter_artistes():
 		index_actuel = noeud_liste_artistes.get_child_count() - 1
 		new_artiste = noeud_artiste.instantiate()
 		#print("requête : ", artistes[1][i])
-		new_artiste.get_node("LineEdit").text = artistes[1][index_actuel]["nom"]
+		new_artiste.get_node("LineEdit").text = to_text(artistes[1][index_actuel]["nom"])
 		new_artiste.get_node("LineEdit").id_artiste = artistes[1][index_actuel]["id"]
 		new_artiste.get_node("systeme_image/charger artiste").charger_artiste.connect(_charger_artiste_view)
 		

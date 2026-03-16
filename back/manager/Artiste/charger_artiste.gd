@@ -21,7 +21,15 @@ func action(type_action:String):
 	if type_action == "supprimer l'artiste":
 		# on supprime l'artiste
 		var database = get_tree().get_nodes_in_group("database")[0]
-		var resultat = database.exec_sql("DELETE FROM Artistes WHERE id=?",  [id_artiste])
+		
+		# on tente de d'abord supprimer les albums et musiques liées à cet album
+		# note : les Uplaylists ne sont pas vérifiées (pas impactées par la contrainte de clé étrangère), il est préférable de tester s'il existe quand l'utilisateur demande à charger la playlist
+		# globalement DELETE FROM se fout totalement des foreign keys, bizarre vu que sur db_browser ça bloque
+		var resultat = database.exec_sql("DELETE FROM Musiques WHERE id_album = (SELECT id FROM Albums WHERE id_artiste = ?)", [id_artiste])
+		if resultat[0]:
+			resultat = database.exec_sql("DELETE FROM Albums WHERE id_artiste = ?", [id_artiste])
+		if resultat[0]:
+			resultat = database.exec_sql("DELETE FROM Artistes WHERE id=?",  [id_artiste])
 		if not resultat[0]:
 			Notif.add_notif("échec de la suppression de l'artiste")
 			return

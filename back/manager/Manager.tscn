@@ -5,6 +5,18 @@
 [ext_resource type="Texture2D" uid="uid://5ohqfljbhutl" path="res://assets/icone_base.png" id="4_5rmsu"]
 [ext_resource type="Script" uid="uid://gapp1sw8g8cd" path="res://back/manager/app.gd" id="4_suclj"]
 [ext_resource type="PackedScene" uid="uid://b27tp6fxvdsew" path="res://global/sous menu/sous menu.tscn" id="5_suclj"]
+[ext_resource type="PackedScene" uid="uid://cjrc6u6emruqq" path="res://back/manager/musique/musique.tscn" id="5_t4gtq"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t4gtq"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.24115604, 0.24115607, 0.24115595, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_suclj"]
 bg_color = Color(0.18072194, 0.18072197, 0.18072197, 1)
@@ -83,97 +95,115 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("4_suclj")
 
-[node name="HSplitContainer" type="HSplitContainer" parent="App" unique_id=945937026]
+[node name="VBoxContainer" type="VBoxContainer" parent="App" unique_id=766848172]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="App/VBoxContainer" unique_id=630656818]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="App/VBoxContainer/HBoxContainer" unique_id=1354787175]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 0
+
+[node name="taille image" type="Button" parent="App/VBoxContainer/HBoxContainer/MarginContainer" unique_id=1507577687]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_t4gtq")
+text = "gestion utilisateurs"
+
+[node name="HSplitContainer" type="HSplitContainer" parent="App/VBoxContainer" unique_id=945937026]
+layout_mode = 2
+size_flags_vertical = 3
 split_offsets = PackedInt32Array(250)
 drag_area_highlight_in_editor = true
 split_offset = 250
 
-[node name="Artistes" type="MarginContainer" parent="App/HSplitContainer" unique_id=1286723258 groups=["parties"]]
+[node name="Artistes" type="MarginContainer" parent="App/VBoxContainer/HSplitContainer" unique_id=1286723258 groups=["parties"]]
 layout_mode = 2
 theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 10
 
-[node name="Fond" type="Panel" parent="App/HSplitContainer/Artistes" unique_id=1355296171]
+[node name="Fond" type="Panel" parent="App/VBoxContainer/HSplitContainer/Artistes" unique_id=1355296171]
 layout_mode = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_suclj")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="App/HSplitContainer/Artistes" unique_id=1109598856]
+[node name="VBoxContainer" type="VBoxContainer" parent="App/VBoxContainer/HSplitContainer/Artistes" unique_id=1109598856]
 layout_mode = 2
 theme_override_constants/separation = 15
 
-[node name="HBoxContainer" type="HBoxContainer" parent="App/HSplitContainer/Artistes/VBoxContainer" unique_id=1170182645]
+[node name="HBoxContainer" type="HBoxContainer" parent="App/VBoxContainer/HSplitContainer/Artistes/VBoxContainer" unique_id=1170182645]
 layout_mode = 2
 
-[node name="LineEdit" type="LineEdit" parent="App/HSplitContainer/Artistes/VBoxContainer/HBoxContainer" unique_id=1656473302 groups=["recherche_artiste"]]
+[node name="LineEdit" type="LineEdit" parent="App/VBoxContainer/HSplitContainer/Artistes/VBoxContainer/HBoxContainer" unique_id=1656473302 groups=["recherche_artiste"]]
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "Chercher artiste"
 
-[node name="rechercher" type="Button" parent="App/HSplitContainer/Artistes/VBoxContainer/HBoxContainer" unique_id=969852636]
+[node name="rechercher" type="Button" parent="App/VBoxContainer/HSplitContainer/Artistes/VBoxContainer/HBoxContainer" unique_id=969852636]
 layout_mode = 2
 text = "Rechercher"
 
-[node name="ajouter artiste" type="Button" parent="App/HSplitContainer/Artistes/VBoxContainer" unique_id=37212200]
+[node name="ajouter artiste" type="Button" parent="App/VBoxContainer/HSplitContainer/Artistes/VBoxContainer" unique_id=37212200]
 layout_mode = 2
 text = "Ajouter artiste"
 
-[node name="ScrollContainer" type="ScrollContainer" parent="App/HSplitContainer/Artistes/VBoxContainer" unique_id=1570242950]
+[node name="ScrollContainer" type="ScrollContainer" parent="App/VBoxContainer/HSplitContainer/Artistes/VBoxContainer" unique_id=1570242950]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="liste artistes" type="VBoxContainer" parent="App/HSplitContainer/Artistes/VBoxContainer/ScrollContainer" unique_id=2080643284 groups=["liste artistes"]]
+[node name="liste artistes" type="VBoxContainer" parent="App/VBoxContainer/HSplitContainer/Artistes/VBoxContainer/ScrollContainer" unique_id=2080643284 groups=["liste artistes"]]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="charger plus" type="Button" parent="App/HSplitContainer/Artistes/VBoxContainer/ScrollContainer/liste artistes" unique_id=1268963146]
+[node name="charger plus" type="Button" parent="App/VBoxContainer/HSplitContainer/Artistes/VBoxContainer/ScrollContainer/liste artistes" unique_id=1268963146]
 visible = false
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 text = "charger plus"
 
-[node name="split albums titres" type="HSplitContainer" parent="App/HSplitContainer" unique_id=974841026]
-visible = false
+[node name="split albums titres" type="HSplitContainer" parent="App/VBoxContainer/HSplitContainer" unique_id=974841026]
 layout_mode = 2
 split_offsets = PackedInt32Array(250)
 drag_area_highlight_in_editor = true
 split_offset = 250
 
-[node name="Albums" type="MarginContainer" parent="App/HSplitContainer/split albums titres" unique_id=366909555 groups=["parties"]]
+[node name="Albums" type="MarginContainer" parent="App/VBoxContainer/HSplitContainer/split albums titres" unique_id=366909555 groups=["parties"]]
 layout_mode = 2
 theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 10
 
-[node name="Fond" type="Panel" parent="App/HSplitContainer/split albums titres/Albums" unique_id=1436661529]
+[node name="Fond" type="Panel" parent="App/VBoxContainer/HSplitContainer/split albums titres/Albums" unique_id=1436661529]
 layout_mode = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_suclj")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="App/HSplitContainer/split albums titres/Albums" unique_id=1552447863]
+[node name="VBoxContainer" type="VBoxContainer" parent="App/VBoxContainer/HSplitContainer/split albums titres/Albums" unique_id=1552447863]
 layout_mode = 2
 theme_override_constants/separation = 7
 
-[node name="artiste actuel" type="HBoxContainer" parent="App/HSplitContainer/split albums titres/Albums/VBoxContainer" unique_id=913974708 groups=["artiste actuel"]]
+[node name="artiste actuel" type="HBoxContainer" parent="App/VBoxContainer/HSplitContainer/split albums titres/Albums/VBoxContainer" unique_id=913974708 groups=["artiste actuel"]]
 layout_mode = 2
 
-[node name="image artiste" type="TextureRect" parent="App/HSplitContainer/split albums titres/Albums/VBoxContainer/artiste actuel" unique_id=227958052]
+[node name="image artiste" type="TextureRect" parent="App/VBoxContainer/HSplitContainer/split albums titres/Albums/VBoxContainer/artiste actuel" unique_id=227958052]
 custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
 texture = ExtResource("4_5rmsu")
 expand_mode = 1
 
-[node name="nom artiste" type="Label" parent="App/HSplitContainer/split albums titres/Albums/VBoxContainer/artiste actuel" unique_id=1775433762]
+[node name="nom artiste" type="Label" parent="App/VBoxContainer/HSplitContainer/split albums titres/Albums/VBoxContainer/artiste actuel" unique_id=1775433762]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
@@ -181,56 +211,90 @@ text = "Artiste"
 clip_text = true
 text_overrun_behavior = 3
 
-[node name="id artiste" type="Label" parent="App/HSplitContainer/split albums titres/Albums/VBoxContainer/artiste actuel" unique_id=1849308905]
+[node name="id artiste" type="Label" parent="App/VBoxContainer/HSplitContainer/split albums titres/Albums/VBoxContainer/artiste actuel" unique_id=1849308905]
 visible = false
 layout_mode = 2
 
-[node name="label albums" type="Label" parent="App/HSplitContainer/split albums titres/Albums/VBoxContainer" unique_id=679743890]
+[node name="label albums" type="Label" parent="App/VBoxContainer/HSplitContainer/split albums titres/Albums/VBoxContainer" unique_id=679743890]
 layout_mode = 2
 size_flags_horizontal = 0
 text = "Albums :"
 
-[node name="ajouter album" type="Button" parent="App/HSplitContainer/split albums titres/Albums/VBoxContainer" unique_id=1570566702]
+[node name="ajouter album" type="Button" parent="App/VBoxContainer/HSplitContainer/split albums titres/Albums/VBoxContainer" unique_id=1570566702]
 layout_mode = 2
 size_flags_horizontal = 0
 text = "ajouter album"
 
-[node name="ScrollContainer" type="ScrollContainer" parent="App/HSplitContainer/split albums titres/Albums/VBoxContainer" unique_id=381206576]
+[node name="ScrollContainer" type="ScrollContainer" parent="App/VBoxContainer/HSplitContainer/split albums titres/Albums/VBoxContainer" unique_id=381206576]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="liste albums" type="VBoxContainer" parent="App/HSplitContainer/split albums titres/Albums/VBoxContainer/ScrollContainer" unique_id=2137106728 groups=["liste albums"]]
+[node name="liste albums" type="VBoxContainer" parent="App/VBoxContainer/HSplitContainer/split albums titres/Albums/VBoxContainer/ScrollContainer" unique_id=2137106728 groups=["liste albums"]]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Titres" type="MarginContainer" parent="App/HSplitContainer/split albums titres" unique_id=723895392 groups=["parties"]]
-visible = false
+[node name="Titres" type="MarginContainer" parent="App/VBoxContainer/HSplitContainer/split albums titres" unique_id=723895392 groups=["parties"]]
 layout_mode = 2
 theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 10
 
-[node name="Fond" type="Panel" parent="App/HSplitContainer/split albums titres/Titres" unique_id=276957789]
+[node name="Fond" type="Panel" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres" unique_id=276957789]
 layout_mode = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_suclj")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="App/HSplitContainer/split albums titres/Titres" unique_id=648641684]
+[node name="VBoxContainer" type="VBoxContainer" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres" unique_id=648641684]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="App/HSplitContainer/split albums titres/Titres/VBoxContainer" unique_id=688201076]
+[node name="album actuel" type="HBoxContainer" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer" unique_id=688201076 groups=["album actuel"]]
 layout_mode = 2
 
-[node name="TextureRect" type="TextureRect" parent="App/HSplitContainer/split albums titres/Titres/VBoxContainer/HBoxContainer" unique_id=1438462912]
-custom_minimum_size = Vector2(80, 80)
+[node name="id album" type="Label" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel" unique_id=248020992]
+visible = false
 layout_mode = 2
 
-[node name="ScrollContainer" type="ScrollContainer" parent="App/HSplitContainer/split albums titres/Titres/VBoxContainer" unique_id=1615246848]
+[node name="image album" type="TextureRect" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel" unique_id=1438462912]
+custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
+size_flags_vertical = 0
+texture = ExtResource("4_5rmsu")
+expand_mode = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="App/HSplitContainer/split albums titres/Titres/VBoxContainer/ScrollContainer" unique_id=895473392]
+[node name="infos" type="VBoxContainer" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel" unique_id=387234146]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="nom" type="Label" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos" unique_id=11456438]
+layout_mode = 2
+text = "Album"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="annee" type="LineEdit" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos" unique_id=52414517]
+layout_mode = 2
+placeholder_text = "année"
+
+[node name="genre" type="LineEdit" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos" unique_id=2126467997]
+layout_mode = 2
+placeholder_text = "genre"
+
+[node name="Button" type="Button" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer" unique_id=22583]
+layout_mode = 2
+text = "ajouter musique"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer" unique_id=1615246848]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="liste musiques" type="VBoxContainer" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/ScrollContainer" unique_id=895473392 groups=["liste musiques"]]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Musique" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/ScrollContainer/liste musiques" unique_id=1699275401 instance=ExtResource("5_t4gtq")]
 layout_mode = 2
 
 [node name="SousMenu" parent="." unique_id=1248340178 groups=["SousMenu"] instance=ExtResource("5_suclj")]
@@ -238,7 +302,7 @@ visible = false
 layout_mode = 1
 
 [connection signal="pressed" from="creation database/centre/VBoxContainer/AspectRatioContainer/create database" to="." method="_on_create_database_pressed"]
-[connection signal="pressed" from="App/HSplitContainer/Artistes/VBoxContainer/HBoxContainer/rechercher" to="App" method="charger_artistes"]
-[connection signal="pressed" from="App/HSplitContainer/Artistes/VBoxContainer/ajouter artiste" to="App" method="_on_ajouter_artiste_pressed"]
-[connection signal="pressed" from="App/HSplitContainer/Artistes/VBoxContainer/ScrollContainer/liste artistes/charger plus" to="App" method="ajouter_artistes"]
-[connection signal="pressed" from="App/HSplitContainer/split albums titres/Albums/VBoxContainer/ajouter album" to="App" method="_on_ajouter_album_pressed"]
+[connection signal="pressed" from="App/VBoxContainer/HSplitContainer/Artistes/VBoxContainer/HBoxContainer/rechercher" to="App" method="charger_artistes"]
+[connection signal="pressed" from="App/VBoxContainer/HSplitContainer/Artistes/VBoxContainer/ajouter artiste" to="App" method="_on_ajouter_artiste_pressed"]
+[connection signal="pressed" from="App/VBoxContainer/HSplitContainer/Artistes/VBoxContainer/ScrollContainer/liste artistes/charger plus" to="App" method="ajouter_artistes"]
+[connection signal="pressed" from="App/VBoxContainer/HSplitContainer/split albums titres/Albums/VBoxContainer/ajouter album" to="App" method="_on_ajouter_album_pressed"]

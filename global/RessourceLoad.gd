@@ -63,6 +63,7 @@ func get_file_data(chemin_fichier):
 
 func easy_get_image(chemin_image):
 	# fonction qui utilise les fonctions au dessus pour charger et retourner une image depuis le disque
+	# null peut être une clé
 	var image_bytes
 	
 	if not is_loaded(chemin_image):

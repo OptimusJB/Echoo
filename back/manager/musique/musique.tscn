@@ -1,0 +1,47 @@
+[gd_scene format=3 uid="uid://cjrc6u6emruqq"]
+
+[ext_resource type="Script" uid="uid://cnpr7ti466dyw" path="res://back/manager/Musique/musique.gd" id="1_ee2dp"]
+[ext_resource type="Script" uid="uid://v8hkfbpgci7c" path="res://back/manager/Musique/select.gd" id="1_m1s62"]
+
+[node name="Musique" type="HBoxContainer" unique_id=310839079]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ee2dp")
+
+[node name="select" type="CheckBox" parent="." unique_id=23344783]
+layout_mode = 2
+script = ExtResource("1_m1s62")
+
+[node name="position" type="Label" parent="." unique_id=314191002]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "1"
+
+[node name="infos" type="VBoxContainer" parent="." unique_id=349546230]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="titre" type="LineEdit" parent="infos" unique_id=1860527682]
+layout_mode = 2
+placeholder_text = "titre"
+
+[node name="fichiers" type="VBoxContainer" parent="infos" unique_id=2032969560]
+visible = false
+layout_mode = 2
+
+[node name="fichier min" type="LineEdit" parent="infos/fichiers" unique_id=1220367720]
+layout_mode = 2
+placeholder_text = "fichier min"
+
+[node name="fichier moy" type="LineEdit" parent="infos/fichiers" unique_id=2099830770]
+layout_mode = 2
+placeholder_text = "fichier moy"
+
+[node name="fichier max" type="LineEdit" parent="infos/fichiers" unique_id=533055548]
+layout_mode = 2
+placeholder_text = "fichier max"
+
+[connection signal="toggled" from="select" to="select" method="_on_toggled"]
