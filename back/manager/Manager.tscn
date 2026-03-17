@@ -4,8 +4,10 @@
 [ext_resource type="Script" uid="uid://ckiu1dcrljcuh" path="res://global/fonctions_database.gd" id="2_gy5a5"]
 [ext_resource type="Texture2D" uid="uid://5ohqfljbhutl" path="res://assets/icone_base.png" id="4_5rmsu"]
 [ext_resource type="Script" uid="uid://gapp1sw8g8cd" path="res://back/manager/app.gd" id="4_suclj"]
+[ext_resource type="Script" uid="uid://dqahhcnu31pud" path="res://back/manager/annee.gd" id="5_1hc43"]
 [ext_resource type="PackedScene" uid="uid://b27tp6fxvdsew" path="res://global/sous menu/sous menu.tscn" id="5_suclj"]
 [ext_resource type="PackedScene" uid="uid://cjrc6u6emruqq" path="res://back/manager/musique/musique.tscn" id="5_t4gtq"]
+[ext_resource type="Script" uid="uid://crclrqm666twe" path="res://back/manager/genre.gd" id="6_bkwmb"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t4gtq"]
 content_margin_left = 5.0
@@ -276,10 +278,12 @@ text_overrun_behavior = 3
 [node name="annee" type="LineEdit" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos" unique_id=52414517]
 layout_mode = 2
 placeholder_text = "année"
+script = ExtResource("5_1hc43")
 
 [node name="genre" type="LineEdit" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos" unique_id=2126467997]
 layout_mode = 2
 placeholder_text = "genre"
+script = ExtResource("6_bkwmb")
 
 [node name="Button" type="Button" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer" unique_id=22583]
 layout_mode = 2
@@ -306,3 +310,7 @@ layout_mode = 1
 [connection signal="pressed" from="App/VBoxContainer/HSplitContainer/Artistes/VBoxContainer/ajouter artiste" to="App" method="_on_ajouter_artiste_pressed"]
 [connection signal="pressed" from="App/VBoxContainer/HSplitContainer/Artistes/VBoxContainer/ScrollContainer/liste artistes/charger plus" to="App" method="ajouter_artistes"]
 [connection signal="pressed" from="App/VBoxContainer/HSplitContainer/split albums titres/Albums/VBoxContainer/ajouter album" to="App" method="_on_ajouter_album_pressed"]
+[connection signal="focus_exited" from="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos/annee" to="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos/annee" method="_on_focus_exited"]
+[connection signal="text_submitted" from="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos/annee" to="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos/annee" method="update_annee"]
+[connection signal="focus_exited" from="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos/genre" to="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos/genre" method="_on_focus_exited"]
+[connection signal="text_submitted" from="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos/genre" to="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos/genre" method="update_genre"]

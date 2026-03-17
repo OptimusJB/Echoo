@@ -66,6 +66,10 @@ func easy_get_image(chemin_image):
 	# null peut être une clé
 	var image_bytes
 	
+	# on change le null en "" (même si normalement ça marche avec le null)
+	if not chemin_image:
+		chemin_image = ""
+	
 	if not is_loaded(chemin_image):
 		# on check si c'est une image de base
 		if not chemin_image:

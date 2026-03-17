@@ -38,6 +38,8 @@ func action(type_action:String):
 		# on enlève l'artiste actuel si c'est le même et que c'est ouvert
 		if int(get_tree().get_nodes_in_group("artiste actuel")[0].get_node("id artiste").text) == id_artiste and get_tree().get_nodes_in_group("parties")[1].get_node("../").visible:
 			get_tree().get_nodes_in_group("parties")[1].get_node("../").visible = false
+			# on cache également la vue de l'album actuel
+			get_tree().get_nodes_in_group("parties")[2].visible = false
 		
 		$"../../".queue_free()
 		

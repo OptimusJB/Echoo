@@ -22,6 +22,7 @@ config/icon="uid://bmnvu85tquim8"
 Settings="*uid://bqv58q2yiuhrd"
 Notif="*uid://vqojgkpibm0b"
 RessourceLoad="*uid://b67h6mblxyq0c"
+FonctionsGlobal="*uid://dbjnytxwaxgqx"
 
 [display]
 

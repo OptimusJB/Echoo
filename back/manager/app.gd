@@ -12,12 +12,6 @@ func _ready() -> void:
 func init():
 	# fonction appelée par Manager, sert à charger les premiers trucs
 	pass
-
-func to_text(element):
-	# retourne l'element en str, et "" si null
-	if not element:
-		return ""
-	return str(element)
 	
 func _charger_album_view(id_album):
 	# fonction qui charge la page d'un album
@@ -35,9 +29,13 @@ func _charger_album_view(id_album):
 	var nom_album = resultat[1][0]["nom"]
 	var chemin_image = resultat[1][0]["image"]
 	var annee_album = resultat[1][0]["annee"]
+	var genre_album = resultat[1][0]["genre"]
 	noeud_album_actuel.get_node("image album").texture = RessourceLoad.easy_get_image(chemin_image)
-	noeud_album_actuel.get_node("infos/nom").text = to_text(nom_album)
-	noeud_album_actuel.get_node("id album").text = to_text(id_album)
+	noeud_album_actuel.get_node("infos/nom").text = FonctionsGlobal.to_text(nom_album)
+	#print("base : %s, après:%s" % [FonctionsGlobal.to_text(annee_album), FonctionsGlobal.to_text_int(annee_album)])
+	noeud_album_actuel.get_node("infos/annee").text = FonctionsGlobal.to_text_int(annee_album)
+	noeud_album_actuel.get_node("infos/genre").text = FonctionsGlobal.to_text(genre_album)
+	noeud_album_actuel.get_node("id album").text = FonctionsGlobal.to_text(id_album)
 	
 	var noeud_liste_musiques = get_tree().get_nodes_in_group("liste musiques")[0]
 	# on supprime les potentiels anciens albums
@@ -54,14 +52,14 @@ func _charger_album_view(id_album):
 		for musique in resultat[1]:
 			new_musique = noeud_musique.instantiate()
 			new_musique.id = musique["id_musique"]
-			new_musique.get_node("infos/titre").text = to_text(musique["nom_musique"])
-			new_musique.get_node("infos/fichiers/fichier min").text = to_text(musique["min"])
-			new_musique.get_node("infos/fichiers/fichier moy").text = to_text(musique["moy"])
-			new_musique.get_node("infos/fichiers/fichier max").text = to_text(musique["max"])
+			new_musique.get_node("infos/titre").text = FonctionsGlobal.to_text(musique["nom_musique"])
+			new_musique.get_node("infos/fichiers/fichier min").text = FonctionsGlobal.to_text(musique["min"])
+			new_musique.get_node("infos/fichiers/fichier moy").text = FonctionsGlobal.to_text(musique["moy"])
+			new_musique.get_node("infos/fichiers/fichier max").text = FonctionsGlobal.to_text(musique["max"])
 			
 			noeud_liste_musiques.add_child(new_musique)
 			
-	get_tree().get_nodes_in_group("parties")[1].get_node("../").visible = true
+	get_tree().get_nodes_in_group("parties")[2].visible = true
 	
 func _charger_artiste_view(id_artiste):
 	# fonction qui charge la page d'un artiste
@@ -79,8 +77,8 @@ func _charger_artiste_view(id_artiste):
 	var nom_artiste = resultat[1][0]["nom"]
 	var chemin_image = resultat[1][0]["image"]
 	noeud_artiste_actuel.get_node("image artiste").texture = RessourceLoad.easy_get_image(chemin_image)
-	noeud_artiste_actuel.get_node("nom artiste").text = to_text(nom_artiste)
-	noeud_artiste_actuel.get_node("id artiste").text = to_text(id_artiste)
+	noeud_artiste_actuel.get_node("nom artiste").text = FonctionsGlobal.to_text(nom_artiste)
+	noeud_artiste_actuel.get_node("id artiste").text = FonctionsGlobal.to_text(id_artiste)
 	
 	#var noeud_liste_albums = noeud_artiste_actuel.get_node("../ScrollContainer/liste albums")
 	var noeud_liste_albums = get_tree().get_nodes_in_group("liste albums")[0]
@@ -98,7 +96,7 @@ func _charger_artiste_view(id_artiste):
 		for album in resultat[1]:
 			new_album = noeud_album.instantiate()
 			new_album.id = album["id_album"]
-			new_album.get_node("nom").text = to_text(album["nom_album"])
+			new_album.get_node("nom").text = FonctionsGlobal.to_text(album["nom_album"])
 			new_album.get_node("systeme_image/image").texture = RessourceLoad.easy_get_image(album["image_album"])
 			
 			noeud_liste_albums.add_child(new_album)
@@ -116,7 +114,7 @@ func ajouter_artistes():
 		index_actuel = noeud_liste_artistes.get_child_count() - 1
 		new_artiste = noeud_artiste.instantiate()
 		#print("requête : ", artistes[1][i])
-		new_artiste.get_node("LineEdit").text = to_text(artistes[1][index_actuel]["nom"])
+		new_artiste.get_node("LineEdit").text = FonctionsGlobal.to_text(artistes[1][index_actuel]["nom"])
 		new_artiste.get_node("LineEdit").id_artiste = artistes[1][index_actuel]["id"]
 		new_artiste.get_node("systeme_image/charger artiste").charger_artiste.connect(_charger_artiste_view)
 		
