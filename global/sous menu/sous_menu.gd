@@ -6,7 +6,6 @@ func auto_position():
 	var options_size = $"fond".size
 	var screen_size = size
 	var mouse_position = get_local_mouse_position()
-	
 	$"fond".position = mouse_position
 	if mouse_position[0] + options_size[0] > screen_size[0]:
 		# dépassement droit
@@ -14,6 +13,8 @@ func auto_position():
 	if mouse_position[1] + options_size[1] > screen_size[1]:
 		# dépassement bas
 		$"liste options".position.y = screen_size[1] - options_size[1]
+	
+	$fond.size = Vector2.ZERO	# si on change la position, le size à ce moment llà semble devenir le size de base
 	
 func creer_sous_menu(ce_noeud, liste_options:Array):
 	# fonction qui fait spawn le sous-menu
@@ -25,8 +26,10 @@ func creer_sous_menu(ce_noeud, liste_options:Array):
 	noeud_appelant = ce_noeud
 	
 	for enfant in $"fond/liste options".get_children():
-		enfant.queue_free()
+		enfant.free()
 	
+	#$"fond/liste options".size = Vector2.ZERO
+	#$"fond".size = Vector2.ZERO
 	var new_bouton
 	for option in liste_options:
 		new_bouton = $"bouton type".duplicate()

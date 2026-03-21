@@ -26,6 +26,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
 script = ExtResource("1_1q7tn")
 
 [node name="bouton type" type="Button" parent="." unique_id=641784905]
@@ -40,12 +42,14 @@ text = "testsfd"
 script = ExtResource("2_idx45")
 
 [node name="fond" type="PanelContainer" parent="." unique_id=912234948]
-layout_mode = 0
-offset_right = 8.0
-offset_bottom = 8.0
+layout_mode = 1
+offset_right = 10.0
+offset_bottom = 10.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_1q7tn")
 
 [node name="liste options" type="VBoxContainer" parent="fond" unique_id=1668224742]
 layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
 
 [connection signal="pressed" from="bouton type" to="bouton type" method="_on_pressed"]

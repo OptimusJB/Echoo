@@ -6,7 +6,6 @@
 [ext_resource type="Script" uid="uid://gapp1sw8g8cd" path="res://back/manager/app.gd" id="4_suclj"]
 [ext_resource type="Script" uid="uid://dqahhcnu31pud" path="res://back/manager/annee.gd" id="5_1hc43"]
 [ext_resource type="PackedScene" uid="uid://b27tp6fxvdsew" path="res://global/sous menu/sous menu.tscn" id="5_suclj"]
-[ext_resource type="PackedScene" uid="uid://cjrc6u6emruqq" path="res://back/manager/musique/musique.tscn" id="5_t4gtq"]
 [ext_resource type="Script" uid="uid://crclrqm666twe" path="res://back/manager/genre.gd" id="6_bkwmb"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t4gtq"]
@@ -285,9 +284,35 @@ layout_mode = 2
 placeholder_text = "genre"
 script = ExtResource("6_bkwmb")
 
-[node name="Button" type="Button" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer" unique_id=22583]
+[node name="boutons qualité" type="HBoxContainer" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer" unique_id=1479321466]
 layout_mode = 2
-text = "ajouter musique"
+
+[node name="ajouter musique" type="Label" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/boutons qualité" unique_id=1553705331]
+layout_mode = 2
+text = "ajouter musiques :"
+
+[node name="min" type="Button" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/boutons qualité" unique_id=486546072]
+layout_mode = 2
+text = "min"
+
+[node name="moy" type="Button" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/boutons qualité" unique_id=401011547]
+layout_mode = 2
+text = "moy"
+
+[node name="max" type="Button" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/boutons qualité" unique_id=797247252]
+layout_mode = 2
+text = "max"
+
+[node name="sélections" type="HBoxContainer" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer" unique_id=783418354]
+layout_mode = 2
+
+[node name="tout sélectionner" type="Button" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/sélections" unique_id=1307083169]
+layout_mode = 2
+text = "tout sélectionner"
+
+[node name="tout désélectionner" type="Button" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/sélections" unique_id=120137711]
+layout_mode = 2
+text = "tout désélectionner"
 
 [node name="ScrollContainer" type="ScrollContainer" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer" unique_id=1615246848]
 layout_mode = 2
@@ -297,9 +322,6 @@ size_flags_vertical = 3
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-
-[node name="Musique" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/ScrollContainer/liste musiques" unique_id=1699275401 instance=ExtResource("5_t4gtq")]
-layout_mode = 2
 
 [node name="SousMenu" parent="." unique_id=1248340178 groups=["SousMenu"] instance=ExtResource("5_suclj")]
 visible = false
@@ -314,3 +336,5 @@ layout_mode = 1
 [connection signal="text_submitted" from="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos/annee" to="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos/annee" method="update_annee"]
 [connection signal="focus_exited" from="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos/genre" to="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos/genre" method="_on_focus_exited"]
 [connection signal="text_submitted" from="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos/genre" to="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos/genre" method="update_genre"]
+[connection signal="pressed" from="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/sélections/tout sélectionner" to="App" method="_on_tout_sélectionner_pressed"]
+[connection signal="pressed" from="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/sélections/tout désélectionner" to="App" method="_on_tout_désélectionner_pressed"]

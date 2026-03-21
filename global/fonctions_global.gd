@@ -1,5 +1,8 @@
 extends Node
 
+var start_music_selected = null # pour le shift sélection des musiques
+#var musics_selected = [] # liste des musiques sélectionnées
+
 func to_int(texte):
 	# retourne l'élément en int, 0 si problème
 	if texte is int:

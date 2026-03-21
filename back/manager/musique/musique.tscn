@@ -1,23 +1,25 @@
 [gd_scene format=3 uid="uid://cjrc6u6emruqq"]
 
-[ext_resource type="Script" uid="uid://cnpr7ti466dyw" path="res://back/manager/Musique/musique.gd" id="1_ee2dp"]
-[ext_resource type="Script" uid="uid://v8hkfbpgci7c" path="res://back/manager/Musique/select.gd" id="1_m1s62"]
+[ext_resource type="Script" uid="uid://cnpr7ti466dyw" path="res://back/manager/musique/musique.gd" id="1_ee2dp"]
+[ext_resource type="Script" uid="uid://v8hkfbpgci7c" path="res://back/manager/musique/select.gd" id="1_m1s62"]
+[ext_resource type="Script" uid="uid://cyf1b7lq2upmd" path="res://back/manager/musique/titre.gd" id="3_0ql0f"]
+[ext_resource type="Script" uid="uid://drp474r2dxhux" path="res://back/manager/musique/choisir_qualite.gd" id="3_7se5r"]
 
-[node name="Musique" type="HBoxContainer" unique_id=310839079]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="Musique" type="HBoxContainer" unique_id=310839079 groups=["noeud racine"]]
+offset_right = 1152.0
+offset_bottom = 648.0
 script = ExtResource("1_ee2dp")
 
 [node name="select" type="CheckBox" parent="." unique_id=23344783]
 layout_mode = 2
+size_flags_vertical = 0
+mouse_filter = 1
 script = ExtResource("1_m1s62")
 
 [node name="position" type="Label" parent="." unique_id=314191002]
 layout_mode = 2
 size_flags_horizontal = 0
+size_flags_vertical = 0
 text = "1"
 
 [node name="infos" type="VBoxContainer" parent="." unique_id=349546230]
@@ -27,21 +29,63 @@ size_flags_horizontal = 3
 [node name="titre" type="LineEdit" parent="infos" unique_id=1860527682]
 layout_mode = 2
 placeholder_text = "titre"
+script = ExtResource("3_0ql0f")
 
 [node name="fichiers" type="VBoxContainer" parent="infos" unique_id=2032969560]
 visible = false
 layout_mode = 2
 
-[node name="fichier min" type="LineEdit" parent="infos/fichiers" unique_id=1220367720]
+[node name="min" type="HBoxContainer" parent="infos/fichiers" unique_id=777149872]
 layout_mode = 2
-placeholder_text = "fichier min"
 
-[node name="fichier moy" type="LineEdit" parent="infos/fichiers" unique_id=2099830770]
+[node name="choisir min" type="Button" parent="infos/fichiers/min" unique_id=1763353325]
 layout_mode = 2
-placeholder_text = "fichier moy"
+text = "fichier min"
+script = ExtResource("3_7se5r")
+qualite = "min"
 
-[node name="fichier max" type="LineEdit" parent="infos/fichiers" unique_id=533055548]
+[node name="fichier min" type="Label" parent="infos/fichiers/min" unique_id=2083180538]
 layout_mode = 2
-placeholder_text = "fichier max"
+size_flags_horizontal = 3
+text = "C:\\\\"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="moy" type="HBoxContainer" parent="infos/fichiers" unique_id=1235852127]
+layout_mode = 2
+
+[node name="choisir moy" type="Button" parent="infos/fichiers/moy" unique_id=681133373]
+layout_mode = 2
+text = "fichier moy"
+script = ExtResource("3_7se5r")
+qualite = "moy"
+
+[node name="fichier moy" type="Label" parent="infos/fichiers/moy" unique_id=34183012]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "C:\\\\"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="max" type="HBoxContainer" parent="infos/fichiers" unique_id=116185875]
+layout_mode = 2
+
+[node name="choisir max" type="Button" parent="infos/fichiers/max" unique_id=482453322]
+layout_mode = 2
+text = "fichier max"
+script = ExtResource("3_7se5r")
+qualite = "max"
+
+[node name="fichier max" type="Label" parent="infos/fichiers/max" unique_id=1510471057]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "C:\\\\"
+clip_text = true
+text_overrun_behavior = 3
 
 [connection signal="toggled" from="select" to="select" method="_on_toggled"]
+[connection signal="focus_exited" from="infos/titre" to="infos/titre" method="_on_focus_exited"]
+[connection signal="text_submitted" from="infos/titre" to="infos/titre" method="update_nom"]
+[connection signal="pressed" from="infos/fichiers/min/choisir min" to="infos/fichiers/min/choisir min" method="_on_pressed"]
+[connection signal="pressed" from="infos/fichiers/moy/choisir moy" to="infos/fichiers/moy/choisir moy" method="_on_pressed"]
+[connection signal="pressed" from="infos/fichiers/max/choisir max" to="infos/fichiers/max/choisir max" method="_on_pressed"]
