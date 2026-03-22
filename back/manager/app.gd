@@ -26,7 +26,7 @@ func _massive_select(noeud_musique_select):
 	var noeud_liste_musiques = get_tree().get_nodes_in_group("liste musiques")[0]
 	var index_start = FonctionsGlobal.start_music_selected.get_index()
 	var index_fin = noeud_musique_select.get_index()
-	print("(%d, %d)" % [index_start, index_fin])
+	#print("(%d, %d)" % [index_start, index_fin])
 	# on enlève l'inclusion du noeud de fin
 	if index_fin > index_start:
 		index_fin -= 1
@@ -37,7 +37,7 @@ func _massive_select(noeud_musique_select):
 		return
 	
 	var intervale = [min(index_start, index_fin), max(index_start, index_fin)]
-	print(intervale)
+	#print(intervale)
 	var index_noeud = intervale[0]
 	var noeud_select = null
 	while index_noeud <= intervale[1]:
@@ -105,7 +105,8 @@ func _charger_album_view(id_album):
 			noeud_liste_musiques.add_child(new_musique)
 			# on connecte le signal massive_select
 			new_musique.get_node("select").massive_select.connect(_massive_select)
-	
+			
+			
 	# on met le start_music_select à la première musique s'il y en a
 	if noeud_liste_musiques.get_child_count() > 0:
 		FonctionsGlobal.start_music_selected = noeud_liste_musiques.get_child(0)

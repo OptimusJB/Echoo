@@ -16,6 +16,7 @@ func fermer_database():
 func ouvrir_database():
 	# ouvre la database, émet db_open_failed si raté
 	#database.path = OS.get_executable_path().get_base_dir() + "/" + database_filename
+	database.foreign_keys = true
 	database.path = "user://" + database_filename
 	if not database.open_db():
 		#push_error("erreur lors de l'ouverture de la database")

@@ -42,6 +42,7 @@ func action(type_action:String):
 			get_tree().get_nodes_in_group("parties")[2].visible = false
 		
 		$"../../".queue_free()
+		file_select.queue_free()
 		
 	elif type_action == "ouvrir la page de l'artiste":
 		charger_artiste.emit(id_artiste)

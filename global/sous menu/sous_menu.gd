@@ -12,7 +12,7 @@ func auto_position():
 		$"fond".position.x = screen_size[0] - options_size[0]
 	if mouse_position[1] + options_size[1] > screen_size[1]:
 		# dépassement bas
-		$"liste options".position.y = screen_size[1] - options_size[1]
+		$"fond".position.y = screen_size[1] - options_size[1]
 	
 	$fond.size = Vector2.ZERO	# si on change la position, le size à ce moment llà semble devenir le size de base
 	

@@ -2,6 +2,10 @@ extends Node
 var loaded = {}	# de la forme chemin_ressource:ressource
 var icone_base = load("res://assets/icone_base.png")
 
+func clear():
+	# supprime tout le contenu de loaded
+	loaded.clear()
+	
 func get_ressource_extension(chemin_ressource:String) -> String:
 	return chemin_ressource.split(".")[len(chemin_ressource.split("."))-1]
 

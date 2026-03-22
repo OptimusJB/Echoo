@@ -35,7 +35,10 @@ func _input(event: InputEvent) -> void:
 		get_window().content_scale_factor += 0.25
 		Notif.add_notif("nouvelle échelle : " + str(get_window().content_scale_factor))
 		Settings.set_setting("echelle", get_window().content_scale_factor)
-
+	elif event.is_action_pressed("clear ram"):
+		RessourceLoad.clear()
+		Notif.add_notif("fichiers stockés en ram supprimés")
+	
 func _on_create_database_pressed() -> void:
 	# création de la base de données
 	if get_tree().get_nodes_in_group("database")[0].create_database():

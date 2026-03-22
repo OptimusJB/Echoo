@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://dqahhcnu31pud" path="res://back/manager/annee.gd" id="5_1hc43"]
 [ext_resource type="PackedScene" uid="uid://b27tp6fxvdsew" path="res://global/sous menu/sous menu.tscn" id="5_suclj"]
 [ext_resource type="Script" uid="uid://crclrqm666twe" path="res://back/manager/genre.gd" id="6_bkwmb"]
+[ext_resource type="Script" uid="uid://i4wrjyey7d8y" path="res://back/manager/boutons_qualité.gd" id="7_bkwmb"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t4gtq"]
 content_margin_left = 5.0
@@ -286,6 +287,7 @@ script = ExtResource("6_bkwmb")
 
 [node name="boutons qualité" type="HBoxContainer" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer" unique_id=1479321466]
 layout_mode = 2
+script = ExtResource("7_bkwmb")
 
 [node name="ajouter musique" type="Label" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/boutons qualité" unique_id=1553705331]
 layout_mode = 2
@@ -302,6 +304,11 @@ text = "moy"
 [node name="max" type="Button" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/boutons qualité" unique_id=797247252]
 layout_mode = 2
 text = "max"
+
+[node name="troncature" type="LineEdit" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/boutons qualité" unique_id=782872676]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "début à enlever"
 
 [node name="sélections" type="HBoxContainer" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer" unique_id=783418354]
 layout_mode = 2
@@ -336,5 +343,9 @@ layout_mode = 1
 [connection signal="text_submitted" from="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos/annee" to="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos/annee" method="update_annee"]
 [connection signal="focus_exited" from="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos/genre" to="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos/genre" method="_on_focus_exited"]
 [connection signal="text_submitted" from="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos/genre" to="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos/genre" method="update_genre"]
+[connection signal="charger_album" from="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/boutons qualité" to="App" method="_charger_album_view"]
+[connection signal="pressed" from="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/boutons qualité/min" to="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/boutons qualité" method="_on_min_pressed"]
+[connection signal="pressed" from="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/boutons qualité/moy" to="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/boutons qualité" method="_on_moy_pressed"]
+[connection signal="pressed" from="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/boutons qualité/max" to="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/boutons qualité" method="_on_max_pressed"]
 [connection signal="pressed" from="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/sélections/tout sélectionner" to="App" method="_on_tout_sélectionner_pressed"]
 [connection signal="pressed" from="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/sélections/tout désélectionner" to="App" method="_on_tout_désélectionner_pressed"]
