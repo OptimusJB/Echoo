@@ -1,0 +1,48 @@
+[gd_scene format=3 uid="uid://cifbq88245g74"]
+
+[ext_resource type="Script" uid="uid://dse7r8palf1tj" path="res://back/manager/Utilisateur/utilisateur.gd" id="1_71l2d"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_02ywa"]
+bg_color = Color(0.25490198, 0.25490198, 0.25490198, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[node name="Utilisateur" type="PanelContainer" unique_id=1419720944]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_02ywa")
+script = ExtResource("1_71l2d")
+
+[node name="marges" type="MarginContainer" parent="." unique_id=398843058]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="HBoxContainer" type="HBoxContainer" parent="marges" unique_id=1432672707]
+layout_mode = 2
+
+[node name="ban" type="Button" parent="marges/HBoxContainer" unique_id=1755464877]
+layout_mode = 2
+text = "bannir"
+
+[node name="deban" type="Button" parent="marges/HBoxContainer" unique_id=82578676]
+layout_mode = 2
+text = "débannir"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="marges/HBoxContainer" unique_id=879557896]
+layout_mode = 2
+
+[node name="pseudo" type="Label" parent="marges/HBoxContainer/VBoxContainer" unique_id=4163101]
+layout_mode = 2
+text = "pseudo"
+
+[node name="ip" type="Label" parent="marges/HBoxContainer/VBoxContainer" unique_id=671029234]
+layout_mode = 2
+text = "ip :"

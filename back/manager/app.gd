@@ -113,6 +113,7 @@ func _charger_album_view(id_album):
 	#FonctionsGlobal.musics_selected = []
 	
 	charger_musiques_actif = false
+	
 func _charger_artiste_view(id_artiste):
 	if charger_albums_actif:
 		return

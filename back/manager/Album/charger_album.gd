@@ -1,7 +1,5 @@
 extends Button
 
-var file_select
-
 signal charger_album
 
 func _on_pressed() -> void:
@@ -38,26 +36,14 @@ func action(type_action:String):
 		
 		# on supprime l'album
 		$"../../".queue_free()
-		file_select.queue_free()
 		
 	elif type_action == "ouvrir la page de l'album":
 		charger_album.emit(id_album)
 	
 	elif type_action == "modifier l'image":
-		file_select.popup_file_dialog()
-
-func _ready() -> void:
-	# on crée le filedialog
-	file_select = FileDialog.new()
-	file_select.file_mode = FileDialog.FILE_MODE_OPEN_FILE
-	file_select.access = FileDialog.ACCESS_FILESYSTEM
-	file_select.add_filter("*.png", "images png")
-	file_select.add_filter("*.jpg", "images jpg")
-	file_select.add_filter("*.jpeg", "images jpeg")
-	file_select.add_filter("*.svg", "images svg")
-	file_select.add_filter("*.bmp", "images bmp")
-	get_tree().get_nodes_in_group("windows")[1].add_child(file_select)
-	file_select.file_selected.connect(fichier_choisi)
+		var file_dialog = get_tree().get_nodes_in_group("file dialogs")[0]
+		file_dialog.noeud_appelant = self
+		file_dialog.popup_file_dialog()
 	
 func fichier_choisi(chemin_fichier):
 	# on change l'image de l'artiste (pas de vérification)

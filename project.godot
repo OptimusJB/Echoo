@@ -12,6 +12,7 @@ config_version=5
 
 config/name="Spoutoufy"
 config/description="logiciel d'écoute de musique"
+run/main_scene="uid://om336lsnkmbo"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 run/max_fps=60
 run/low_processor_mode=true

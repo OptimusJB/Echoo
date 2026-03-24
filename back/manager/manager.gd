@@ -41,8 +41,11 @@ func _input(event: InputEvent) -> void:
 	
 func _on_create_database_pressed() -> void:
 	# création de la base de données
-	if get_tree().get_nodes_in_group("database")[0].create_database():
-		ouvrir_app()
+	if not get_tree().get_nodes_in_group("database")[0].is_database_exists():
+		if get_tree().get_nodes_in_group("database")[0].create_database():
+			ouvrir_app()
+	else:
+		Notif.add_notif("la base de données existe déjà")
 	
 
 func ouvrir_app() -> void:

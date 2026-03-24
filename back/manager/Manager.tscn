@@ -3,11 +3,29 @@
 [ext_resource type="Script" uid="uid://cqv2pujj67s73" path="res://back/manager/manager.gd" id="1_gnkgc"]
 [ext_resource type="Script" uid="uid://ckiu1dcrljcuh" path="res://global/fonctions_database.gd" id="2_gy5a5"]
 [ext_resource type="Texture2D" uid="uid://5ohqfljbhutl" path="res://assets/icone_base.png" id="4_5rmsu"]
+[ext_resource type="Script" uid="uid://c61vwn5wi5sv7" path="res://back/manager/gestion_utilisateurs.gd" id="4_buvgh"]
 [ext_resource type="Script" uid="uid://gapp1sw8g8cd" path="res://back/manager/app.gd" id="4_suclj"]
 [ext_resource type="Script" uid="uid://dqahhcnu31pud" path="res://back/manager/annee.gd" id="5_1hc43"]
 [ext_resource type="PackedScene" uid="uid://b27tp6fxvdsew" path="res://global/sous menu/sous menu.tscn" id="5_suclj"]
 [ext_resource type="Script" uid="uid://crclrqm666twe" path="res://back/manager/genre.gd" id="6_bkwmb"]
 [ext_resource type="Script" uid="uid://i4wrjyey7d8y" path="res://back/manager/boutons_qualité.gd" id="7_bkwmb"]
+[ext_resource type="Script" uid="uid://dtdr4l7bsdjbb" path="res://back/manager/file_select.gd" id="9_o3pu0"]
+[ext_resource type="Script" uid="uid://cwkbcj87jlerh" path="res://back/manager/retour.gd" id="9_toyh7"]
+[ext_resource type="Script" uid="uid://8pk2ygrvd66h" path="res://back/manager/files_select.gd" id="10_buvgh"]
+[ext_resource type="Script" uid="uid://clw58jw0hj5w1" path="res://back/manager/chercher.gd" id="10_t6fdu"]
+[ext_resource type="PackedScene" uid="uid://cifbq88245g74" path="res://back/manager/Utilisateur/Utilisateur.tscn" id="11_llder"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_toyh7"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.2966023, 0.29660237, 0.29660222, 1)
+border_color = Color(0.29803923, 0.29803923, 0.29803923, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t4gtq"]
 content_margin_left = 5.0
@@ -30,6 +48,9 @@ expand_margin_left = 5.0
 expand_margin_top = 5.0
 expand_margin_right = 5.0
 expand_margin_bottom = 5.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_buvgh"]
+bg_color = Color(0.18039216, 0.18039216, 0.18039216, 1)
 
 [node name="Manager" type="Control" unique_id=191382699]
 layout_mode = 3
@@ -85,9 +106,11 @@ layout_mode = 2
 
 [node name="create database" type="Button" parent="creation database/centre/VBoxContainer/AspectRatioContainer" unique_id=2091996015]
 layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_toyh7")
 text = "créer base de données"
 
 [node name="App" type="Control" parent="." unique_id=1366334384 groups=["windows"]]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -115,10 +138,11 @@ theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 0
 
-[node name="taille image" type="Button" parent="App/VBoxContainer/HBoxContainer/MarginContainer" unique_id=1507577687]
+[node name="gestion utilisateurs" type="Button" parent="App/VBoxContainer/HBoxContainer/MarginContainer" unique_id=1507577687]
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_t4gtq")
 text = "gestion utilisateurs"
+script = ExtResource("4_buvgh")
 
 [node name="HSplitContainer" type="HSplitContainer" parent="App/VBoxContainer" unique_id=945937026]
 layout_mode = 2
@@ -175,6 +199,7 @@ size_flags_vertical = 4
 text = "charger plus"
 
 [node name="split albums titres" type="HSplitContainer" parent="App/VBoxContainer/HSplitContainer" unique_id=974841026]
+visible = false
 layout_mode = 2
 split_offsets = PackedInt32Array(250)
 drag_area_highlight_in_editor = true
@@ -237,6 +262,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Titres" type="MarginContainer" parent="App/VBoxContainer/HSplitContainer/split albums titres" unique_id=723895392 groups=["parties"]]
+visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 10
@@ -330,11 +356,126 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
+[node name="GestionUtilisateurs" type="Control" parent="." unique_id=1683893756 groups=["windows"]]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Fond" type="Panel" parent="GestionUtilisateurs" unique_id=150291154]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_buvgh")
+
+[node name="MarginContainer" type="MarginContainer" parent="GestionUtilisateurs" unique_id=338516150]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+
+[node name="elements" type="VBoxContainer" parent="GestionUtilisateurs/MarginContainer" unique_id=1334471357]
+layout_mode = 2
+
+[node name="menu" type="HBoxContainer" parent="GestionUtilisateurs/MarginContainer/elements" unique_id=1311129477]
+layout_mode = 2
+
+[node name="retour" type="Button" parent="GestionUtilisateurs/MarginContainer/elements/menu" unique_id=922791988]
+layout_mode = 2
+text = "retour"
+script = ExtResource("9_toyh7")
+
+[node name="chercher" type="Button" parent="GestionUtilisateurs/MarginContainer/elements/menu" unique_id=174430939]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "rechercher"
+script = ExtResource("10_t6fdu")
+
+[node name="type recherche" type="OptionButton" parent="GestionUtilisateurs/MarginContainer/elements/menu" unique_id=1743765030]
+layout_mode = 2
+size_flags_horizontal = 0
+selected = 0
+fit_to_longest_item = false
+item_count = 3
+popup/item_0/text = "tous"
+popup/item_0/id = 0
+popup/item_1/text = "non bannis"
+popup/item_1/id = 1
+popup/item_2/text = "bannis"
+popup/item_2/id = 2
+
+[node name="chercher pseudo" type="LineEdit" parent="GestionUtilisateurs/MarginContainer/elements/menu" unique_id=1987995278]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "chercher un pseudo"
+
+[node name="taille max fichier" type="LineEdit" parent="GestionUtilisateurs/MarginContainer/elements/menu" unique_id=1520296933]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "taille max envoi fichier"
+
+[node name="type ban" type="OptionButton" parent="GestionUtilisateurs/MarginContainer/elements" unique_id=1119538862]
+layout_mode = 2
+size_flags_horizontal = 0
+selected = 0
+fit_to_longest_item = false
+item_count = 2
+popup/item_0/text = "bannir l'ip"
+popup/item_0/id = 0
+popup/item_1/text = "bannir uniquement le pseudo"
+popup/item_1/id = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="GestionUtilisateurs/MarginContainer/elements" unique_id=1288707050]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="liste utilisateurs" type="VBoxContainer" parent="GestionUtilisateurs/MarginContainer/elements/ScrollContainer" unique_id=1045960091 groups=["liste utilisateurs"]]
+layout_mode = 2
+
+[node name="Utilisateur" parent="GestionUtilisateurs/MarginContainer/elements/ScrollContainer/liste utilisateurs" unique_id=1419720944 instance=ExtResource("11_llder")]
+layout_mode = 2
+
 [node name="SousMenu" parent="." unique_id=1248340178 groups=["SousMenu"] instance=ExtResource("5_suclj")]
 visible = false
 layout_mode = 1
 
+[node name="file_select_image" type="FileDialog" parent="." unique_id=1923921141 groups=["file dialogs"]]
+title = "Open a File"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.png", "*.jpg", "*.jpeg", "*.bmp", "*.svg")
+script = ExtResource("9_o3pu0")
+
+[node name="files_select_audio" type="FileDialog" parent="." unique_id=523538411 groups=["file dialogs"]]
+oversampling_override = 1.0
+title = "Open File(s)"
+position = Vector2i(0, 36)
+file_mode = 1
+access = 2
+filters = PackedStringArray("*.ogg", "*.wav", "*.mp3")
+script = ExtResource("10_buvgh")
+
+[node name="file_select_audio" type="FileDialog" parent="." unique_id=631213953 groups=["file dialogs"]]
+oversampling_override = 1.0
+title = "Open a File"
+position = Vector2i(0, 36)
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.ogg", "*.wav", "*.mp3")
+script = ExtResource("9_o3pu0")
+
 [connection signal="pressed" from="creation database/centre/VBoxContainer/AspectRatioContainer/create database" to="." method="_on_create_database_pressed"]
+[connection signal="pressed" from="App/VBoxContainer/HBoxContainer/MarginContainer/gestion utilisateurs" to="App/VBoxContainer/HBoxContainer/MarginContainer/gestion utilisateurs" method="_on_pressed"]
 [connection signal="pressed" from="App/VBoxContainer/HSplitContainer/Artistes/VBoxContainer/HBoxContainer/rechercher" to="App" method="charger_artistes"]
 [connection signal="pressed" from="App/VBoxContainer/HSplitContainer/Artistes/VBoxContainer/ajouter artiste" to="App" method="_on_ajouter_artiste_pressed"]
 [connection signal="pressed" from="App/VBoxContainer/HSplitContainer/Artistes/VBoxContainer/ScrollContainer/liste artistes/charger plus" to="App" method="ajouter_artistes"]
@@ -349,3 +490,8 @@ layout_mode = 1
 [connection signal="pressed" from="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/boutons qualité/max" to="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/boutons qualité" method="_on_max_pressed"]
 [connection signal="pressed" from="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/sélections/tout sélectionner" to="App" method="_on_tout_sélectionner_pressed"]
 [connection signal="pressed" from="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/sélections/tout désélectionner" to="App" method="_on_tout_désélectionner_pressed"]
+[connection signal="pressed" from="GestionUtilisateurs/MarginContainer/elements/menu/retour" to="GestionUtilisateurs/MarginContainer/elements/menu/retour" method="_on_pressed"]
+[connection signal="pressed" from="GestionUtilisateurs/MarginContainer/elements/menu/chercher" to="GestionUtilisateurs/MarginContainer/elements/menu/chercher" method="_on_pressed"]
+[connection signal="file_selected" from="file_select_image" to="file_select_image" method="_on_file_selected"]
+[connection signal="files_selected" from="files_select_audio" to="files_select_audio" method="_on_files_selected"]
+[connection signal="file_selected" from="file_select_audio" to="file_select_audio" method="_on_file_selected"]

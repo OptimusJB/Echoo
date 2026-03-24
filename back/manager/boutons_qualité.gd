@@ -1,6 +1,5 @@
 extends HBoxContainer
 
-var file_select
 var qualite_ajout:String
 
 signal charger_album
@@ -8,7 +7,9 @@ signal charger_album
 func ajouter_musiques(qualite:String):
 	assert(qualite in ["min", "moy", "max"], "qualite invalide")
 	qualite_ajout = qualite
-	file_select.popup_file_dialog()
+	var file_dialog = get_tree().get_nodes_in_group("file dialogs")[1]
+	file_dialog.noeud_appelant = self
+	file_dialog.popup_file_dialog()
 	
 func get_nom_musique(chemin_fichier:String):
 	var troncature = FonctionsGlobal.to_int($"troncature".text)
@@ -84,15 +85,3 @@ func _on_moy_pressed() -> void:
 
 func _on_max_pressed() -> void:
 	ajouter_musiques("max")
-
-func _ready() -> void:
-	# on crée le filedialog
-	await get_tree().process_frame
-	file_select = FileDialog.new()
-	file_select.file_mode = FileDialog.FILE_MODE_OPEN_FILES
-	file_select.access = FileDialog.ACCESS_FILESYSTEM
-	file_select.add_filter("*.ogg", "musiques ogg")
-	file_select.add_filter("*.mp3", "musiques mp3")
-	file_select.add_filter("*.wav", "musiques wav")
-	get_tree().get_nodes_in_group("windows")[1].add_child(file_select)
-	file_select.files_selected.connect(fichiers_choisis)

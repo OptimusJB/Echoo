@@ -38,9 +38,9 @@ func create_database() -> int:
 	database.query("CREATE TABLE Artistes(id INTEGER, nom TEXT, image TEXT, PRIMARY KEY (id AUTOINCREMENT))")
 	database.query("CREATE TABLE Albums(id INTEGER, id_artiste INTEGER, nom TEXT, annee INTEGER, image TEXT, genre TEXT, PRIMARY KEY (id AUTOINCREMENT), FOREIGN KEY (id_artiste) REFERENCES Artistes(id))")
 	database.query("CREATE TABLE Musiques(id INTEGER, nom TEXT, id_album INT, min TEXT, moy TEXT, max TEXT, position_album INTEGER, PRIMARY KEY (id AUTOINCREMENT), FOREIGN KEY(id_album) REFERENCES Albums(id))")
-	database.query("CREATE TABLE Utilisateurs(id INTEGER, username TEXT, password TEXT, PRIMARY KEY (id AUTOINCREMENT))")
+	database.query("CREATE TABLE Utilisateurs(id INTEGER, username TEXT, password TEXT, ip TEXT, banni INTEGER, PRIMARY KEY (id AUTOINCREMENT))")
 	database.query("CREATE TABLE UPlaylists(id INTEGER, id_utilisateur INTEGER, nom TEXT, description TEXT, image TEXT, musiques TEXT, PRIMARY KEY (id AUTOINCREMENT), FOREIGN KEY (id_utilisateur) REFERENCES Utilisateurs(id))")
-	database.query("CREATE TABLE ListeNoire(id INTEGER, adresse TEXT, PRIMARY KEY (id), FOREIGN KEY (id) REFERENCES Utilisateurs(id))")
+	#database.query("CREATE TABLE ListeNoire(id INTEGER, PRIMARY KEY (id), FOREIGN KEY (id) REFERENCES Utilisateurs(id))")
 	#database.close_db()
 	return 1
 
