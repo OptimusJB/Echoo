@@ -3,7 +3,8 @@ extends Node
 var save_filename="settings.txt"
 var settings = {}
 
-var presets = {"server_manager":{"echelle":1.0}}
+var presets = {"server_manager":{"echelle":1.0, "mode bannissement":0, "taille envoi fichier":5.0, "liste blanche ip":[]}}
+var use_json = false
 
 func save_settings() -> int:
 	# sauvegarde
@@ -12,7 +13,11 @@ func save_settings() -> int:
 		push_error("erreur lors de l'ouverture du fichier")
 		return 0
 	
-	fichier.store_var(settings)
+	if use_json:
+		fichier.store_string(JSON.stringify(settings))
+		#print(JSON.stringify(settings))
+	else:
+		fichier.store_var(settings)
 	fichier.close()
 	return 1
 
@@ -24,10 +29,20 @@ func load_settings(preset:String = "null") -> int:
 		var fichier = FileAccess.open("user://" + save_filename, FileAccess.READ)
 		if not fichier:
 			push_error("erreur lors de l'ouverture du fichier")
-	
-		settings = fichier.get_var()
+		
+		if not use_json :
+			settings = fichier.get_var()
+			success = true
+		else:
+			var json = JSON.parse_string(fichier.get_as_text())
+			#print("json : ", json, ", type : ", type_string(typeof(json)))
+			#print("type valeur : ", type_string(typeof(json["echelle"])))
+			#print(1.0 == 1)
+			if json:
+				success = true
+				settings = json
 		fichier.close()
-		success = true
+		# note : les int deviennent des float
 	
 	if not success:
 		# échec de récupération de la save, donc on prend un preset
@@ -35,7 +50,7 @@ func load_settings(preset:String = "null") -> int:
 			if not preset in presets.keys():
 				push_error("le preset " + preset + " n'existe pas")
 				return 0
-			settings = presets[preset]
+			settings = presets[preset].duplicate()
 	return 1
 	
 func set_setting(cle:String, valeur, auto_save=true) -> void:

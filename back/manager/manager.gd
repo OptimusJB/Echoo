@@ -15,6 +15,7 @@ func _ready() -> void:
 	get_tree().auto_accept_quit = false	# pour NOTIFICATION_WM_CLOSE_REQUEST
 	
 	# on charge les settings
+	Settings.use_json = true
 	Settings.save_filename = "server_settings.txt"
 	Settings.load_settings("server_manager")
 	

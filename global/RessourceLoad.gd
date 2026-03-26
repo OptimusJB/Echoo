@@ -1,6 +1,7 @@
 extends Node
 var loaded = {}	# de la forme chemin_ressource:ressource
 var icone_base = load("res://assets/icone_base.png")
+var dossier_images_utilisateurs = "users playlists images/"	# contient les images des playlists des utilisateurs
 
 func clear():
 	# supprime tout le contenu de loaded
@@ -91,3 +92,16 @@ func easy_get_image(chemin_image):
 				push_error("la ressource d'id %d n'est pas une image" % chemin_image)
 				Notif.add_notif("la ressource d'id %d n'est pas une image" % chemin_image)
 	return get_ressource(chemin_image)
+
+func is_image_in_folder(nom_image:String, chemin_dossier=null):
+	# le dossier doit se terminer par un slash
+	# le nom image ne doit pas avoir d'extension
+	# ATTENTION fonction pas testée
+	if not chemin_dossier:
+		chemin_dossier = dossier_images_utilisateurs
+	assert(chemin_dossier[len(chemin_dossier) - 1] == "/", "chemin_dossier doit se terminer par un /")
+	var liste_extensions = [".png", ".jpg", ".jpeg", ".bmp", ".svg"]
+	for extension in liste_extensions:
+		if FileAccess.file_exists(chemin_dossier + nom_image + extension):
+			return true
+	return false

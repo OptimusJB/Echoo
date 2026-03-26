@@ -9,10 +9,19 @@ func to_int(texte):
 		return texte
 	if not texte:
 		return 0
-	if texte is String and texte.is_valid_int():
+	if texte is String and texte.is_valid_int() or texte is float:
 		return int(texte)
 	return 0
-	
+
+func to_float(texte):
+	# retourne l'élément en float, 0.0 si problème
+	if texte is float:
+		return texte
+	if not texte:
+		return 0.0
+	if texte is String and texte.is_valid_float() or texte is int:
+		return float(texte)
+	return 0.0
 
 func to_text(element):
 	# retourne l'element en str, et "" si null
@@ -25,3 +34,6 @@ func to_text_int(element):
 	# ex : 'truc' -> '0'
 	#      '2025' -> '2025'
 	return str(to_int(element))
+
+func to_text_float(element):
+	return str(to_float(element))

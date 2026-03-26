@@ -6,14 +6,20 @@
 [ext_resource type="Script" uid="uid://c61vwn5wi5sv7" path="res://back/manager/gestion_utilisateurs.gd" id="4_buvgh"]
 [ext_resource type="Script" uid="uid://gapp1sw8g8cd" path="res://back/manager/app.gd" id="4_suclj"]
 [ext_resource type="Script" uid="uid://dqahhcnu31pud" path="res://back/manager/annee.gd" id="5_1hc43"]
+[ext_resource type="Script" uid="uid://cc5acfpxniji4" path="res://back/manager/options_serveur.gd" id="5_llder"]
 [ext_resource type="PackedScene" uid="uid://b27tp6fxvdsew" path="res://global/sous menu/sous menu.tscn" id="5_suclj"]
 [ext_resource type="Script" uid="uid://crclrqm666twe" path="res://back/manager/genre.gd" id="6_bkwmb"]
 [ext_resource type="Script" uid="uid://i4wrjyey7d8y" path="res://back/manager/boutons_qualité.gd" id="7_bkwmb"]
 [ext_resource type="Script" uid="uid://dtdr4l7bsdjbb" path="res://back/manager/file_select.gd" id="9_o3pu0"]
 [ext_resource type="Script" uid="uid://cwkbcj87jlerh" path="res://back/manager/retour.gd" id="9_toyh7"]
+[ext_resource type="Script" uid="uid://bqpdph5t2nk8r" path="res://back/manager/window_gestion_utilisateur.gd" id="10_6cnwv"]
 [ext_resource type="Script" uid="uid://8pk2ygrvd66h" path="res://back/manager/files_select.gd" id="10_buvgh"]
 [ext_resource type="Script" uid="uid://clw58jw0hj5w1" path="res://back/manager/chercher.gd" id="10_t6fdu"]
-[ext_resource type="PackedScene" uid="uid://cifbq88245g74" path="res://back/manager/Utilisateur/Utilisateur.tscn" id="11_llder"]
+[ext_resource type="Script" uid="uid://dpmsn82mbepk5" path="res://back/manager/retour_options.gd" id="13_oeabr"]
+[ext_resource type="Script" uid="uid://bm5ifqo383lxt" path="res://back/manager/type_ban_select.gd" id="13_ribnt"]
+[ext_resource type="Script" uid="uid://c73rfn1h2462w" path="res://back/manager/window_options.gd" id="14_5m8ug"]
+[ext_resource type="Script" uid="uid://c66ojst57vcho" path="res://back/manager/bouton_ajouter_ip.gd" id="16_5m8ug"]
+[ext_resource type="Script" uid="uid://dtqpf5upcqv0u" path="res://back/manager/taille_max_fichier.gd" id="16_pwxhr"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_toyh7"]
 content_margin_left = 5.0
@@ -77,7 +83,6 @@ mouse_filter = 2
 color = Color(0.10524041, 0.10524041, 0.1052404, 1)
 
 [node name="creation database" type="Control" parent="." unique_id=26419766 groups=["windows"]]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -129,20 +134,26 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="App/VBoxContainer" unique_id=630656818]
-layout_mode = 2
-
-[node name="MarginContainer" type="MarginContainer" parent="App/VBoxContainer/HBoxContainer" unique_id=1354787175]
+[node name="MarginContainer" type="MarginContainer" parent="App/VBoxContainer" unique_id=1354787175]
 layout_mode = 2
 theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 5
-theme_override_constants/margin_right = 0
+theme_override_constants/margin_right = 5
 
-[node name="gestion utilisateurs" type="Button" parent="App/VBoxContainer/HBoxContainer/MarginContainer" unique_id=1507577687]
+[node name="HBoxContainer" type="HBoxContainer" parent="App/VBoxContainer/MarginContainer" unique_id=630656818]
+layout_mode = 2
+
+[node name="gestion utilisateurs" type="Button" parent="App/VBoxContainer/MarginContainer/HBoxContainer" unique_id=1507577687]
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_t4gtq")
 text = "gestion utilisateurs"
 script = ExtResource("4_buvgh")
+
+[node name="options serveur" type="Button" parent="App/VBoxContainer/MarginContainer/HBoxContainer" unique_id=460278863]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_t4gtq")
+text = "options serveur"
+script = ExtResource("5_llder")
 
 [node name="HSplitContainer" type="HSplitContainer" parent="App/VBoxContainer" unique_id=945937026]
 layout_mode = 2
@@ -357,12 +368,14 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="GestionUtilisateurs" type="Control" parent="." unique_id=1683893756 groups=["windows"]]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("10_6cnwv")
 
 [node name="Fond" type="Panel" parent="GestionUtilisateurs" unique_id=150291154]
 layout_mode = 1
@@ -373,7 +386,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_buvgh")
 
-[node name="MarginContainer" type="MarginContainer" parent="GestionUtilisateurs" unique_id=338516150]
+[node name="marges" type="MarginContainer" parent="GestionUtilisateurs" unique_id=338516150]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -384,24 +397,24 @@ theme_override_constants/margin_left = 5
 theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 5
 
-[node name="elements" type="VBoxContainer" parent="GestionUtilisateurs/MarginContainer" unique_id=1334471357]
+[node name="elements" type="VBoxContainer" parent="GestionUtilisateurs/marges" unique_id=1334471357]
 layout_mode = 2
 
-[node name="menu" type="HBoxContainer" parent="GestionUtilisateurs/MarginContainer/elements" unique_id=1311129477]
+[node name="menu" type="HBoxContainer" parent="GestionUtilisateurs/marges/elements" unique_id=1311129477]
 layout_mode = 2
 
-[node name="retour" type="Button" parent="GestionUtilisateurs/MarginContainer/elements/menu" unique_id=922791988]
+[node name="retour" type="Button" parent="GestionUtilisateurs/marges/elements/menu" unique_id=922791988]
 layout_mode = 2
 text = "retour"
 script = ExtResource("9_toyh7")
 
-[node name="chercher" type="Button" parent="GestionUtilisateurs/MarginContainer/elements/menu" unique_id=174430939]
+[node name="chercher" type="Button" parent="GestionUtilisateurs/marges/elements/menu" unique_id=174430939]
 layout_mode = 2
 size_flags_horizontal = 0
 text = "rechercher"
 script = ExtResource("10_t6fdu")
 
-[node name="type recherche" type="OptionButton" parent="GestionUtilisateurs/MarginContainer/elements/menu" unique_id=1743765030]
+[node name="type recherche" type="OptionButton" parent="GestionUtilisateurs/marges/elements/menu" unique_id=1743765030]
 layout_mode = 2
 size_flags_horizontal = 0
 selected = 0
@@ -414,17 +427,12 @@ popup/item_1/id = 1
 popup/item_2/text = "bannis"
 popup/item_2/id = 2
 
-[node name="chercher pseudo" type="LineEdit" parent="GestionUtilisateurs/MarginContainer/elements/menu" unique_id=1987995278]
+[node name="chercher pseudo" type="LineEdit" parent="GestionUtilisateurs/marges/elements/menu" unique_id=1987995278]
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "chercher un pseudo"
 
-[node name="taille max fichier" type="LineEdit" parent="GestionUtilisateurs/MarginContainer/elements/menu" unique_id=1520296933]
-layout_mode = 2
-size_flags_horizontal = 3
-placeholder_text = "taille max envoi fichier"
-
-[node name="type ban" type="OptionButton" parent="GestionUtilisateurs/MarginContainer/elements" unique_id=1119538862]
+[node name="type ban" type="OptionButton" parent="GestionUtilisateurs/marges/elements" unique_id=1119538862]
 layout_mode = 2
 size_flags_horizontal = 0
 selected = 0
@@ -434,15 +442,82 @@ popup/item_0/text = "bannir l'ip"
 popup/item_0/id = 0
 popup/item_1/text = "bannir uniquement le pseudo"
 popup/item_1/id = 1
+script = ExtResource("13_ribnt")
 
-[node name="ScrollContainer" type="ScrollContainer" parent="GestionUtilisateurs/MarginContainer/elements" unique_id=1288707050]
+[node name="ScrollContainer" type="ScrollContainer" parent="GestionUtilisateurs/marges/elements" unique_id=1288707050]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="liste utilisateurs" type="VBoxContainer" parent="GestionUtilisateurs/MarginContainer/elements/ScrollContainer" unique_id=1045960091 groups=["liste utilisateurs"]]
+[node name="liste utilisateurs" type="VBoxContainer" parent="GestionUtilisateurs/marges/elements/ScrollContainer" unique_id=1045960091 groups=["liste utilisateurs"]]
 layout_mode = 2
 
-[node name="Utilisateur" parent="GestionUtilisateurs/MarginContainer/elements/ScrollContainer/liste utilisateurs" unique_id=1419720944 instance=ExtResource("11_llder")]
+[node name="Options" type="Control" parent="." unique_id=1223357793 groups=["windows"]]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("14_5m8ug")
+
+[node name="Fond" type="Panel" parent="Options" unique_id=2070424807]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_buvgh")
+
+[node name="marges" type="MarginContainer" parent="Options" unique_id=1491542838]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+
+[node name="elements" type="VBoxContainer" parent="Options/marges" unique_id=162562300]
+layout_mode = 2
+
+[node name="retour" type="Button" parent="Options/marges/elements" unique_id=1750154200]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "retour"
+script = ExtResource("13_oeabr")
+
+[node name="taille max fichier" type="LineEdit" parent="Options/marges/elements" unique_id=1744707739]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "taille max envoi fichier (en Mio)"
+script = ExtResource("16_pwxhr")
+
+[node name="texte liste blanche" type="Label" parent="Options/marges/elements" unique_id=1005581193]
+layout_mode = 2
+text = "liste des ip de confiance :"
+
+[node name="ajouter ip" type="HBoxContainer" parent="Options/marges/elements" unique_id=1169660357]
+layout_mode = 2
+
+[node name="bouton ajouter" type="Button" parent="Options/marges/elements/ajouter ip" unique_id=1837211482]
+layout_mode = 2
+text = "ajouter ip"
+script = ExtResource("16_5m8ug")
+
+[node name="ip choisie" type="LineEdit" parent="Options/marges/elements/ajouter ip" unique_id=1487120332]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "entrez une ip (ex : 127.0.0.1)"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Options/marges/elements" unique_id=1801057485]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="liste blanche ip" type="VBoxContainer" parent="Options/marges/elements/ScrollContainer" unique_id=1685981007 groups=["liste blanche ip"]]
 layout_mode = 2
 
 [node name="SousMenu" parent="." unique_id=1248340178 groups=["SousMenu"] instance=ExtResource("5_suclj")]
@@ -475,7 +550,8 @@ filters = PackedStringArray("*.ogg", "*.wav", "*.mp3")
 script = ExtResource("9_o3pu0")
 
 [connection signal="pressed" from="creation database/centre/VBoxContainer/AspectRatioContainer/create database" to="." method="_on_create_database_pressed"]
-[connection signal="pressed" from="App/VBoxContainer/HBoxContainer/MarginContainer/gestion utilisateurs" to="App/VBoxContainer/HBoxContainer/MarginContainer/gestion utilisateurs" method="_on_pressed"]
+[connection signal="pressed" from="App/VBoxContainer/MarginContainer/HBoxContainer/gestion utilisateurs" to="App/VBoxContainer/MarginContainer/HBoxContainer/gestion utilisateurs" method="_on_pressed"]
+[connection signal="pressed" from="App/VBoxContainer/MarginContainer/HBoxContainer/options serveur" to="App/VBoxContainer/MarginContainer/HBoxContainer/options serveur" method="_on_pressed"]
 [connection signal="pressed" from="App/VBoxContainer/HSplitContainer/Artistes/VBoxContainer/HBoxContainer/rechercher" to="App" method="charger_artistes"]
 [connection signal="pressed" from="App/VBoxContainer/HSplitContainer/Artistes/VBoxContainer/ajouter artiste" to="App" method="_on_ajouter_artiste_pressed"]
 [connection signal="pressed" from="App/VBoxContainer/HSplitContainer/Artistes/VBoxContainer/ScrollContainer/liste artistes/charger plus" to="App" method="ajouter_artistes"]
@@ -490,8 +566,13 @@ script = ExtResource("9_o3pu0")
 [connection signal="pressed" from="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/boutons qualité/max" to="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/boutons qualité" method="_on_max_pressed"]
 [connection signal="pressed" from="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/sélections/tout sélectionner" to="App" method="_on_tout_sélectionner_pressed"]
 [connection signal="pressed" from="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/sélections/tout désélectionner" to="App" method="_on_tout_désélectionner_pressed"]
-[connection signal="pressed" from="GestionUtilisateurs/MarginContainer/elements/menu/retour" to="GestionUtilisateurs/MarginContainer/elements/menu/retour" method="_on_pressed"]
-[connection signal="pressed" from="GestionUtilisateurs/MarginContainer/elements/menu/chercher" to="GestionUtilisateurs/MarginContainer/elements/menu/chercher" method="_on_pressed"]
+[connection signal="pressed" from="GestionUtilisateurs/marges/elements/menu/retour" to="GestionUtilisateurs/marges/elements/menu/retour" method="_on_pressed"]
+[connection signal="pressed" from="GestionUtilisateurs/marges/elements/menu/chercher" to="GestionUtilisateurs/marges/elements/menu/chercher" method="_on_pressed"]
+[connection signal="item_selected" from="GestionUtilisateurs/marges/elements/type ban" to="GestionUtilisateurs/marges/elements/type ban" method="_on_item_selected"]
+[connection signal="pressed" from="Options/marges/elements/retour" to="Options/marges/elements/retour" method="_on_pressed"]
+[connection signal="focus_exited" from="Options/marges/elements/taille max fichier" to="Options/marges/elements/taille max fichier" method="_on_focus_exited"]
+[connection signal="text_submitted" from="Options/marges/elements/taille max fichier" to="Options/marges/elements/taille max fichier" method="_on_text_submitted"]
+[connection signal="pressed" from="Options/marges/elements/ajouter ip/bouton ajouter" to="Options/marges/elements/ajouter ip/bouton ajouter" method="_on_pressed"]
 [connection signal="file_selected" from="file_select_image" to="file_select_image" method="_on_file_selected"]
 [connection signal="files_selected" from="files_select_audio" to="files_select_audio" method="_on_files_selected"]
 [connection signal="file_selected" from="file_select_audio" to="file_select_audio" method="_on_file_selected"]

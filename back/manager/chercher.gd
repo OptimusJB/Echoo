@@ -18,7 +18,6 @@ func _on_pressed() -> void:
 	
 	# on met la partie_sql qu'il faut selon le type de recherche
 	var sql_recherche = ""
-	WebSocketPeer
 	if type_recherche == 0:
 		# tous
 		sql_recherche = ""
@@ -48,8 +47,9 @@ func _on_pressed() -> void:
 	for utilisateur_actuel in resultat[1]:
 		await get_tree().process_frame
 		new_utilisateur = utilisateur.instantiate()
-		new_utilisateur.get_node("marges/HBoxContainer/VBoxContainer/pseudo").text = FonctionsGlobal.to_text(utilisateur_actuel["username"])
-		new_utilisateur.get_node("marges/HBoxContainer/VBoxContainer/ip").text = "ip : " + FonctionsGlobal.to_text(utilisateur_actuel["ip"])
+		new_utilisateur.get_node("HBoxContainer/VBoxContainer/pseudo").text = FonctionsGlobal.to_text(utilisateur_actuel["username"])
+		new_utilisateur.get_node("HBoxContainer/VBoxContainer/ip").text = "ip : " + FonctionsGlobal.to_text(utilisateur_actuel["ip"])
+		new_utilisateur.id = FonctionsGlobal.to_int(utilisateur_actuel["id"])
 		
 		# on change le fond s'il est banni
 		if utilisateur_actuel["banni"]:
