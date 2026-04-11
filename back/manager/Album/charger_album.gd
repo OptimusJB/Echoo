@@ -20,9 +20,10 @@ func action(type_action:String):
 		# on supprime l'artiste
 		var database = get_tree().get_nodes_in_group("database")[0]
 		# on tente de d'abord supprimer les musiques liées à cet album
-		# note : les Uplaylists ne sont pas vérifiées (pas impactées par la contrainte de clé étrangère), il est préférable de tester s'il existe quand l'utilisateur demande à charger la playlist
 		
-		var resultat = database.exec_sql("DELETE FROM Musiques WHERE id_album = ?", [id_album])
+		var resultat = database.exec_sql("DELETE FROM UMusiques WHERE id_musique IN (SELECT id FROM Musiques WHERE id_album = ?)", [id_album])
+		if resultat[0]:
+			resultat = database.exec_sql("DELETE FROM Musiques WHERE id_album = ?", [id_album])
 		if resultat[0]:
 			resultat = database.exec_sql("DELETE FROM Albums WHERE id=?",  [id_album])
 		if not resultat[0]:

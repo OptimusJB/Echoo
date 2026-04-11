@@ -20,8 +20,10 @@ func action(type_action:String):
 		
 		for musique in noeud_liste_musiques.get_children():
 			if musique.get_node("select").button_pressed:
-				# on supprime la musique
-				resultat = noeud_database.exec_sql("DELETE FROM Musiques WHERE id=?", [musique.id])
+				# on supprime la musique et ses références dans Uplaylists
+				resultat = noeud_database.exec_sql("DELETE FROM UMusiques WHERE id_musique=?", [musique.id])
+				if resultat[0]:
+					resultat = noeud_database.exec_sql("DELETE FROM Musiques WHERE id=?", [musique.id])
 				if not resultat[0]:
 					Notif.add_notif("échec partielle de la suppression")
 					musique.get_node("position").text = str(position_musique)

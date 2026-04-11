@@ -22,8 +22,10 @@ func _on_pressed() -> void:
 					Notif.add_notif("échec de la suppression d'image de la playlist " + playlist["nom"])
 				dossier = null	# pas sûr que ça serve mais en met quand même
 		
-	# on supprime les playlists
-	resultat = noeud_database.exec_sql("DELETE FROM Uplaylists WHERE id_utilisateur=?", [$"../../".id])
+	# on supprime les playlists et leurs référene dans Umusiques
+	resultat = noeud_database.exec_sql("DELETE FROM UMusiques WHERE id_playlist IN (SELECT id FROM UPlaylists WHERE id_utilisateur=?)", [$"../../".id])
+	if resultat[0]:
+		resultat = noeud_database.exec_sql("DELETE FROM Uplaylists WHERE id_utilisateur=?", [$"../../".id])
 	if not resultat[0]:
 		Notif.add_notif("échec de la suppression des playlistsde l'utilisateur")
 		return

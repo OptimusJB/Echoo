@@ -22,9 +22,10 @@ func action(type_action:String):
 		var database = get_tree().get_nodes_in_group("database")[0]
 		
 		# on tente de d'abord supprimer les albums et musiques liées à cet album
-		# note : les Uplaylists ne sont pas vérifiées (pas impactées par la contrainte de clé étrangère), il est préférable de tester s'il existe quand l'utilisateur demande à charger la playlist
 		# globalement DELETE FROM se fout totalement des foreign keys, bizarre vu que sur db_browser ça bloque
-		var resultat = database.exec_sql("DELETE FROM Musiques WHERE id_album = (SELECT id FROM Albums WHERE id_artiste = ?)", [id_artiste])
+		var resultat = database.exec_sql("DELETE FROM UMusiques WHERE id_musique IN (SELECT id FROM Musiques WHERE id_album IN (SELECT id FROM Albums WHERE id_artiste = ?))", [id_artiste])
+		if resultat[0]:
+			resultat = database.exec_sql("DELETE FROM Musiques WHERE id_album IN (SELECT id FROM Albums WHERE id_artiste = ?)", [id_artiste])
 		if resultat[0]:
 			resultat = database.exec_sql("DELETE FROM Albums WHERE id_artiste = ?", [id_artiste])
 		if resultat[0]:
