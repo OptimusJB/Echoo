@@ -4,7 +4,8 @@ import { exit } from "node:process";
 
 var ip="0.0.0.0";
 var port=25565;
-var connexions = {};
+var connexions_timeout = new Map;
+var connexions_data = new Map;
 
 // on crée le fichier de stop du serveur
 try{
@@ -40,9 +41,9 @@ const wss = new WebSocketServer({
 });
 
 
-function handle(websocketpeer, message){
+function handle(websocketpeer, message_text, message_bytes){
     // message de la forme {'type':'valeur', ...}
-    if(message.type == "quoi"){
+    if(message_text.type == "quoi"){
         websocketpeer.send(JSON.stringify({"type":"feur"}));
         return;
     }
@@ -50,24 +51,53 @@ function handle(websocketpeer, message){
 
 
 wss.on("connection", function connection(websocketpeer){ // connection d'un client
-    connexions[websocketpeer] = Date.now();
+    connexions_timeout.set(websocketpeer, Date.now());
+    var message_bytes;
+    var message_text = "";
+
+    //connexions_timeout[websocketpeer] = Date.now();
     websocketpeer.on("error", console.error);
     websocketpeer.on("message", function message(data, est_binaire){
-        if(!est_binaire) data = data.toString("utf-8");
-        // data est censé être sous forme de str de json
+        if(est_binaire){
+            // on ajoute du binaire dans connexions_data
+            if(!connexions_data.has(websocketpeer)){
+                connexions_data.set(websocketpeer, new Map);
+                connexions_data.get(websocketpeer).set("bytes", data);
+            }
+            else connexions_data.get(websocketpeer).set(websocketpeer, connexions_data.get(websocketpeer) + data);
+        }
+        else{
+            data = data.toString("utf-8");
+            // on ajoute du texte dans connexions_data
+            if(!connexions_data.has(websocketpeer)){
+                connexions_data.set(websocketpeer, new Map);
+                connexions_data.get(websocketpeer).set("text", data);
+            }
+            else connexions_data.get(websocketpeer).set("text", connexions_data.get(websocketpeer) + data);
+        }
+        if (!connexions_data.get(websocketpeer).get("text").includes("&SPFEND&")) return; // le message n'est pas encore complet
+        
+        // le message est complet, on enlève &SPFBEGIN& et &SPFEND&
+        message_text = connexions_data.get(websocketpeer).get("text").split("&SPFBEGIN&")[1].split("&SPFEND&")[0];
+        message_bytes = connexions_data.get(websocketpeer).get("bytes");
 
+        // on supprime le contenu de connexions_data
+        connexions_data.delete(websocketpeer);
+
+        // data est censé être sous forme de str de json
         try{
-            data = JSON.parse(data);
+            message_text = JSON.parse(message_text);
         } catch{
             console.log("un message a été reçu, mais le parse en json a échoué");
             return;
         }
-
+        //console.log("message reçu : " + message_text.type);
         // on met à jour le temps
-        connexions[websocketpeer] = Date.now();
+        connexions_timeout.set(websocketpeer, Date.now());
+        //connexions_timeout[websocketpeer] = Date.now();
 
         // on lance handle
-        handle(message);
+        handle(websocketpeer, message_text, message_bytes);
     });
 });
 

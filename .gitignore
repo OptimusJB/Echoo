@@ -4,3 +4,4 @@
 /client manager/addons/
 /serveur/node_modules/
 /serveur/server-ip.json
+/serveur/stop-server.txt

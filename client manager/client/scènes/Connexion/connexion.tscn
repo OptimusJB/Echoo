@@ -1,7 +1,103 @@
 [gd_scene format=3 uid="uid://56f0pcn14g4x"]
 
 [ext_resource type="Theme" uid="uid://36276l8ev85m" path="res://assets/theme_spoutoufy.tres" id="1_yr7gr"]
+[ext_resource type="Script" uid="uid://c7o6lyr1sljve" path="res://client/scènes/Connexion/connexion.gd" id="2_enjtl"]
+[ext_resource type="Script" uid="uid://dp7t23flur4wj" path="res://client/scènes/Connexion/radio.gd" id="2_gykwv"]
 [ext_resource type="Texture2D" uid="uid://bmnvu85tquim8" path="res://assets/Spoutoufy logo.png" id="2_jfbr3"]
+[ext_resource type="Script" uid="uid://b534t1dx6onp" path="res://client/scènes/Connexion/options.gd" id="3_4ebt3"]
+[ext_resource type="FontFile" uid="uid://csnflw5p3ceff" path="res://assets/police.otf" id="3_jcgtn"]
+[ext_resource type="Script" uid="uid://de6274stljiah" path="res://client/scènes/Connexion/se_connecter.gd" id="7_4ebt3"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_g8emd"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.34248248, 0.59120107, 0.9996019, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pfexr"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.003921569, 0.39607844, 0.92941177, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rpy55"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.0017068126, 0.31094387, 0.74416757, 1)
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cc54s"]
+bg_color = Color(0.18039216, 0.18039216, 0.18039216, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.003921569, 0.39607844, 0.92941177, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+expand_margin_left = 2.0
+expand_margin_top = 2.0
+expand_margin_right = 2.0
+expand_margin_bottom = 2.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6q3mw"]
+bg_color = Color(0.18039216, 0.18039216, 0.18039216, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+expand_margin_left = 2.0
+expand_margin_top = 2.0
+expand_margin_right = 2.0
+expand_margin_bottom = 2.0
+
+[sub_resource type="Theme" id="Theme_gykwv"]
+Button/font_sizes/font_size = 23
+Button/fonts/font = ExtResource("3_jcgtn")
+Button/styles/hover = SubResource("StyleBoxFlat_g8emd")
+Button/styles/normal = SubResource("StyleBoxFlat_pfexr")
+Button/styles/pressed = SubResource("StyleBoxFlat_rpy55")
+Label/font_sizes/font_size = 23
+Label/fonts/font = ExtResource("3_jcgtn")
+LineEdit/font_sizes/font_size = 23
+LineEdit/fonts/font = ExtResource("3_jcgtn")
+LineEdit/styles/focus = SubResource("StyleBoxFlat_cc54s")
+LineEdit/styles/normal = SubResource("StyleBoxFlat_6q3mw")
+
+[sub_resource type="Theme" id="Theme_abwk2"]
+Button/font_sizes/font_size = 23
+Button/fonts/font = ExtResource("3_jcgtn")
+Button/styles/hover = SubResource("StyleBoxFlat_g8emd")
+Button/styles/normal = SubResource("StyleBoxFlat_pfexr")
+Button/styles/pressed = SubResource("StyleBoxFlat_rpy55")
+Label/font_sizes/font_size = 23
+Label/fonts/font = ExtResource("3_jcgtn")
+LineEdit/font_sizes/font_size = 23
+LineEdit/fonts/font = ExtResource("3_jcgtn")
+LineEdit/styles/focus = SubResource("StyleBoxFlat_cc54s")
+LineEdit/styles/normal = SubResource("StyleBoxFlat_6q3mw")
 
 [node name="Connexion" type="Control" unique_id=636552501]
 layout_mode = 3
@@ -11,6 +107,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_yr7gr")
+script = ExtResource("2_enjtl")
 
 [node name="fond" type="ColorRect" parent="." unique_id=950600754]
 layout_mode = 1
@@ -20,6 +117,78 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.18072194, 0.18072197, 0.18072191, 1)
+
+[node name="marges" type="MarginContainer" parent="." unique_id=1213459114]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+
+[node name="options serveur" type="VBoxContainer" parent="marges" unique_id=261548106]
+layout_mode = 2
+
+[node name="choisir serveur" type="Button" parent="marges/options serveur" unique_id=1148978747]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "CHOOSE_SERVER"
+
+[node name="valider" type="Button" parent="marges/options serveur" unique_id=1297621323]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 0
+text = "CONFIRM"
+
+[node name="espace" type="Control" parent="marges/options serveur" unique_id=598984887]
+custom_minimum_size = Vector2(0, 5)
+layout_mode = 2
+
+[node name="options" type="VBoxContainer" parent="marges/options serveur" unique_id=655237204]
+visible = false
+layout_mode = 2
+script = ExtResource("3_4ebt3")
+
+[node name="texte_ip" type="Label" parent="marges/options serveur/options" unique_id=437184777]
+layout_mode = 2
+text = "ip"
+
+[node name="select_ip" type="LineEdit" parent="marges/options serveur/options" unique_id=858387497]
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+
+[node name="texte_port" type="Label" parent="marges/options serveur/options" unique_id=142224253]
+layout_mode = 2
+text = "port"
+
+[node name="select_port" type="LineEdit" parent="marges/options serveur/options" unique_id=1026502031]
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+
+[node name="espace" type="Control" parent="marges/options serveur/options" unique_id=1175917961]
+custom_minimum_size = Vector2(0, 5)
+layout_mode = 2
+
+[node name="radio" type="HBoxContainer" parent="marges/options serveur/options" unique_id=1634953227]
+layout_mode = 2
+script = ExtResource("2_gykwv")
+
+[node name="wss" type="CheckBox" parent="marges/options serveur/options/radio" unique_id=1515670784]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "wss"
+
+[node name="ws" type="CheckBox" parent="marges/options serveur/options/radio" unique_id=2065028047]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "ws"
+
+[node name="avertissement" type="Label" parent="marges/options serveur/options" unique_id=847115998]
+custom_minimum_size = Vector2(50, 10)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9999997, 0.11579733, 0.14866751, 1)
+theme_override_font_sizes/font_size = 14
+text = "WARNING_WS"
+autowrap_mode = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1205662092]
 layout_mode = 1
@@ -48,10 +217,11 @@ layout_mode = 2
 
 [node name="texte_nom" type="Label" parent="VBoxContainer" unique_id=1977057165]
 layout_mode = 2
-text = "Nom d'utilisateur"
+text = "USERNAME"
 
 [node name="select_nom" type="LineEdit" parent="VBoxContainer" unique_id=1213662366]
 layout_mode = 2
+theme = SubResource("Theme_gykwv")
 
 [node name="espace" type="Control" parent="VBoxContainer" unique_id=234278137]
 custom_minimum_size = Vector2(0, 10)
@@ -59,16 +229,25 @@ layout_mode = 2
 
 [node name="texte_mdp" type="Label" parent="VBoxContainer" unique_id=1102644515]
 layout_mode = 2
-text = "mot de passe"
+text = "PASSWORD"
 
 [node name="select_mdp" type="LineEdit" parent="VBoxContainer" unique_id=1029023234]
 layout_mode = 2
+theme = SubResource("Theme_abwk2")
+secret = true
 
 [node name="espace3" type="Control" parent="VBoxContainer" unique_id=2028919934]
-custom_minimum_size = Vector2(0, 15)
+custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 
 [node name="se connecter" type="Button" parent="VBoxContainer" unique_id=1965911760]
 layout_mode = 2
 size_flags_horizontal = 4
-text = "se connecter au serveur"
+text = "CONNECT_SERVER"
+script = ExtResource("7_4ebt3")
+
+[connection signal="pressed" from="marges/options serveur/choisir serveur" to="marges/options serveur/options" method="_on_choisir_serveur_pressed"]
+[connection signal="pressed" from="marges/options serveur/valider" to="marges/options serveur/options" method="_on_valider_pressed"]
+[connection signal="pressed" from="marges/options serveur/options/radio/wss" to="marges/options serveur/options/radio" method="_on_wss_pressed"]
+[connection signal="pressed" from="marges/options serveur/options/radio/ws" to="marges/options serveur/options/radio" method="_on_ws_pressed"]
+[connection signal="pressed" from="VBoxContainer/se connecter" to="VBoxContainer/se connecter" method="_on_pressed"]
