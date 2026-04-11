@@ -1,0 +1,74 @@
+[gd_scene format=3 uid="uid://56f0pcn14g4x"]
+
+[ext_resource type="Theme" uid="uid://36276l8ev85m" path="res://assets/theme_spoutoufy.tres" id="1_yr7gr"]
+[ext_resource type="Texture2D" uid="uid://bmnvu85tquim8" path="res://assets/Spoutoufy logo.png" id="2_jfbr3"]
+
+[node name="Connexion" type="Control" unique_id=636552501]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_yr7gr")
+
+[node name="fond" type="ColorRect" parent="." unique_id=950600754]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.18072194, 0.18072197, 0.18072191, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1205662092]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -97.5
+offset_top = -20.0
+offset_right = 97.5
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="logo" type="TextureRect" parent="VBoxContainer" unique_id=1295611345]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("2_jfbr3")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="espace2" type="Control" parent="VBoxContainer" unique_id=681087298]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="texte_nom" type="Label" parent="VBoxContainer" unique_id=1977057165]
+layout_mode = 2
+text = "Nom d'utilisateur"
+
+[node name="select_nom" type="LineEdit" parent="VBoxContainer" unique_id=1213662366]
+layout_mode = 2
+
+[node name="espace" type="Control" parent="VBoxContainer" unique_id=234278137]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="texte_mdp" type="Label" parent="VBoxContainer" unique_id=1102644515]
+layout_mode = 2
+text = "mot de passe"
+
+[node name="select_mdp" type="LineEdit" parent="VBoxContainer" unique_id=1029023234]
+layout_mode = 2
+
+[node name="espace3" type="Control" parent="VBoxContainer" unique_id=2028919934]
+custom_minimum_size = Vector2(0, 15)
+layout_mode = 2
+
+[node name="se connecter" type="Button" parent="VBoxContainer" unique_id=1965911760]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "se connecter au serveur"
