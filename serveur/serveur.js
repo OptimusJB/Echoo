@@ -2,10 +2,12 @@ import { WebSocketServer } from "ws";
 import fs from "node:fs";
 import { exit } from "node:process";
 
-var ip="0.0.0.0";
-var port=25565;
-var connexions_timeout = new Map;
-var connexions_data = new Map;
+let ip="0.0.0.0";
+let port=25565;
+let connexions_timeout = new Map;
+let connexions_data = new Map;
+
+let timeout_time = 10000; // en ms
 
 // on crée le fichier de stop du serveur
 try{
@@ -19,16 +21,16 @@ try{
 try{
     if(!fs.existsSync("server-ip.json")){
         // on crée le fichier
-        var data_fichier = {
+        let data_fichier = {
             "ip":"0.0.0.0",
             "port":25565
         }
-        var data_str = JSON.stringify(data_fichier);
+        let data_str = JSON.stringify(data_fichier);
         fs.writeFileSync("server-ip.json", data_str);
     }
 
-    var fichier_read = fs.readFileSync("server-ip.json", "utf-8");
-    var data_fichier = JSON.parse(fichier_read);
+    let fichier_read = fs.readFileSync("server-ip.json", "utf-8");
+    let data_fichier = JSON.parse(fichier_read);
 
 
 } catch{
@@ -43,34 +45,39 @@ const wss = new WebSocketServer({
 
 function handle(websocketpeer, message_text, message_bytes){
     // message de la forme {'type':'valeur', ...}
-    if(message_text.type == "quoi"){
-        websocketpeer.send(JSON.stringify({"type":"feur"}));
-        return;
-    }
 };
 
 
 wss.on("connection", function connection(websocketpeer){ // connection d'un client
     connexions_timeout.set(websocketpeer, Date.now());
-    var message_bytes;
-    var message_text = "";
+    connexions_data.set(websocketpeer, new Map);
+    let message_bytes;
+    let message_text = "";
 
-    //connexions_timeout[websocketpeer] = Date.now();
     websocketpeer.on("error", console.error);
     websocketpeer.on("message", function message(data, est_binaire){
+        // on met à jour le temps
+        connexions_timeout.set(websocketpeer, Date.now());
+
+
         if(est_binaire){
             // on ajoute du binaire dans connexions_data
-            if(!connexions_data.has(websocketpeer)){
-                connexions_data.set(websocketpeer, new Map);
+            if(!connexions_data.get(websocketpeer).has("bytes")){
                 connexions_data.get(websocketpeer).set("bytes", data);
             }
             else connexions_data.get(websocketpeer).set(websocketpeer, connexions_data.get(websocketpeer) + data);
         }
         else{
             data = data.toString("utf-8");
+             // on check si c'est un ping
+            if(data == "quoi"){
+                //console.log("ping reçu")
+                websocketpeer.send("feur");
+                return;
+            }
+
             // on ajoute du texte dans connexions_data
-            if(!connexions_data.has(websocketpeer)){
-                connexions_data.set(websocketpeer, new Map);
+            if(!connexions_data.get(websocketpeer).has("text")){
                 connexions_data.get(websocketpeer).set("text", data);
             }
             else connexions_data.get(websocketpeer).set("text", connexions_data.get(websocketpeer) + data);
@@ -84,7 +91,7 @@ wss.on("connection", function connection(websocketpeer){ // connection d'un clie
         // on supprime le contenu de connexions_data
         connexions_data.delete(websocketpeer);
 
-        // data est censé être sous forme de str de json
+        // message_text est censé être sous forme de str de json
         try{
             message_text = JSON.parse(message_text);
         } catch{
@@ -92,9 +99,6 @@ wss.on("connection", function connection(websocketpeer){ // connection d'un clie
             return;
         }
         //console.log("message reçu : " + message_text.type);
-        // on met à jour le temps
-        connexions_timeout.set(websocketpeer, Date.now());
-        //connexions_timeout[websocketpeer] = Date.now();
 
         // on lance handle
         handle(websocketpeer, message_text, message_bytes);
@@ -103,7 +107,7 @@ wss.on("connection", function connection(websocketpeer){ // connection d'un clie
 
 function check_stop(){
     try{
-        var fichier_read = fs.readFileSync("stop-server.txt");
+        let fichier_read = fs.readFileSync("stop-server.txt");
         if (fichier_read == "1"){
             console.log("arrêt du serveur");
             exit();
@@ -113,5 +117,20 @@ function check_stop(){
     }
 };
 
+function check_timeout(){
+    let client;
+    for(client of connexions_timeout.keys()){
+        //console.log("%d > %d", Date.now() - connexions_timeout.get(client), timeout_time);
+        if (Date.now() - connexions_timeout.get(client) > timeout_time){
+            // on enlève la connexion de connexions_timeout et connexions_data et on la coupe
+            console.log("suppression timeout")
+            connexions_timeout.delete(client);
+            connexions_data.delete(client);
+            if (client.readyState == WebSocket.CONNECTING || client.readyState == WebSocket.OPEN) client.terminate();
+        }
+    }
+}
+
+setInterval(check_timeout, 10000); // on vérifie si des connexions sont rompues toutes les minutes
 setInterval(check_stop, 60000); // on vérifie si le serveur doit s'arrêter toutes les minutes
 console.log("serveur lancé");

@@ -8,7 +8,7 @@ func _ready() -> void:
 	# on met le content_scale_factor
 	get_window().content_scale_factor = Settings.get_setting("echelle")
 
-# fonction à copier coller à chaque racine
+# fonction à copier coller à chaque racine d'interface principale
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("echelle_down") and get_window().content_scale_factor > 0.25:
 		get_window().content_scale_factor -= 0.25

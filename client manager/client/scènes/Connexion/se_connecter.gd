@@ -1,6 +1,5 @@
 extends Button
 
-
 func _on_pressed() -> void:
 	if Client.is_locked:
 		Notif.add_notif(tr("NOT_ALLOWED"))
@@ -21,22 +20,24 @@ func _on_pressed() -> void:
 		Client.is_locked = false
 		return
 	
-	set_process(true) # pour checker si ça réussit ou échoue
+	# on lance l'animation du logo
+	get_tree().get_first_node_in_group("animation logo").play("battement")
+	
+	#set_process(true) # pour checker si ça réussit ou échoue
 
+func connected():
+	# connexion réussie
+	# mettre ici fonction permettant d'envoyer la demande de connexion
+	pass
+
+func disconnected():
+	Notif.add_notif(tr("CONNECTION_FAILED"))
+	Client.is_locked = false
+	
+	# on arrête l'animation du logo
+	get_tree().get_first_node_in_group("animation logo").play("RESET")
+	
 func _ready() -> void:
 	set_process(false)
-
-func _process(delta: float) -> void:
-	# fonction pour cheker la réussite ou l'échec de la connexion au serveur
-	var state = Client.socket.get_ready_state()
-	if state == WebSocketPeer.STATE_CLOSED:
-		Notif.add_notif(tr("CONNECTION_FAILED"))
-		Client.is_locked = false
-		set_process(false)
-		
-	elif state == WebSocketPeer.STATE_OPEN:
-		# connexion réussie
-		print("connexion réussie")
-		# mettre ici fonction permettant d'envoyer la demande de connexion
-		
-		set_process(false)
+	Client.connected.connect(connected)
+	Client.disconnected.connect(disconnected)
