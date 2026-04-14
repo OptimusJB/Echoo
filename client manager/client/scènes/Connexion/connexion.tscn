@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://b534t1dx6onp" path="res://client/scènes/Connexion/options.gd" id="3_4ebt3"]
 [ext_resource type="FontFile" uid="uid://csnflw5p3ceff" path="res://assets/police.otf" id="3_jcgtn"]
 [ext_resource type="Script" uid="uid://de6274stljiah" path="res://client/scènes/Connexion/se_connecter.gd" id="7_4ebt3"]
+[ext_resource type="Script" uid="uid://cy7obs2rmgtbo" path="res://client/scènes/Connexion/nouveau_compte.gd" id="8_woofx"]
 
 [sub_resource type="Animation" id="Animation_4ebt3"]
 length = 0.001
@@ -302,8 +303,37 @@ size_flags_horizontal = 4
 text = "CONNECT_SERVER"
 script = ExtResource("7_4ebt3")
 
+[node name="espace4" type="Control" parent="VBoxContainer" unique_id=2144439050]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="nouveau compte" type="VBoxContainer" parent="VBoxContainer" unique_id=1314082398]
+visible = false
+layout_mode = 2
+script = ExtResource("8_woofx")
+
+[node name="texte création" type="Label" parent="VBoxContainer/nouveau compte" unique_id=1790806639]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Ce nom d'utilisateur est libre.
+Créer un compte ?"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/nouveau compte" unique_id=1011555682]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="oui création" type="Button" parent="VBoxContainer/nouveau compte/HBoxContainer" unique_id=784403823]
+layout_mode = 2
+text = "oui"
+
+[node name="non création" type="Button" parent="VBoxContainer/nouveau compte/HBoxContainer" unique_id=1189385282]
+layout_mode = 2
+text = "non"
+
 [connection signal="pressed" from="marges/options serveur/choisir serveur" to="marges/options serveur/options" method="_on_choisir_serveur_pressed"]
 [connection signal="pressed" from="marges/options serveur/valider" to="marges/options serveur/options" method="_on_valider_pressed"]
 [connection signal="pressed" from="marges/options serveur/options/radio/wss" to="marges/options serveur/options/radio" method="_on_wss_pressed"]
 [connection signal="pressed" from="marges/options serveur/options/radio/ws" to="marges/options serveur/options/radio" method="_on_ws_pressed"]
 [connection signal="pressed" from="VBoxContainer/se connecter" to="VBoxContainer/se connecter" method="_on_pressed"]
+[connection signal="pressed" from="VBoxContainer/nouveau compte/HBoxContainer/oui création" to="VBoxContainer/nouveau compte" method="_on_oui_création_pressed"]
+[connection signal="pressed" from="VBoxContainer/nouveau compte/HBoxContainer/non création" to="VBoxContainer/nouveau compte" method="_on_non_création_pressed"]

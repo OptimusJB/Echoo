@@ -6,6 +6,7 @@ var url = "wss://192.168.1.26"
 var port = 25565
 
 var max_buffer = 1.049e+9 # environ 1000mio
+var buffer_slice = 2.097e+6 # environ 2mio
 var reponse = {"text":"", "bytes":null}	# reçu par le serveur
 
 # instance websocket
@@ -24,6 +25,9 @@ var is_locked = false
 
 var est_connecte = false
 var connexion_en_cours = false
+var timer_timeout:Timer
+
+var noeud_appelant
 
 func wait_connected(connexion:WebSocketPeer):
 	# fonction bloquante qui attend que le socket a établi la connexion
@@ -62,10 +66,11 @@ func connexion_serveur():
 	# on n'utilise pas heartbeat_interval parce que c'est de la merde
 	# à la place on crée notre propose système de ping
 	#socket.heartbeat_interval = 2
-	print("connexion")
+	print("connexion en cours à " + url + ":" + str(port))
 	nb_reponses_attendues = 0
 	last_reponse = Time.get_ticks_msec()
 	timer_ping.start()
+	timer_timeout.start()
 	connexion_en_cours = true
 	return 1
 
@@ -74,6 +79,14 @@ func timer_ping_timeout():
 		reponse = {"text":"", "bytes":null}
 		socket.send_text("quoi")
 		nb_reponses_attendues += 1
+
+func timer_timeout_timeout():
+	# STATE_CONNECTING à enlever si on veut pas que ça timeout pendant la connexion
+	var timeout_state = [socket.STATE_OPEN, socket.STATE_CONNECTING]
+	if Time.get_ticks_msec() - last_reponse > timeout_time && socket.get_ready_state() in timeout_state:
+		print("timeout déclenché")
+		nb_reponses_attendues = 0
+		socket.close()
 	
 func _ready() -> void:
 	# on initialise le timer
@@ -83,6 +96,13 @@ func _ready() -> void:
 	timer_ping.wait_time = 5 # ping toutes les 5 sec
 	timer_ping.timeout.connect(timer_ping_timeout)
 	add_child(timer_ping)
+	
+	timer_timeout = Timer.new()
+	timer_timeout.autostart = false
+	timer_timeout.one_shot = false
+	timer_timeout.wait_time = 10
+	timer_timeout.timeout.connect(timer_timeout_timeout)
+	add_child(timer_timeout)
 	
 	# on augmente les limites de buffer du socket (environ 100mio pour être large)
 	socket.inbound_buffer_size = max_buffer
@@ -113,13 +133,6 @@ func _process(_delta: float) -> void:
 	
 	# si nb_reponses_attendues > 0, on check les potentiels paquets arrivés
 	if nb_reponses_attendues > 0:
-		# on regarde d'abord le temps de timeout
-		if Time.get_ticks_msec() - last_reponse > timeout_time:
-			print("connexion perdue")
-			nb_reponses_attendues = 0
-			socket.close()
-			return
-		
 		if socket.get_available_packet_count():
 			last_reponse = Time.get_ticks_msec()
 		while socket.get_available_packet_count():
@@ -140,3 +153,41 @@ func _process(_delta: float) -> void:
 					reponse["bytes"] = paquet
 				else:
 					reponse["bytes"] += paquet
+			
+			# on check si le message entier est parvenu
+			if "&SPFEND&" in reponse["text"]:
+				# on tronque pour enlever &SPFEND&
+				reponse["text"] = reponse["text"].substr(0, len(reponse["text"]) - len("&SPFEND&"))
+				
+				# reponse["text"] doit être sous forme de JSON
+				var message_text = JSON.parse_string(reponse["text"])
+				var message_bytes = reponse["bytes"]
+				reponse = {"text":"", "bytes":null}	# on supprime le contenu de réponse
+				
+				if message_text == null:
+					print("un message a été reçu, mais le parse en json a échoué")
+					return
+				
+				nb_reponses_attendues -= 1
+				noeud_appelant.received(message_text, message_bytes)
+				
+func send(message):	# soit str soit bytes, le stringify doit avoir été fait avant
+	if message is String:
+		# on envoie directement le message sans découpe (on suppose qu'on est en dessous de la limite)
+		socket.send_text(message + "&SPFEND&")
+		nb_reponses_attendues += 1
+		return
+	# sinon on suppose que c'est des bytes, on découpe
+	while message:
+		socket.send(message.slice(0, buffer_slice))
+		message = message.slice(buffer_slice)
+	socket.send_text("&SPFEND&")
+	nb_reponses_attendues += 1
+
+func check_keys(message_json:Dictionary, liste_cles:Array):
+	# retourne true si toutes les clés sont dans message_json
+	var liste_cles_message = message_json.keys()
+	for cle in liste_cles:
+		if not cle in liste_cles_message:
+			return 0
+	return 1

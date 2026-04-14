@@ -1,5 +1,7 @@
 extends Button
 
+var disconnect_notif = true
+
 func _on_pressed() -> void:
 	if Client.is_locked:
 		Notif.add_notif(tr("NOT_ALLOWED"))
@@ -10,15 +12,19 @@ func _on_pressed() -> void:
 		Notif.add_notif(tr("INVALID_INFOS"))
 		return
 	
-	# on tente la connexion
 	Client.is_locked = true
-	Client.url = Settings.get_setting("type connexion") + "://" + Settings.get_setting("ip")
-	Client.port = FonctionsGlobal.to_int(Settings.get_setting("port"))
-	Notif.add_notif(tr("LOGGING_IN"))
-	if Client.connexion_serveur() < 0:
-		Notif.add_notif(tr("CONNECTION_FAILED"))
-		Client.is_locked = false
-		return
+	# on regarde si on est déhà connecté au serveur
+	if Client.socket.get_ready_state() == Client.socket.STATE_OPEN:
+		connected()
+	else:
+		# on tente la connexion
+		Client.url = Settings.get_setting("type connexion") + "://" + Settings.get_setting("ip")
+		Client.port = FonctionsGlobal.to_int(Settings.get_setting("port"))
+		Notif.add_notif(tr("LOGGING_IN"))
+		if Client.connexion_serveur() < 0:
+			Notif.add_notif(tr("CONNECTION_FAILED"))
+			Client.is_locked = false
+			return
 	
 	# on lance l'animation du logo
 	get_tree().get_first_node_in_group("animation logo").play("battement")
@@ -27,11 +33,43 @@ func _on_pressed() -> void:
 
 func connected():
 	# connexion réussie
-	# mettre ici fonction permettant d'envoyer la demande de connexion
-	pass
+	# on réupère le pseudo et le mot de passe
+	FonctionsGlobal.pseudo = $"../select_nom".text
+	FonctionsGlobal.mdp = $"../select_mdp".text
+	
+	# on envoie
+	Client.noeud_appelant = self
+	Client.send(JSON.stringify({"type":"se connecter", "pseudo":FonctionsGlobal.pseudo, "mdp":FonctionsGlobal.mdp}))
 
+func received(message_json, _message_bytes):
+	get_tree().get_first_node_in_group("animation logo").play("RESET")
+	if not Client.check_keys(message_json, ["type", "resultat"]):
+		Client.socket.close()
+		Client.is_locked = false
+		return
+		
+	if message_json["type"] == "se connecter":
+		if message_json["resultat"] == "oui":
+			# réussite de la connexion, on stocke les infos du serveur
+			#print("résultat connexion : ", message_json)
+			FonctionsGlobal.id_serveur = message_json["id serveur"]
+			FonctionsGlobal.taille_envoi_fichier = message_json["taille envoi fichier"]
+			get_tree().change_scene_to_file("res://client/scènes/Accueil/Accueil.tscn")
+		elif message_json["resultat"] == "non":
+			# mot de passe invalide
+			Notif.add_notif(tr("WRONG_PASSWORD"))
+			#Client.socket.close()
+			
+		elif message_json["resultat"] == "new":
+			# nouveau compte
+			$"../nouveau compte".visible = true
+	Client.is_locked = false
+	
 func disconnected():
-	Notif.add_notif(tr("CONNECTION_FAILED"))
+	if disconnect_notif:
+		Notif.add_notif(tr("CONNECTION_FAILED"))
+	else:
+		disconnect_notif = true
 	Client.is_locked = false
 	
 	# on arrête l'animation du logo

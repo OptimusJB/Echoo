@@ -1,6 +1,8 @@
 import { WebSocketServer } from "ws";
 import fs from "node:fs";
 import { exit } from "node:process";
+import sqlite, { DatabaseSync } from 'node:sqlite';
+import { randomInt } from "node:crypto";
 
 let ip="0.0.0.0";
 let port=25565;
@@ -9,53 +11,211 @@ let connexions_data = new Map;
 
 let timeout_time = 10000; // en ms
 
+let buffer_slice = 2.097e+6 // environ 2mio
+
 // on crée le fichier de stop du serveur
 try{
-    fs.writeFileSync("stop-server.txt", "0");
+    fs.writeFileSync("stop_server.txt", "0");
 }catch{
-    console.log("échec de l'initalisation du fichier stop-server.txt");
+    console.log("échec de l'initalisation du fichier stop_server.txt");
     exit();
 }
 
-// on récupère l'ip et le port dans le fichier "server-ip.json"
+// on récupère / crée l'identifiant du serveur
+var id_serveur;
 try{
-    if(!fs.existsSync("server-ip.json")){
+    if(!fs.existsSync("server_id.txt")){
+        // on crée le fichier
+        id_serveur = randomInt(999999999999).toString()
+        fs.writeFileSync("server_id.txt", id_serveur);
+    }
+
+    let fichier_read = fs.readFileSync("server_id.txt", "utf-8");
+    id_serveur = parseInt(fichier_read);
+
+} catch{
+    console.log("un erreur est survenue lors de la lecture du fichier server_id.txt");
+    exit();
+}
+
+// on récupère l'ip et le port dans le fichier "server_ip.json"
+try{
+    if(!fs.existsSync("server_ip.json")){
         // on crée le fichier
         let data_fichier = {
             "ip":"0.0.0.0",
             "port":25565
         }
         let data_str = JSON.stringify(data_fichier);
-        fs.writeFileSync("server-ip.json", data_str);
+        fs.writeFileSync("server_ip.json", data_str);
     }
 
-    let fichier_read = fs.readFileSync("server-ip.json", "utf-8");
+    let fichier_read = fs.readFileSync("server_ip.json", "utf-8");
     let data_fichier = JSON.parse(fichier_read);
+
+    ip = fichier_read["ip"];
+    port = parseInt(fichier_read["port"]);
+
+} catch{
+    console.log("un erreur est survenue lors de la lecture du fichier server_ip.json");
+    exit();
+}
+
+// on récupère les settings présents dans server_settings.txt
+try{
+    if(!fs.existsSync("server_settings.txt")){
+        console.log("fichier server_settings.txt introuvable");
+        exit();
+    }
+
+    let fichier_read = fs.readFileSync("server_settings.txt", "utf-8");
+    var server_settings = JSON.parse(fichier_read);
+
+} catch{
+    console.log("un erreur est survenue lors de la lecture du fichier server_settings.txt");
+    exit();
+}
+
+// on tente d'ouvrir la base de données
+try{
+    if(!fs.existsSync("chemin_database.txt")){
+        // on crée le fichier
+        fs.writeFileSync("chemin_database.txt", "server_data.db");
+    }
+
+    let fichier_read = fs.readFileSync("chemin_database.txt", "utf-8");
+    if(!fs.existsSync(fichier_read)){
+        console.log("le fichier " + fichier_read + " n'existe pas");
+        exit();
+    }
+    
+    // on essaye d'ouvrir la base de données
+    try{
+        var database = new DatabaseSync(fichier_read);
+    } catch{
+        console.log("impossible d'ouvrir la base de données");
+        exit();
+    }
 
 
 } catch{
-    console.log("un erreur est survenue lors de la lecture du fichier server-ip.json");
+    console.log("un erreur est survenue lors de la lecture du fichier chemin_database.txt");
     exit();
 }
 
 const wss = new WebSocketServer({
     port:25565,
+    host:ip,
 });
 
+function database_select(requete, arguments_requete){
+    let requete_prepare = database.prepare(requete);
+    return requete_prepare.all(...arguments_requete); // ... tranforme une liste en arguments
+}
 
-function handle(websocketpeer, message_text, message_bytes){
+function database_exec(requete, arguments_requete){
+    let requete_prepare = database.prepare(requete);
+    return requete_prepare.run(...arguments_requete);
+}
+
+function send(message_envoi, websocketpeer){
+    if (typeof message_envoi == "string"){
+        // c'est une chaine de caractères, donc on envoi tout directement
+        websocketpeer.send(message_envoi + "&SPFEND&");
+    }
+    else{
+        // on suppose que c'est des bytes, on envoie par morceaux
+        let i = 0;
+        let sous_message;
+        while(i < message_envoi.length){
+            sous_message = message_envoi.subarray(i, buffer_slice);
+            websocketpeer.send(sous_message);
+            i = i + sous_message.length;
+        }
+        websocketpeer.send("&SPFEND&");
+    }
+}
+
+function handle(websocketpeer, message_json, message_bytes){
     // message de la forme {'type':'valeur', ...}
+    // TODO ajouter vérification des clés
+    if(message_json.type == "se connecter"){
+        let resultat;
+        if (server_settings["mode bannissement"] == 0)
+            resultat = database_select("SELECT password, (SELECT MAX(banni) FROM Utilisateurs WHERE ip=?) AS banni FROM Utilisateurs WHERE username = ?", [websocketpeer.ip_client, message_json.pseudo]);
+        else resultat = database_select("SELECT password, banni FROM Utilisateurs WHERE username = ?", [message_json.pseudo]);
+        
+        if(resultat.length > 0){
+            // l'utilisateur existe
+            if(resultat[0].password == message_json.mdp && resultat[0].banni == 0){
+                // l'utilisateur peut se connecter
+                websocketpeer.est_connecte = true;
+                websocketpeer.pseudo = message_json.pseudo;
+                websocketpeer.mdp = message_json.mdp;
+                send(JSON.stringify({"type":"se connecter", "resultat":"oui", "taille envoi fichier":server_settings["taille envoi fichier"], "id serveur":id_serveur}), websocketpeer);
+            }
+            else{
+                // mauvais mot de passe
+                send(JSON.stringify({"type":"se connecter", "resultat":"non"}), websocketpeer);
+            }
+        }
+        else{
+            // l'utilisateur n'existe pas (création de compte)
+            send(JSON.stringify({"type":"se connecter", "resultat":"new"}), websocketpeer);
+        }
+    }
+    else if(message_json.type == "nouveau compte"){
+        // on vérifie que l'ip n'est pas bannie
+        let resultat;
+        if (server_settings["mode bannissement"] == 0){
+            resultat = database_select("SELECT MAX(banni) FROM Utilisateurs WHERE ip=?", [websocketpeer.ip_client]);
+            if (resultat.length > 0){
+                if(resultat[0].banni == 1){
+                    console.log("tentative de connexion d'une ip, fermeture socket");
+                    websocketpeer.terminate()
+                }
+            }
+        }
+
+        // on vérifie que le pseudo n'existe pas
+        resultat = database_select("SELECT username FROM Utilisateurs WHERE username=?", [message_json.pseudo]);
+        if (resultat.length == 0){
+        // TODO : faire un hashage
+        resultat = database_exec("INSERT INTO Utilisateurs(username, password, ip, banni) VALUES(?, ?, ?, 0)", [message_json.pseudo, message_json.mdp, websocketpeer.ip_client]);
+        
+        console.log("nouvel utilisateur : " + message_json.pseudo);
+        send(JSON.stringify({"type":"nouveau compte", "resultat":"oui"}), websocketpeer);
+        } else send(JSON.stringify({"type":"nouveau compte", "resultat":"non"}), websocketpeer);
+        
+        
+    }
+    else if(websocketpeer.est_connecte){ // on vérifie que l'utilisateur est connecté
+    }
+    else{
+        console.log("type invalide, fermeture socket");
+        websocketpeer.terminate();
+    }
 };
 
 
-wss.on("connection", function connection(websocketpeer){ // connection d'un client
+wss.on("connection", function connection(websocketpeer, req){ // connection d'un client
     connexions_timeout.set(websocketpeer, Date.now());
     connexions_data.set(websocketpeer, new Map);
     let message_bytes;
     let message_text = "";
 
+    // on initialise les différents attributs du socket
+    websocketpeer.est_connecte = false;
+    websocketpeer.pseudo = "";
+    websocketpeer.mdp = "";
+
+    // on met l'ip du websocket
+    // TODO checker XforwardedFor
+    websocketpeer.ip_client = req.socket.remoteAddress;
+
     websocketpeer.on("error", console.error);
     websocketpeer.on("message", function message(data, est_binaire){
+
         // on met à jour le temps
         connexions_timeout.set(websocketpeer, Date.now());
 
@@ -84,12 +244,12 @@ wss.on("connection", function connection(websocketpeer){ // connection d'un clie
         }
         if (!connexions_data.get(websocketpeer).get("text").includes("&SPFEND&")) return; // le message n'est pas encore complet
         
-        // le message est complet, on enlève &SPFBEGIN& et &SPFEND&
-        message_text = connexions_data.get(websocketpeer).get("text").split("&SPFBEGIN&")[1].split("&SPFEND&")[0];
+        // le message est complet, on enlève  &SPFEND&
+        message_text = connexions_data.get(websocketpeer).get("text").split("&SPFEND&")[0];
         message_bytes = connexions_data.get(websocketpeer).get("bytes");
 
         // on supprime le contenu de connexions_data
-        connexions_data.delete(websocketpeer);
+        connexions_data.set(websocketpeer, new Map);
 
         // message_text est censé être sous forme de str de json
         try{
@@ -107,23 +267,24 @@ wss.on("connection", function connection(websocketpeer){ // connection d'un clie
 
 function check_stop(){
     try{
-        let fichier_read = fs.readFileSync("stop-server.txt");
+        let fichier_read = fs.readFileSync("stop_server.txt");
         if (fichier_read == "1"){
             console.log("arrêt du serveur");
             exit();
         }
     }catch{
-        console.log("échec de la lecture du fichier stop-server.txt");
+        console.log("échec de la lecture du fichier stop_server.txt");
     }
 };
 
 function check_timeout(){
     let client;
+    //console.log("taille : " + wss.clients.size)
     for(client of connexions_timeout.keys()){
         //console.log("%d > %d", Date.now() - connexions_timeout.get(client), timeout_time);
         if (Date.now() - connexions_timeout.get(client) > timeout_time){
             // on enlève la connexion de connexions_timeout et connexions_data et on la coupe
-            console.log("suppression timeout")
+            //console.log("suppression timeout")
             connexions_timeout.delete(client);
             connexions_data.delete(client);
             if (client.readyState == WebSocket.CONNECTING || client.readyState == WebSocket.OPEN) client.terminate();

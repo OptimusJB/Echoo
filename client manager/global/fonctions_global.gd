@@ -1,5 +1,13 @@
 extends Node
 
+# variables globales
+var pseudo = ""
+var mdp = ""
+
+var taille_envoi_fichier = 0.0
+var id_serveur = 0
+
+
 var start_music_selected = null # pour le shift sélection des musiques
 #var musics_selected = [] # liste des musiques sélectionnées
 

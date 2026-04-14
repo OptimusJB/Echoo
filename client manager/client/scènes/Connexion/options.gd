@@ -28,3 +28,6 @@ func _on_valider_pressed() -> void:
 	$"../choisir serveur".visible = true
 	
 	Notif.add_notif(tr("NOTIF_SERVER_CHANGED"))
+	
+	# on close le socket au cas où il est déjà ouvert
+	Client.socket.close()
