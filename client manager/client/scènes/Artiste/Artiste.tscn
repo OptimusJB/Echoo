@@ -1,0 +1,64 @@
+[gd_scene format=3 uid="uid://bvsqtth08llbv"]
+
+[ext_resource type="Theme" uid="uid://36276l8ev85m" path="res://assets/theme_spoutoufy.tres" id="1_6siyv"]
+[ext_resource type="Script" uid="uid://dfn83ko6n52mn" path="res://client/scènes/Artiste/artiste.gd" id="1_oodt7"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_50tfm"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.2784314, 0.2784314, 0.2784314, 0)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_087bc"]
+corner_radius_top_left = 40
+corner_radius_top_right = 40
+corner_radius_bottom_right = 40
+corner_radius_bottom_left = 40
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_unmqm"]
+load_path = "res://.godot/imported/icone_base.png-91e1e2733a0b629740258488393281cb.ctex"
+
+[node name="Artiste" type="PanelContainer" unique_id=1436555055]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 50.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_50tfm")
+script = ExtResource("1_oodt7")
+
+[node name="Musique" type="HBoxContainer" parent="." unique_id=1253112777]
+layout_mode = 2
+size_flags_vertical = 0
+theme = ExtResource("1_6siyv")
+
+[node name="masque" type="PanelContainer" parent="Musique" unique_id=873011327]
+clip_children = 1
+layout_mode = 2
+mouse_filter = 1
+theme_override_styles/panel = SubResource("StyleBoxFlat_087bc")
+
+[node name="image" type="TextureRect" parent="Musique/masque" unique_id=1990597262]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+texture = SubResource("CompressedTexture2D_unmqm")
+expand_mode = 2
+stretch_mode = 4
+
+[node name="milieu" type="VBoxContainer" parent="Musique" unique_id=2059656144]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="nom" type="Label" parent="Musique/milieu" unique_id=1197125478]
+layout_mode = 2
+size_flags_vertical = 6
+text = "nom artiste"
+clip_text = true
+text_overrun_behavior = 3
+
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]

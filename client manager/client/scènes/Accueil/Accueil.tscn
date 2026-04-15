@@ -1,5 +1,11 @@
 [gd_scene format=3 uid="uid://chpuy5plkrye1"]
 
+[ext_resource type="Theme" uid="uid://36276l8ev85m" path="res://assets/theme_spoutoufy.tres" id="1_2pu2h"]
+[ext_resource type="Script" uid="uid://b2rj5kq07ugbh" path="res://client/scènes/Accueil/accueil.gd" id="2_rdqf3"]
+[ext_resource type="Script" uid="uid://unl618kuvipn" path="res://client/scènes/Accueil/rechercher.gd" id="3_23ks8"]
+[ext_resource type="PackedScene" uid="uid://cgqyfnmnlool" path="res://client/scènes/PlaylistsView/PlaylistView.tscn" id="3_rdqf3"]
+[ext_resource type="Script" uid="uid://clb6okmwhvjmt" path="res://client/scènes/Accueil/enumeration.gd" id="5_3t856"]
+
 [node name="Accueil" type="Control" unique_id=644059938]
 layout_mode = 3
 anchors_preset = 15
@@ -7,3 +13,67 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("1_2pu2h")
+script = ExtResource("2_rdqf3")
+
+[node name="fond" type="ColorRect" parent="." unique_id=562066699]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.07444572, 0.07444573, 0.07444573, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1766515087]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="marges supérieur" type="MarginContainer" parent="VBoxContainer" unique_id=692308771]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="rechercher" type="LineEdit" parent="VBoxContainer/marges supérieur" unique_id=1840486204]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+size_flags_horizontal = 6
+placeholder_text = "SEARCH"
+script = ExtResource("3_23ks8")
+
+[node name="timer texte" type="Timer" parent="VBoxContainer/marges supérieur/rechercher" unique_id=227345036]
+one_shot = true
+
+[node name="Button" type="Button" parent="VBoxContainer/marges supérieur" unique_id=1592837296]
+layout_mode = 2
+size_flags_horizontal = 8
+text = "SETTINGS"
+
+[node name="marges corps" type="MarginContainer" parent="VBoxContainer" unique_id=1773847381]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_right = 0
+
+[node name="corps" type="HSplitContainer" parent="VBoxContainer/marges corps" unique_id=1227525279]
+layout_mode = 2
+
+[node name="PlaylistView" parent="VBoxContainer/marges corps/corps" unique_id=281558320 instance=ExtResource("3_rdqf3")]
+layout_mode = 2
+
+[node name="Enumeration" type="PanelContainer" parent="VBoxContainer/marges corps/corps" unique_id=812830795]
+layout_mode = 2
+script = ExtResource("5_3t856")
+
+[node name="player" type="MarginContainer" parent="VBoxContainer" unique_id=431285132]
+layout_mode = 2
+
+[connection signal="charger_recherche" from="VBoxContainer/marges supérieur/rechercher" to="VBoxContainer/marges corps/corps/Enumeration" method="_on_rechercher_charger_recherche"]
+[connection signal="text_changed" from="VBoxContainer/marges supérieur/rechercher" to="VBoxContainer/marges supérieur/rechercher" method="_on_text_changed"]
+[connection signal="timeout" from="VBoxContainer/marges supérieur/rechercher/timer texte" to="VBoxContainer/marges supérieur/rechercher" method="_on_timer_texte_timeout"]

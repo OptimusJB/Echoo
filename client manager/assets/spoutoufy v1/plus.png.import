@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://f0ucyopamyvg"
-path="res://.godot/imported/loop_playlist.png-cd6c47891589e8ea3cf2220b81eee655.ctex"
+uid="uid://cyikuiwxe20yd"
+path="res://.godot/imported/plus.png-dfa95724f68245e5f0b379fd98fc9260.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/loop_playlist.png"
-dest_files=["res://.godot/imported/loop_playlist.png-cd6c47891589e8ea3cf2220b81eee655.ctex"]
+source_file="res://assets/spoutoufy v1/plus.png"
+dest_files=["res://.godot/imported/plus.png-dfa95724f68245e5f0b379fd98fc9260.ctex"]
 
 [params]
 

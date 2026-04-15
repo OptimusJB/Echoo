@@ -1,0 +1,88 @@
+[gd_scene format=3 uid="uid://c6fixhnuyemra"]
+
+[ext_resource type="Script" uid="uid://cw5vncg1x2yki" path="res://client/scènes/Musique/musique.gd" id="1_gn3mo"]
+[ext_resource type="Theme" uid="uid://36276l8ev85m" path="res://assets/theme_spoutoufy.tres" id="1_hc07j"]
+[ext_resource type="Texture2D" uid="uid://b46i5f7r8nbe2" path="res://assets/spoutoufy v1/next.png" id="2_gn3mo"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hc07j"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.6, 0.6, 0.6, 0)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[node name="Musique" type="PanelContainer" unique_id=1465903364]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 53.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_hc07j")
+script = ExtResource("1_gn3mo")
+
+[node name="éléments" type="HBoxContainer" parent="." unique_id=1008157327]
+layout_mode = 2
+size_flags_vertical = 0
+theme = ExtResource("1_hc07j")
+
+[node name="gauche" type="MarginContainer" parent="éléments" unique_id=1552124141]
+layout_mode = 2
+
+[node name="numéro" type="Label" parent="éléments/gauche" unique_id=1198589167]
+layout_mode = 2
+text = "99"
+
+[node name="play" type="TextureButton" parent="éléments/gauche" unique_id=1096064595]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 1
+texture_normal = ExtResource("2_gn3mo")
+ignore_texture_size = true
+stretch_mode = 4
+
+[node name="image" type="TextureRect" parent="éléments" unique_id=1234535756]
+custom_minimum_size = Vector2(50, 1)
+layout_mode = 2
+texture = ExtResource("2_gn3mo")
+expand_mode = 2
+stretch_mode = 4
+
+[node name="milieu" type="VBoxContainer" parent="éléments" unique_id=718201696]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+
+[node name="titre" type="Label" parent="éléments/milieu" unique_id=1047462541]
+layout_mode = 2
+text = "titre"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="artiste" type="LinkButton" parent="éléments/milieu" unique_id=1474983583]
+layout_mode = 2
+mouse_filter = 1
+theme_override_font_sizes/font_size = 15
+text = "artiste"
+underline = 1
+text_overrun_behavior = 3
+
+[node name="espace" type="Control" parent="éléments" unique_id=1822113894]
+custom_minimum_size = Vector2(20, 0)
+layout_mode = 2
+mouse_filter = 1
+
+[node name="LinkButton" type="LinkButton" parent="éléments" unique_id=1349966337]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+mouse_filter = 1
+text = "album"
+underline = 1
+text_overrun_behavior = 3
+
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]

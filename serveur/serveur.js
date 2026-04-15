@@ -136,6 +136,20 @@ function send(message_envoi, websocketpeer){
     }
 }
 
+function check_keys(message_json, liste_cles){
+    // fonction pas vraiment utilise vu que le handle est dans un try
+    let cle;
+    for (cle of liste_cles){
+        let found = false;
+        let cle_json
+        for(cle_json in message_json){
+            if (cle_json == valeur) found = true;
+        }
+        if (!found); return 0;
+    }
+    return 1;
+}
+
 function handle(websocketpeer, message_json, message_bytes){
     // message de la forme {'type':'valeur', ...}
     // TODO ajouter vérification des clés
@@ -164,6 +178,9 @@ function handle(websocketpeer, message_json, message_bytes){
             send(JSON.stringify({"type":"se connecter", "resultat":"new"}), websocketpeer);
         }
     }
+
+
+
     else if(message_json.type == "nouveau compte"){
         // on vérifie que l'ip n'est pas bannie
         let resultat;
@@ -189,7 +206,27 @@ function handle(websocketpeer, message_json, message_bytes){
         
         
     }
+
+
+
     else if(websocketpeer.est_connecte){ // on vérifie que l'utilisateur est connecté
+
+        if(message_json.type == "rechercher"){
+            let resultat;
+            let max_results = 20
+            let est_fin = false;
+            resultat = database_select("SELECT id, nom, image, id_album, type_table FROM (SELECT Musiques.id, Musiques.nom, Albums.image, id_album, 'musique' AS type_table FROM Musiques JOIN Albums ON Albums.id = Musiques.id_album WHERE Musiques.nom LIKE ? UNION ALL SELECT Artistes.id, Artistes.nom, Artistes.image, NULL AS id_album, 'artiste' AS type_table FROM Artistes WHERE nom LIKE ?) ORDER BY nom ASC LIMIT ? OFFSET ?", [message_json.recherche, message_json.recherche, max_results, message_json["nb charges"]]);
+            
+            if (resultat < max_results) est_fin = true;
+            send(JSON.stringify({"type":"rechercher", "resultat":resultat, "est fin":est_fin}));
+        }
+
+
+        
+        else{
+        console.log("type invalide, fermeture socket");
+        websocketpeer.terminate();
+        }
     }
     else{
         console.log("type invalide, fermeture socket");
@@ -261,6 +298,7 @@ wss.on("connection", function connection(websocketpeer, req){ // connection d'un
         //console.log("message reçu : " + message_text.type);
 
         // on lance handle
+        // TODO : ajouter try
         handle(websocketpeer, message_text, message_bytes);
     });
 });

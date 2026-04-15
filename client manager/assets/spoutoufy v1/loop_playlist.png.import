@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d2rbvu6urkbjk"
-path="res://.godot/imported/password_image.png-fef16a10b7567442ed67ee5371417cfb.ctex"
+uid="uid://f0ucyopamyvg"
+path="res://.godot/imported/loop_playlist.png-2ee75e0f1d397e7281cc65a08cfba413.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/password_image.png"
-dest_files=["res://.godot/imported/password_image.png-fef16a10b7567442ed67ee5371417cfb.ctex"]
+source_file="res://assets/spoutoufy v1/loop_playlist.png"
+dest_files=["res://.godot/imported/loop_playlist.png-2ee75e0f1d397e7281cc65a08cfba413.ctex"]
 
 [params]
 
