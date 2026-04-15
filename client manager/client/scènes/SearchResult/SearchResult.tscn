@@ -2,7 +2,6 @@
 
 [ext_resource type="Theme" uid="uid://36276l8ev85m" path="res://assets/theme_spoutoufy.tres" id="1_6edmc"]
 [ext_resource type="Script" uid="uid://bdinfsmd4cidq" path="res://client/scènes/SearchResult/search_result.gd" id="1_ljbly"]
-[ext_resource type="PackedScene" uid="uid://c6fixhnuyemra" path="res://client/scènes/Musique/Musique.tscn" id="3_3m8fs"]
 
 [node name="SearchResult" type="ScrollContainer" unique_id=1381377857]
 anchors_preset = 15
@@ -23,8 +22,9 @@ layout_mode = 2
 size_flags_horizontal = 4
 text = "SEARCH_RESULTS"
 
-[node name="Musique" parent="liste" unique_id=617661207 instance=ExtResource("3_3m8fs")]
+[node name="charger plus" type="Button" parent="liste" unique_id=1743487185]
 layout_mode = 2
+size_flags_horizontal = 4
+text = "charger plus"
 
-[node name="Musique2" parent="liste" unique_id=1465903364 instance=ExtResource("3_3m8fs")]
-layout_mode = 2
+[connection signal="pressed" from="liste/charger plus" to="." method="_on_charger_plus_pressed"]

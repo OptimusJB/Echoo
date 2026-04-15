@@ -1,11 +1,13 @@
 extends Node
 var loaded = {}	# de la forme chemin_ressource:ressource
+var load_history = []
 var icone_base = load("res://assets/icone_base.png")
 var dossier_images_utilisateurs = "users playlists images/"	# contient les images des playlists des utilisateurs
 
 func clear():
 	# supprime tout le contenu de loaded
 	loaded.clear()
+	load_history = []
 	
 func get_ressource_extension(chemin_ressource:String) -> String:
 	return chemin_ressource.split(".")[len(chemin_ressource.split("."))-1]
@@ -18,7 +20,7 @@ func get_ressource(chemin_ressource):
 		return 0
 	return loaded[chemin_ressource]
 	
-func charger_ressource(chemin_ressource, data:PackedByteArray):
+func charger_ressource(chemin_ressource, data:PackedByteArray, cache_max=-1):
 	# la fonction réécrit dans loaded, même si ça existe déjà
 	var ressource
 	var erreur = 0
@@ -52,9 +54,18 @@ func charger_ressource(chemin_ressource, data:PackedByteArray):
 		loaded[chemin_ressource] = icone_base
 	else:
 		loaded[chemin_ressource] = ressource
+		load_history.append(chemin_ressource)
+		
+		while cache_max > 0 && len(load_history) > cache_max:
+			# on supprime le contenu
+			print("suppression de " + load_history[0] + " du cache")
+			if load_history[0] in loaded.keys():
+				loaded.erase(load_history[0])
+			load_history.remove_at(0)
 	return erreur
 
 func set_icone_base(chemin_ressource):
+	# ne compte pas dans l'historique
 	loaded[chemin_ressource] = icone_base
 	
 func get_file_data(chemin_fichier):

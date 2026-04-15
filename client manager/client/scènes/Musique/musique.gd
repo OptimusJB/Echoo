@@ -1,5 +1,6 @@
 extends PanelContainer
 var focus = false
+var afficher_numero = true	# si false, le bouton n'apparaîtra pas quand on enlève la souris
 
 func _on_mouse_entered() -> void:
 	focus = true

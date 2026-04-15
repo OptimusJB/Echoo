@@ -132,7 +132,7 @@ function send(message_envoi, websocketpeer){
             websocketpeer.send(sous_message);
             i = i + sous_message.length;
         }
-        websocketpeer.send("&SPFEND&");
+        //websocketpeer.send("&SPFEND&");
     }
 }
 
@@ -213,12 +213,21 @@ function handle(websocketpeer, message_json, message_bytes){
 
         if(message_json.type == "rechercher"){
             let resultat;
-            let max_results = 20
+            let max_results = 20;
             let est_fin = false;
-            resultat = database_select("SELECT id, nom, image, id_album, type_table FROM (SELECT Musiques.id, Musiques.nom, Albums.image, id_album, 'musique' AS type_table FROM Musiques JOIN Albums ON Albums.id = Musiques.id_album WHERE Musiques.nom LIKE ? UNION ALL SELECT Artistes.id, Artistes.nom, Artistes.image, NULL AS id_album, 'artiste' AS type_table FROM Artistes WHERE nom LIKE ?) ORDER BY nom ASC LIMIT ? OFFSET ?", [message_json.recherche, message_json.recherche, max_results, message_json["nb charges"]]);
-            
-            if (resultat < max_results) est_fin = true;
-            send(JSON.stringify({"type":"rechercher", "resultat":resultat, "est fin":est_fin}));
+            resultat = database_select("SELECT id, nom, image, id_album, nom_album, nom_artiste, type_table FROM (SELECT Musiques.id, Musiques.nom, Albums.image, id_album, Albums.nom AS nom_album, Artistes.nom AS nom_artiste, 'musique' AS type_table FROM Musiques JOIN Albums ON Albums.id = Musiques.id_album JOIN Artistes ON Artistes.id = Albums.id_artiste WHERE Musiques.nom LIKE ? OR Albums.nom LIKE ? UNION ALL SELECT Artistes.id, Artistes.nom, Artistes.image, NULL AS id_album, NULL AS nom_album, NULL AS nom_artiste, 'artiste' AS type_table FROM Artistes JOIN Albums ON Albums.id_artiste = Artistes.id WHERE Artistes.nom LIKE ? OR Albums.nom LIKE ?) ORDER BY nom ASC LIMIT ? OFFSET ?", ["%" + message_json.recherche + "%", "%" + message_json.recherche + "%", "%" + message_json.recherche + "%", "%" + message_json.recherche + "%", max_results, message_json["nb charges"]]);
+            console.log("taille : " + resultat.length);
+            if (resultat.length < max_results) est_fin = true;
+            send(JSON.stringify({"type":"rechercher", "resultat":resultat, "est fin":est_fin}), websocketpeer);
+        }
+
+
+
+        else if(message_json.type == "get image"){
+            // pas besoin de vérif vu qu'on est dans un try
+            var fichier_read = fs.readFileSync(message_json.image);
+            send(fichier_read, websocketpeer);
+            send(JSON.stringify({"type":"get image", "resultat":"ok"}), websocketpeer);
         }
 
 
@@ -298,7 +307,7 @@ wss.on("connection", function connection(websocketpeer, req){ // connection d'un
         //console.log("message reçu : " + message_text.type);
 
         // on lance handle
-        // TODO : ajouter try
+        // TODO : ajouter try avec catch fermeture socket avec terminate, et aussi avec affichage de l'erreur
         handle(websocketpeer, message_text, message_bytes);
     });
 });

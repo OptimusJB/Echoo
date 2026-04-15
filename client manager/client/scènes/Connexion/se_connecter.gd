@@ -4,12 +4,12 @@ var disconnect_notif = true
 
 func _on_pressed() -> void:
 	if Client.is_locked:
-		Notif.add_notif(tr("NOT_ALLOWED"))
+		Notif.add_notif("NOT_ALLOWED")
 		return
 		
 	# on vérifie que le nom et le mot de passe sont valides
 	if not $"../select_nom".text or not $"../select_mdp".text:
-		Notif.add_notif(tr("INVALID_INFOS"))
+		Notif.add_notif("INVALID_INFOS")
 		return
 	
 	Client.is_locked = true
@@ -20,9 +20,9 @@ func _on_pressed() -> void:
 		# on tente la connexion
 		Client.url = Settings.get_setting("type connexion") + "://" + Settings.get_setting("ip")
 		Client.port = FonctionsGlobal.to_int(Settings.get_setting("port"))
-		Notif.add_notif(tr("LOGGING_IN"))
+		Notif.add_notif("LOGGING_IN")
 		if Client.connexion_serveur() < 0:
-			Notif.add_notif(tr("CONNECTION_FAILED"))
+			Notif.add_notif("CONNECTION_FAILED")
 			Client.is_locked = false
 			return
 	
@@ -44,6 +44,7 @@ func connected():
 func received(message_json, _message_bytes):
 	get_tree().get_first_node_in_group("animation logo").play("RESET")
 	if not Client.check_keys(message_json, ["type", "resultat"]):
+		push_error("clés invalides")
 		Client.socket.close()
 		Client.is_locked = false
 		return
@@ -57,7 +58,7 @@ func received(message_json, _message_bytes):
 			get_tree().change_scene_to_file("res://client/scènes/Accueil/Accueil.tscn")
 		elif message_json["resultat"] == "non":
 			# mot de passe invalide
-			Notif.add_notif(tr("WRONG_PASSWORD"))
+			Notif.add_notif("WRONG_PASSWORD")
 			#Client.socket.close()
 			
 		elif message_json["resultat"] == "new":
@@ -67,7 +68,7 @@ func received(message_json, _message_bytes):
 	
 func disconnected():
 	if disconnect_notif:
-		Notif.add_notif(tr("CONNECTION_FAILED"))
+		Notif.add_notif("CONNECTION_FAILED")
 	else:
 		disconnect_notif = true
 	Client.is_locked = false

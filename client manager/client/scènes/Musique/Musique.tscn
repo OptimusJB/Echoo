@@ -53,8 +53,8 @@ expand_mode = 2
 stretch_mode = 4
 
 [node name="milieu" type="VBoxContainer" parent="éléments" unique_id=718201696]
-custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="titre" type="Label" parent="éléments/milieu" unique_id=1047462541]
 layout_mode = 2
@@ -75,7 +75,7 @@ custom_minimum_size = Vector2(20, 0)
 layout_mode = 2
 mouse_filter = 1
 
-[node name="LinkButton" type="LinkButton" parent="éléments" unique_id=1349966337]
+[node name="album" type="LinkButton" parent="éléments" unique_id=1349966337]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
