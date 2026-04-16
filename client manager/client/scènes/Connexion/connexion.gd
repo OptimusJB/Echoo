@@ -7,6 +7,9 @@ func _ready() -> void:
 	
 	# on met le content_scale_factor
 	get_window().content_scale_factor = Settings.get_setting("echelle")
+	
+	var preset_notif = get_tree().get_nodes_in_group("notif_preset")[0]
+	preset_notif.get_node("texte").add_theme_font_override("font", load("res://assets/police.otf"))
 
 # fonction à copier coller à chaque racine d'interface principale
 func _input(event: InputEvent) -> void:

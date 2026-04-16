@@ -10,6 +10,8 @@ func auto_position():
 	if mouse_position[0] + options_size[0] > screen_size[0]:
 		# dépassement droit
 		$"fond".position.x = screen_size[0] - options_size[0]
+	
+	#print(str(mouse_position[1]) + " + " + str(options_size[1]) + " > " + str(screen_size[1]))
 	if mouse_position[1] + options_size[1] > screen_size[1]:
 		# dépassement bas
 		$"fond".position.y = screen_size[1] - options_size[1]
@@ -40,7 +42,7 @@ func creer_sous_menu(ce_noeud, liste_options:Array):
 		# on connecte son signal
 		new_bouton.option_choisie.connect(option_finale)
 	
-	auto_position()
+	auto_position.call_deferred()
 	visible=true
 
 func _gui_input(event: InputEvent) -> void:

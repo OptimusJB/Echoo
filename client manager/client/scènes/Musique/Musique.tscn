@@ -2,7 +2,9 @@
 
 [ext_resource type="Script" uid="uid://cw5vncg1x2yki" path="res://client/scènes/Musique/musique.gd" id="1_gn3mo"]
 [ext_resource type="Theme" uid="uid://36276l8ev85m" path="res://assets/theme_spoutoufy.tres" id="1_hc07j"]
-[ext_resource type="Texture2D" uid="uid://b46i5f7r8nbe2" path="res://assets/spoutoufy v1/next.png" id="2_gn3mo"]
+[ext_resource type="Script" uid="uid://g0e2uxfn44ya" path="res://client/scènes/Musique/afficher_cacher.gd" id="3_4p4h5"]
+[ext_resource type="Texture2D" uid="uid://c0ykbryeky5lq" path="res://assets/play_no_bordures.png" id="4_3aofp"]
+[ext_resource type="Texture2D" uid="uid://5ohqfljbhutl" path="res://assets/icone_base.png" id="5_3aofp"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hc07j"]
 content_margin_left = 5.0
@@ -27,28 +29,34 @@ script = ExtResource("1_gn3mo")
 layout_mode = 2
 size_flags_vertical = 0
 theme = ExtResource("1_hc07j")
+theme_override_constants/separation = 4
 
 [node name="gauche" type="MarginContainer" parent="éléments" unique_id=1552124141]
 layout_mode = 2
+theme_override_constants/margin_left = 4
 
 [node name="numéro" type="Label" parent="éléments/gauche" unique_id=1198589167]
 layout_mode = 2
-text = "99"
+text = "1"
+horizontal_alignment = 2
+script = ExtResource("3_4p4h5")
 
 [node name="play" type="TextureButton" parent="éléments/gauche" unique_id=1096064595]
+self_modulate = Color(1, 1, 1, 0)
 custom_minimum_size = Vector2(25, 25)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 mouse_filter = 1
-texture_normal = ExtResource("2_gn3mo")
+texture_normal = ExtResource("4_3aofp")
 ignore_texture_size = true
 stretch_mode = 4
+script = ExtResource("3_4p4h5")
 
 [node name="image" type="TextureRect" parent="éléments" unique_id=1234535756]
 custom_minimum_size = Vector2(50, 1)
 layout_mode = 2
-texture = ExtResource("2_gn3mo")
+texture = ExtResource("5_3aofp")
 expand_mode = 2
 stretch_mode = 4
 
@@ -86,3 +94,4 @@ text_overrun_behavior = 3
 
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
+[connection signal="pressed" from="éléments/gauche/play" to="." method="_on_play_pressed"]

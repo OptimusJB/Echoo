@@ -1,7 +1,7 @@
 extends ScrollContainer
 var noeud_musique = load("res://client/scènes/Musique/Musique.tscn")
 var noeud_artiste = load("res://client/scènes/Artiste/Artiste.tscn")
-var script_get_ressource = load("res://client/scènes/Accueil/easy_get_ressource.gd")
+var script_get_ressource = load("res://client/scènes/Accueil/easy_get_ressource.gd").new()
 
 var noeud_enum:Node
 var recherche_actuelle
@@ -24,11 +24,26 @@ func charger_recherche(recherche = null, noeud_enumeration = null):
 	if noeud_enumeration:
 		noeud_enum = noeud_enumeration
 	
+	if first_charge:
+		# on ajoute la recherche dans la scène
+		for enfant in noeud_enum.get_children():
+			enfant.queue_free()
+		noeud_enum.add_child(self)
+		
+		var noeud_player = get_tree().get_first_node_in_group("player") # pour créer la playlist
+		noeud_player.playlist = []
+		noeud_player.nom_playlist = "recherche"
+	
+		first_charge = false
+	$"liste/charger plus".visible = false
+	$"liste/resultat recherche".text = "LOADING"
+		
 	Client.noeud_appelant = self
 	Client.send(JSON.stringify({"type":"rechercher", "recherche":recherche_actuelle, "nb charges":nb_charges}))
 
-func received(message_json, message_bytes):
+func received(message_json, _message_bytes):
 	if not Client.check_keys(message_json, ["type", "resultat", "est fin"]):
+		push_error("clés invalides")
 		Client.socket.close()
 		Client.is_locked = false
 		return
@@ -38,28 +53,46 @@ func received(message_json, message_bytes):
 	#print("reçu : ", message_json)
 	#print("reçu")
 	var new_noeud
+	var noeud_player = get_tree().get_first_node_in_group("player") # pour créer la playlist
+	var i = len(noeud_player.playlist)	# pour position_playlist
+	
 	for element in message_json["resultat"]:
 		if element["type_table"] == "musique":
 			# l'élément est une musique
+			noeud_player.playlist.append(FonctionsGlobal.to_int(element["id"]))
+			
 			new_noeud = noeud_musique.instantiate()
 			new_noeud.afficher_numero = false
-			new_noeud.get_node("éléments/gauche/numéro").visible = false
+			new_noeud.id = FonctionsGlobal.to_int(element["id"])
+			
+			#print("position playlist : ", i)
+			new_noeud.position_playlist = i
+			i += 1
+			
+			new_noeud.get_node("éléments/gauche/numéro").cacher()
 			new_noeud.get_node("éléments/milieu/titre").text = FonctionsGlobal.to_text(element["nom"])
 			new_noeud.get_node("éléments/milieu/artiste").text = FonctionsGlobal.to_text(element["nom_artiste"])
 			new_noeud.get_node("éléments/album").text = FonctionsGlobal.to_text(element["nom_album"])
 			
-			new_noeud.get_node("éléments/image").texture = await script_get_ressource.new().easy_get_image(element["image"])
+			new_noeud.get_node("éléments/image").texture = await script_get_ressource.easy_get_image(element["image"])
 			
 			$"liste".add_child(new_noeud)
 			$"liste".move_child(new_noeud, $"liste".get_child_count() - 2)
 			nb_charges += 1
-	
-	if first_charge:
-		# on ajoute la recherche dans la scène
-		for enfant in noeud_enum.get_children():
-			enfant.queue_free()
-		noeud_enum.add_child(self)
-		first_charge = false
+		
+		elif element["type_table"] == "artiste":
+			# l'élément est un artiste
+			new_noeud = noeud_artiste.instantiate()
+			new_noeud.id = FonctionsGlobal.to_int(element["id"])
+			new_noeud.get_node("éléments/nom").text = FonctionsGlobal.to_text(element["nom"])
+			new_noeud.get_node("éléments/masque/image").texture = await script_get_ressource.easy_get_image(element["image"])
+			
+			$"liste".add_child(new_noeud)
+			$"liste".move_child(new_noeud, $"liste".get_child_count() - 2)
+			nb_charges += 1
+		else:
+			push_error("problème type_table")
+			return
 	
 	# on cache / montre charger plus selon si c'est la fin ou pas
 	if message_json["est fin"]:
@@ -67,6 +100,7 @@ func received(message_json, message_bytes):
 	else:
 		$"liste/charger plus".visible = true
 		
+	$"liste/resultat recherche".text = "SEARCH_RESULTS"
 	Client.is_locked = false
 
 

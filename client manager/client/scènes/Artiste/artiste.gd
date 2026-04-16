@@ -1,5 +1,6 @@
 extends PanelContainer
 var focus = false
+var id:int
 
 func _on_mouse_entered() -> void:
 	focus = true

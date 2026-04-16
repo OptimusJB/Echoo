@@ -57,7 +57,7 @@ func _charger_album_view(id_album):
 	# on récupère les infos de l'artiste
 	var resultat = noeud_database.exec_sql("SELECT nom, annee, image, genre FROM Albums WHERE id=?", [id_album])
 	if not resultat[0]:
-		Notif.add_notif("éche de la récupération des infos de l'album")
+		Notif.add_notif("échec de la récupération des infos de l'album")
 		charger_musiques_actif = false
 		return
 	if len(resultat[1]) != 1:

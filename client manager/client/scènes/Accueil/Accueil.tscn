@@ -5,6 +5,29 @@
 [ext_resource type="Script" uid="uid://unl618kuvipn" path="res://client/scènes/Accueil/rechercher.gd" id="3_23ks8"]
 [ext_resource type="PackedScene" uid="uid://cgqyfnmnlool" path="res://client/scènes/PlaylistsView/PlaylistView.tscn" id="3_rdqf3"]
 [ext_resource type="Script" uid="uid://clb6okmwhvjmt" path="res://client/scènes/Accueil/enumeration.gd" id="5_3t856"]
+[ext_resource type="Texture2D" uid="uid://cbsuvjw4vgbop" path="res://assets/random_off.png" id="6_4y3b3"]
+[ext_resource type="Script" uid="uid://d2qbh46v2axke" path="res://client/scènes/Accueil/player.gd" id="6_ydhwd"]
+[ext_resource type="Texture2D" uid="uid://d1wosgciqnqqy" path="res://assets/random_on.png" id="7_ydhwd"]
+[ext_resource type="Script" uid="uid://bhjf3yqfa0q38" path="res://client/scènes/Accueil/resize.gd" id="8_4y3b3"]
+[ext_resource type="Texture2D" uid="uid://bmqfkrtlnvxpm" path="res://assets/previous.png" id="9_bep4y"]
+[ext_resource type="Texture2D" uid="uid://dewxkaw3q0pmg" path="res://assets/play_player.png" id="10_mep5p"]
+[ext_resource type="Texture2D" uid="uid://d0nar31bka6v6" path="res://assets/pause.png" id="11_fu6rb"]
+[ext_resource type="Texture2D" uid="uid://ca3fkt5jethnd" path="res://assets/next.png" id="12_pjwbn"]
+[ext_resource type="Texture2D" uid="uid://cjfuqk16t8egn" path="res://assets/repeat_off.png" id="13_5hb7a"]
+[ext_resource type="Script" uid="uid://c3lmtabi5i43t" path="res://client/scènes/Accueil/repeter.gd" id="15_bep4y"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ltm4r"]
+content_margin_bottom = 10.0
+bg_color = Color(0.15199637, 0.15199637, 0.15199631, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.15294118, 0.15294118, 0.15294118, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 
 [node name="Accueil" type="Control" unique_id=644059938]
 layout_mode = 3
@@ -71,9 +94,209 @@ layout_mode = 2
 layout_mode = 2
 script = ExtResource("5_3t856")
 
-[node name="player" type="MarginContainer" parent="VBoxContainer" unique_id=431285132]
+[node name="player" type="PanelContainer" parent="VBoxContainer" unique_id=697010720 groups=["player"]]
 layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ltm4r")
+script = ExtResource("6_ydhwd")
+
+[node name="centre" type="VBoxContainer" parent="VBoxContainer/player" unique_id=1220152365]
+layout_mode = 2
+
+[node name="boutons" type="HBoxContainer" parent="VBoxContainer/player/centre" unique_id=1784014770]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_constants/separation = 20
+
+[node name="size aléatoire" type="Control" parent="VBoxContainer/player/centre/boutons" unique_id=1106405839]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="aléatoire" type="TextureButton" parent="VBoxContainer/player/centre/boutons/size aléatoire" unique_id=109472057]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -12.5
+offset_top = -12.5
+offset_right = 12.5
+offset_bottom = 12.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+toggle_mode = true
+texture_normal = ExtResource("6_4y3b3")
+texture_pressed = ExtResource("7_ydhwd")
+ignore_texture_size = true
+stretch_mode = 4
+script = ExtResource("8_4y3b3")
+
+[node name="size precedent" type="Control" parent="VBoxContainer/player/centre/boutons" unique_id=1079895244]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="precedent" type="TextureButton" parent="VBoxContainer/player/centre/boutons/size precedent" unique_id=1396000455]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -12.5
+offset_top = -12.5
+offset_right = 12.5
+offset_bottom = 12.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("9_bep4y")
+ignore_texture_size = true
+stretch_mode = 4
+script = ExtResource("8_4y3b3")
+
+[node name="size jouer" type="Control" parent="VBoxContainer/player/centre/boutons" unique_id=84585214]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="jouer" type="TextureButton" parent="VBoxContainer/player/centre/boutons/size jouer" unique_id=166279710]
+custom_minimum_size = Vector2(45, 45)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -22.5
+offset_top = -22.5
+offset_right = 22.5
+offset_bottom = 22.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+toggle_mode = true
+texture_normal = ExtResource("10_mep5p")
+texture_pressed = ExtResource("11_fu6rb")
+ignore_texture_size = true
+stretch_mode = 4
+script = ExtResource("8_4y3b3")
+
+[node name="size suivant" type="Control" parent="VBoxContainer/player/centre/boutons" unique_id=529134364]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="suivant" type="TextureButton" parent="VBoxContainer/player/centre/boutons/size suivant" unique_id=947269435]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -12.5
+offset_top = -12.5
+offset_right = 12.5
+offset_bottom = 12.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("12_pjwbn")
+ignore_texture_size = true
+stretch_mode = 4
+script = ExtResource("8_4y3b3")
+
+[node name="size repeter" type="Control" parent="VBoxContainer/player/centre/boutons" unique_id=1002962118]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="repeter" type="TextureButton" parent="VBoxContainer/player/centre/boutons/size repeter" unique_id=796409984]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -12.5
+offset_top = -12.5
+offset_right = 12.5
+offset_bottom = 12.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource("13_5hb7a")
+ignore_texture_size = true
+stretch_mode = 4
+script = ExtResource("15_bep4y")
+
+[node name="slider" type="HBoxContainer" parent="VBoxContainer/player/centre" unique_id=1982445940]
+layout_mode = 2
+
+[node name="espace" type="Control" parent="VBoxContainer/player/centre/slider" unique_id=1321095395]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="temps actuel" type="Label" parent="VBoxContainer/player/centre/slider" unique_id=547299972]
+layout_mode = 2
+theme_override_font_sizes/font_size = 17
+text = "2:43"
+
+[node name="barre" type="HSlider" parent="VBoxContainer/player/centre/slider" unique_id=1735262540]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+
+[node name="temps max" type="Label" parent="VBoxContainer/player/centre/slider" unique_id=1727420931]
+layout_mode = 2
+theme_override_font_sizes/font_size = 17
+text = "4:01"
+
+[node name="espace2" type="Control" parent="VBoxContainer/player/centre/slider" unique_id=1183299164]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="VBoxContainer/player" unique_id=191914258]
 
 [connection signal="charger_recherche" from="VBoxContainer/marges supérieur/rechercher" to="VBoxContainer/marges corps/corps/Enumeration" method="_on_rechercher_charger_recherche"]
 [connection signal="text_changed" from="VBoxContainer/marges supérieur/rechercher" to="VBoxContainer/marges supérieur/rechercher" method="_on_text_changed"]
 [connection signal="timeout" from="VBoxContainer/marges supérieur/rechercher/timer texte" to="VBoxContainer/marges supérieur/rechercher" method="_on_timer_texte_timeout"]
+[connection signal="button_down" from="VBoxContainer/player/centre/boutons/size aléatoire/aléatoire" to="VBoxContainer/player/centre/boutons/size aléatoire/aléatoire" method="_on_button_down"]
+[connection signal="button_up" from="VBoxContainer/player/centre/boutons/size aléatoire/aléatoire" to="VBoxContainer/player/centre/boutons/size aléatoire/aléatoire" method="_on_button_up"]
+[connection signal="mouse_entered" from="VBoxContainer/player/centre/boutons/size aléatoire/aléatoire" to="VBoxContainer/player/centre/boutons/size aléatoire/aléatoire" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="VBoxContainer/player/centre/boutons/size aléatoire/aléatoire" to="VBoxContainer/player/centre/boutons/size aléatoire/aléatoire" method="_on_mouse_exited"]
+[connection signal="button_down" from="VBoxContainer/player/centre/boutons/size precedent/precedent" to="VBoxContainer/player/centre/boutons/size precedent/precedent" method="_on_button_down"]
+[connection signal="button_up" from="VBoxContainer/player/centre/boutons/size precedent/precedent" to="VBoxContainer/player/centre/boutons/size precedent/precedent" method="_on_button_up"]
+[connection signal="mouse_entered" from="VBoxContainer/player/centre/boutons/size precedent/precedent" to="VBoxContainer/player/centre/boutons/size precedent/precedent" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="VBoxContainer/player/centre/boutons/size precedent/precedent" to="VBoxContainer/player/centre/boutons/size precedent/precedent" method="_on_mouse_exited"]
+[connection signal="button_down" from="VBoxContainer/player/centre/boutons/size jouer/jouer" to="VBoxContainer/player/centre/boutons/size jouer/jouer" method="_on_button_down"]
+[connection signal="button_up" from="VBoxContainer/player/centre/boutons/size jouer/jouer" to="VBoxContainer/player/centre/boutons/size jouer/jouer" method="_on_button_up"]
+[connection signal="mouse_entered" from="VBoxContainer/player/centre/boutons/size jouer/jouer" to="VBoxContainer/player/centre/boutons/size jouer/jouer" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="VBoxContainer/player/centre/boutons/size jouer/jouer" to="VBoxContainer/player/centre/boutons/size jouer/jouer" method="_on_mouse_exited"]
+[connection signal="button_down" from="VBoxContainer/player/centre/boutons/size suivant/suivant" to="VBoxContainer/player/centre/boutons/size suivant/suivant" method="_on_button_down"]
+[connection signal="button_up" from="VBoxContainer/player/centre/boutons/size suivant/suivant" to="VBoxContainer/player/centre/boutons/size suivant/suivant" method="_on_button_up"]
+[connection signal="mouse_entered" from="VBoxContainer/player/centre/boutons/size suivant/suivant" to="VBoxContainer/player/centre/boutons/size suivant/suivant" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="VBoxContainer/player/centre/boutons/size suivant/suivant" to="VBoxContainer/player/centre/boutons/size suivant/suivant" method="_on_mouse_exited"]
+[connection signal="button_down" from="VBoxContainer/player/centre/boutons/size repeter/repeter" to="VBoxContainer/player/centre/boutons/size repeter/repeter" method="_on_button_down"]
+[connection signal="button_up" from="VBoxContainer/player/centre/boutons/size repeter/repeter" to="VBoxContainer/player/centre/boutons/size repeter/repeter" method="_on_button_up"]
+[connection signal="mouse_entered" from="VBoxContainer/player/centre/boutons/size repeter/repeter" to="VBoxContainer/player/centre/boutons/size repeter/repeter" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="VBoxContainer/player/centre/boutons/size repeter/repeter" to="VBoxContainer/player/centre/boutons/size repeter/repeter" method="_on_mouse_exited"]
+[connection signal="pressed" from="VBoxContainer/player/centre/boutons/size repeter/repeter" to="VBoxContainer/player/centre/boutons/size repeter/repeter" method="_on_pressed"]

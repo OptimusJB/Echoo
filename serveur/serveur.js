@@ -3,6 +3,8 @@ import fs from "node:fs";
 import { exit } from "node:process";
 import sqlite, { DatabaseSync } from 'node:sqlite';
 import { randomInt } from "node:crypto";
+import path from 'node:path';
+
 
 let ip="0.0.0.0";
 let port=25565;
@@ -128,9 +130,11 @@ function send(message_envoi, websocketpeer){
         let i = 0;
         let sous_message;
         while(i < message_envoi.length){
-            sous_message = message_envoi.subarray(i, buffer_slice);
+            sous_message = message_envoi.subarray(i, i + buffer_slice); // slice deprecated
             websocketpeer.send(sous_message);
             i = i + sous_message.length;
+            
+            //console.log(i + " et " + sous_message.length + " et " + message_envoi.length);
         }
         //websocketpeer.send("&SPFEND&");
     }
@@ -215,8 +219,9 @@ function handle(websocketpeer, message_json, message_bytes){
             let resultat;
             let max_results = 20;
             let est_fin = false;
-            resultat = database_select("SELECT id, nom, image, id_album, nom_album, nom_artiste, type_table FROM (SELECT Musiques.id, Musiques.nom, Albums.image, id_album, Albums.nom AS nom_album, Artistes.nom AS nom_artiste, 'musique' AS type_table FROM Musiques JOIN Albums ON Albums.id = Musiques.id_album JOIN Artistes ON Artistes.id = Albums.id_artiste WHERE Musiques.nom LIKE ? OR Albums.nom LIKE ? UNION ALL SELECT Artistes.id, Artistes.nom, Artistes.image, NULL AS id_album, NULL AS nom_album, NULL AS nom_artiste, 'artiste' AS type_table FROM Artistes JOIN Albums ON Albums.id_artiste = Artistes.id WHERE Artistes.nom LIKE ? OR Albums.nom LIKE ?) ORDER BY nom ASC LIMIT ? OFFSET ?", ["%" + message_json.recherche + "%", "%" + message_json.recherche + "%", "%" + message_json.recherche + "%", "%" + message_json.recherche + "%", max_results, message_json["nb charges"]]);
-            console.log("taille : " + resultat.length);
+            resultat = database_select("SELECT id, nom, image, id_album, nom_album, nom_artiste, type_table FROM (SELECT Musiques.id, Musiques.nom, Albums.image, id_album, Albums.nom AS nom_album, Artistes.nom AS nom_artiste, 'musique' AS type_table FROM Musiques JOIN Albums ON Albums.id = Musiques.id_album JOIN Artistes ON Artistes.id = Albums.id_artiste WHERE Musiques.nom LIKE ? OR Albums.nom LIKE ? UNION ALL SELECT DISTINCT Artistes.id, Artistes.nom, Artistes.image, NULL AS id_album, NULL AS nom_album, NULL AS nom_artiste, 'artiste' AS type_table FROM Artistes LEFT JOIN Albums ON Albums.id_artiste = Artistes.id WHERE Artistes.nom LIKE ? OR Albums.nom LIKE ?) ORDER BY nom ASC LIMIT ? OFFSET ?", ["%" + message_json.recherche + "%", "%" + message_json.recherche + "%", "%" + message_json.recherche + "%", "%" + message_json.recherche + "%", max_results, message_json["nb charges"]]);
+            //console.log("taille : " + resultat.length);
+            //console.log("stringify : " + JSON.stringify({"type":"rechercher", "resultat":resultat, "est fin":est_fin}))
             if (resultat.length < max_results) est_fin = true;
             send(JSON.stringify({"type":"rechercher", "resultat":resultat, "est fin":est_fin}), websocketpeer);
         }
@@ -225,9 +230,57 @@ function handle(websocketpeer, message_json, message_bytes){
 
         else if(message_json.type == "get image"){
             // pas besoin de vérif vu qu'on est dans un try
-            var fichier_read = fs.readFileSync(message_json.image);
+            let fichier_read = fs.readFileSync(message_json.image);
             send(fichier_read, websocketpeer);
             send(JSON.stringify({"type":"get image", "resultat":"ok"}), websocketpeer);
+        }
+
+
+        else if(message_json.type == "get music infos"){
+            let resultat;
+            resultat = database_select("SELECT Musiques.nom AS nom_musique, Albums.image AS image_musique, Artistes.nom AS nom_artiste FROM Musiques JOIN Albums ON Albums.id = Musiques.id_album JOIN Artistes ON Artistes.id = Albums.id_artiste WHERE Musiques.id = ?", [message_json.id]);
+            send(JSON.stringify({"type":"get music infos", "resultat":resultat[0]}), websocketpeer);
+        }
+
+
+        else if(message_json.type == "get music"){
+            let resultat;
+            let qualite;
+            if (!["min", "moy", "max"].includes(message_json["qualite"])){
+                console.log("qualité invalide, fermeture socket");
+                websocketpeer.terminate();
+                return;
+            }
+            resultat = database_select("SELECT min, moy, max FROM Musiques WHERE id=?", [message_json["id"]]);
+            
+            // on check la qualite a récupérer
+            qualite = message_json["qualite"];
+            while(qualite != "non"){
+                if (resultat[0][qualite]) break;
+                switch (qualite){
+                    case "min":
+                        qualite = "non";
+                        break;
+                    case "moy":
+                        qualite = "min";
+                        break;
+                    case "max":
+                        qualite = "max";
+                        break;
+                }
+            }
+            if (qualite == "non"){
+                // pas de qualités dispo
+                send(JSON.stringify({"type":"get music", "resultat":"non", "qualite":"non"}), websocketpeer);
+            }
+            else{
+                let extension = path.extname(resultat[0][qualite]);
+                
+                // on lit le fichier (pas besoin de vérifier, on est dans un try)
+                let fichier_data = fs.readFileSync(resultat[0][qualite]);
+                send(fichier_data, websocketpeer);
+                send(JSON.stringify({"type":"get music", "resultat":extension, "qualite":qualite}), websocketpeer);
+            }
         }
 
 

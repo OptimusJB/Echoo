@@ -181,7 +181,7 @@ func send(message):	# soit str soit bytes, le stringify doit avoir été fait av
 	while message:
 		socket.send(message.slice(0, buffer_slice))
 		message = message.slice(buffer_slice)
-	socket.send_text("&SPFEND&")
+	#socket.send_text("&SPFEND&")
 	nb_reponses_attendues += 1
 
 func check_keys(message_json:Dictionary, liste_cles:Array):

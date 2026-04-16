@@ -31,30 +31,31 @@ grow_horizontal = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_50tfm")
 script = ExtResource("1_oodt7")
 
-[node name="Musique" type="HBoxContainer" parent="." unique_id=1253112777]
+[node name="éléments" type="HBoxContainer" parent="." unique_id=1253112777]
 layout_mode = 2
 size_flags_vertical = 0
 theme = ExtResource("1_6siyv")
 
-[node name="masque" type="PanelContainer" parent="Musique" unique_id=873011327]
+[node name="espace" type="Control" parent="éléments" unique_id=1591748627]
+custom_minimum_size = Vector2(25, 0)
+layout_mode = 2
+
+[node name="masque" type="PanelContainer" parent="éléments" unique_id=873011327]
 clip_children = 1
 layout_mode = 2
 mouse_filter = 1
 theme_override_styles/panel = SubResource("StyleBoxFlat_087bc")
 
-[node name="image" type="TextureRect" parent="Musique/masque" unique_id=1990597262]
+[node name="image" type="TextureRect" parent="éléments/masque" unique_id=1990597262]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 texture = SubResource("CompressedTexture2D_unmqm")
 expand_mode = 2
 stretch_mode = 4
 
-[node name="milieu" type="VBoxContainer" parent="Musique" unique_id=2059656144]
+[node name="nom" type="Label" parent="éléments" unique_id=1197125478]
 layout_mode = 2
 size_flags_horizontal = 3
-
-[node name="nom" type="Label" parent="Musique/milieu" unique_id=1197125478]
-layout_mode = 2
 size_flags_vertical = 6
 text = "nom artiste"
 clip_text = true
