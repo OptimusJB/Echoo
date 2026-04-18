@@ -15,7 +15,7 @@ var socket = WebSocketPeer.new()
 # timer pour l'exécution du ping
 var timer_ping:Timer
 var last_reponse
-var timeout_time = 10000 # en msec
+var timeout_time =  10000 # en msec
 
 # nombre de réponses attendues actuellement
 var nb_reponses_attendues = 0
@@ -75,10 +75,12 @@ func connexion_serveur():
 	return 1
 
 func timer_ping_timeout():
+	#print("rep attendues : ", nb_reponses_attendues)
 	if nb_reponses_attendues == 0 && socket.get_ready_state() == socket.STATE_OPEN:
 		reponse = {"text":"", "bytes":null}
 		socket.send_text("quoi")
 		nb_reponses_attendues += 1
+		print("ping envoyé")
 
 func timer_timeout_timeout():
 	# STATE_CONNECTING à enlever si on veut pas que ça timeout pendant la connexion
@@ -135,6 +137,9 @@ func _process(_delta: float) -> void:
 	if nb_reponses_attendues > 0:
 		if socket.get_available_packet_count():
 			last_reponse = Time.get_ticks_msec()
+			timer_ping.start()
+			#print("reset temps")
+			
 		while socket.get_available_packet_count():
 			paquet = socket.get_packet()
 			if socket.was_string_packet():
@@ -143,7 +148,6 @@ func _process(_delta: float) -> void:
 				# on check si c'est un pong
 				if paquet == "feur":
 					print("pong reçu")
-					timer_ping.start()
 					nb_reponses_attendues -= 1
 					return
 					
@@ -177,6 +181,7 @@ func send(message):	# soit str soit bytes, le stringify doit avoir été fait av
 		socket.send_text(message + "&SPFEND&")
 		nb_reponses_attendues += 1
 		return
+		
 	# sinon on suppose que c'est des bytes, on découpe
 	while message:
 		socket.send(message.slice(0, buffer_slice))

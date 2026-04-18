@@ -38,9 +38,7 @@ corner_radius_bottom_left = 15
 [sub_resource type="ImageTexture" id="ImageTexture_6q3mw"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5votx"]
-content_margin_left = 4.0
 content_margin_top = 4.0
-content_margin_right = 4.0
 content_margin_bottom = 4.0
 bg_color = Color(1, 1, 1, 1)
 corner_radius_top_left = 4
@@ -50,9 +48,7 @@ corner_radius_bottom_left = 4
 corner_detail = 6
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u7152"]
-content_margin_left = 4.0
 content_margin_top = 4.0
-content_margin_right = 4.0
 content_margin_bottom = 4.0
 bg_color = Color(0.003921569, 0.39607844, 0.92941177, 1)
 corner_radius_top_left = 4
@@ -62,9 +58,7 @@ corner_radius_bottom_left = 4
 corner_detail = 6
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sknd5"]
-content_margin_left = 4.0
 content_margin_top = 4.0
-content_margin_right = 4.0
 content_margin_bottom = 4.0
 bg_color = Color(0.35006407, 0.3500639, 0.35006392, 0.6)
 corner_radius_top_left = 4

@@ -1,5 +1,4 @@
 extends ScrollContainer
-var noeud_musique = load("res://client/scènes/Musique/Musique.tscn")
 var noeud_artiste = load("res://client/scènes/Artiste/Artiste.tscn")
 var script_get_ressource = load("res://client/scènes/Accueil/easy_get_ressource.gd").new()
 
@@ -61,20 +60,9 @@ func received(message_json, _message_bytes):
 			# l'élément est une musique
 			noeud_player.playlist.append(FonctionsGlobal.to_int(element["id"]))
 			
-			new_noeud = noeud_musique.instantiate()
-			new_noeud.afficher_numero = false
-			new_noeud.id = FonctionsGlobal.to_int(element["id"])
-			
-			#print("position playlist : ", i)
-			new_noeud.position_playlist = i
+			new_noeud = await FonctionsGlobal.creer_musique(FonctionsGlobal.to_int(element["id"]), i, FonctionsGlobal.to_text(element["nom"]), FonctionsGlobal.to_text(element["nom_artiste"]), FonctionsGlobal.to_text(element["nom_album"]), FonctionsGlobal.to_text(element["image"]), false)
 			i += 1
-			
 			new_noeud.get_node("éléments/gauche/numéro").cacher()
-			new_noeud.get_node("éléments/milieu/titre").text = FonctionsGlobal.to_text(element["nom"])
-			new_noeud.get_node("éléments/milieu/artiste").text = FonctionsGlobal.to_text(element["nom_artiste"])
-			new_noeud.get_node("éléments/album").text = FonctionsGlobal.to_text(element["nom_album"])
-			
-			new_noeud.get_node("éléments/image").texture = await script_get_ressource.easy_get_image(element["image"])
 			
 			$"liste".add_child(new_noeud)
 			$"liste".move_child(new_noeud, $"liste".get_child_count() - 2)

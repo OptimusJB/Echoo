@@ -384,7 +384,7 @@ function check_timeout(){
         //console.log("%d > %d", Date.now() - connexions_timeout.get(client), timeout_time);
         if (Date.now() - connexions_timeout.get(client) > timeout_time){
             // on enlève la connexion de connexions_timeout et connexions_data et on la coupe
-            //console.log("suppression timeout")
+            console.log("suppression timeout");
             connexions_timeout.delete(client);
             connexions_data.delete(client);
             if (client.readyState == WebSocket.CONNECTING || client.readyState == WebSocket.OPEN) client.terminate();

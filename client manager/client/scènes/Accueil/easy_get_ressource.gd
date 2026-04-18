@@ -18,6 +18,7 @@ func easy_get_music(id_musique, qualite):
 	var extension = reponse[0]["resultat"]	# avec le '.' devant
 	
 	# on charge la musique
+	#print("octets reçus : ", len(reponse[1]))
 	var musique_stream
 	if extension == ".mp3":
 		musique_stream = AudioStreamMP3.load_from_buffer(reponse[1])

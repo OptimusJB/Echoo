@@ -1,4 +1,6 @@
 extends Node
+var noeud_musique = load("res://client/scènes/Musique/Musique.tscn")
+var script_get_ressource = load("res://client/scènes/Accueil/easy_get_ressource.gd").new()
 
 # variables globales
 var pseudo = ""
@@ -47,3 +49,25 @@ func to_text_int(element):
 
 func to_text_float(element):
 	return str(to_float(element))
+
+func secondes_to_text(temps:int):
+	var minutes = int(float(temps)/60)
+	var secondes = (temps % 60)
+	return str(minutes) + ":" + str(secondes).pad_zeros(2)
+
+func text_to_secondes(texte:String):
+	var parties = texte.split(":")
+	return int(parties[0]) * 60 + int(parties[1])
+
+func creer_musique(id:int, position_playlist:int, nom:String, nom_artiste:String, nom_album:String, image:String, afficher_numero:bool) -> Node:
+	var new_noeud = noeud_musique.instantiate()
+	new_noeud.afficher_numero = false
+	new_noeud.id = id
+	new_noeud.position_playlist = position_playlist
+	
+	new_noeud.get_node("éléments/milieu/titre").text = nom
+	new_noeud.get_node("éléments/milieu/artiste").text = nom_artiste
+	new_noeud.get_node("éléments/album").text = nom_album
+	
+	new_noeud.get_node("éléments/image").texture = await script_get_ressource.easy_get_image(image)
+	return new_noeud

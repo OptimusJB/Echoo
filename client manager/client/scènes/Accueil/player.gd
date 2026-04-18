@@ -1,4 +1,4 @@
-extends PanelContainer
+extends HBoxContainer
 var script_get_ressource = load("res://client/scènes/Accueil/easy_get_ressource.gd").new()
 
 var nom_playlist = ""
@@ -7,7 +7,9 @@ var position_play = null	# position actuelle de la musique jouée dans playlist_
 
 var playlist_play = []	# copie de playlist, en lien avec ce qui est joué actuellement
 
-func received(message_json, message_bytes):
+var player_grab = false	# true si la barre du player est maintenue
+
+func received(message_json, _message_bytes):
 	if not Client.check_keys(message_json, ["type", "resultat"]):
 		push_error("clés invalides")
 		Client.socket.close()
@@ -21,13 +23,32 @@ func received(message_json, message_bytes):
 	if not musique:
 		Notif.add_notif("GET_MUSIC_FAILED")
 	else:
-		$"AudioStreamPlayer".stream = musique
+		$"../AudioStreamPlayer".stream = musique
 		
 		# on change le mix target
-		if $AudioStreamPlayer.mix_target != FonctionsGlobal.to_int(Settings.get_setting("type son")):
-			$AudioStreamPlayer.mix_target = FonctionsGlobal.to_int(Settings.get_setting("type son"))
-		visible = true
-		$AudioStreamPlayer.play()
+		if $"../AudioStreamPlayer".mix_target != FonctionsGlobal.to_int(Settings.get_setting("type son")):
+			$"../AudioStreamPlayer".mix_target = FonctionsGlobal.to_int(Settings.get_setting("type son"))
+		
+		# on change les infos sur le player
+		$"centre/slider/temps actuel".text = FonctionsGlobal.secondes_to_text(0)
+		$"centre/slider/temps max".text = FonctionsGlobal.secondes_to_text($"../AudioStreamPlayer".stream.get_length())
+		$"gauche/image musique".texture = script_get_ressource.easy_get_image(infos["image_musique"])
+		$"gauche/infos musique/nom".text = FonctionsGlobal.to_text(infos["nom_musique"])
+		$"gauche/infos musique/artiste".text = FonctionsGlobal.to_text(infos["nom_artiste"])
+		
+		# on met à jour le slider
+		$"centre/slider/barre".max_value = $"../AudioStreamPlayer".stream.get_length()
+		$"centre/slider/barre".value = 0.0
+		
+		# on met le bouton sur pause
+		$"centre/boutons/size jouer/jouer".button_pressed = true
+		
+		# on met le bon volume
+		$"../AudioStreamPlayer".volume_linear = FonctionsGlobal.to_float(Settings.get_setting("volume"))
+	
+		$"../".visible = true
+		$"../AudioStreamPlayer".play()
+		
 	Client.is_locked = false
 	
 func jouer_musique(position_musique:int):
@@ -37,7 +58,7 @@ func jouer_musique(position_musique:int):
 	Client.is_locked = true
 	
 	# on coupe la musique en cours s'il y en a une
-	$AudioStreamPlayer.stop()
+	$"../AudioStreamPlayer".stop()
 	
 	position_play = position_musique
 	# on demande les infos de la musique au serveur
@@ -55,3 +76,72 @@ func creer_playlist_play(position_playlist:int):
 	
 	playlist_play = playlist.slice(position_playlist, len(playlist))
 	jouer_musique(0)
+
+
+func _on_timer_refresh_timeout() -> void:
+	# on met à jour le slider et le temps
+	if not get_window().has_focus() or not $"../AudioStreamPlayer".has_stream_playback() or player_grab:
+		return
+	
+	var avancement = $"../AudioStreamPlayer".get_playback_position()
+	$"centre/slider/barre".value = float(int(avancement))
+	$"centre/slider/temps actuel".text = FonctionsGlobal.secondes_to_text(avancement)
+	#print(avancement)
+	#print($"centre/slider/barre".value, " et ", $"centre/slider/temps actuel".text)
+
+func _on_barre_drag_started() -> void:
+	player_grab = true
+
+func changer_position(position):
+	var was_paused = $"../AudioStreamPlayer".stream_paused
+	
+	$"../AudioStreamPlayer".stream_paused = false	# seek ne fonctionne pas si aucun son ne joue
+	$"../AudioStreamPlayer".seek(min(position, $"../AudioStreamPlayer".stream.get_length() - 0.01))
+	if was_paused:
+		$"../AudioStreamPlayer".stream_paused = true
+		
+func _on_barre_drag_ended(value_changed: bool) -> void:
+	player_grab = false
+	# on change la position de lecture
+	changer_position($"centre/slider/barre".value)
+
+func _on_barre_value_changed(value: float) -> void:
+	$"centre/slider/temps actuel".text = FonctionsGlobal.secondes_to_text(int(value))
+
+
+func _on_jouer_toggled(toggled_on: bool) -> void:
+	# toggled_on --> en cours de lecture --> texture pause
+	if toggled_on:
+		$"../AudioStreamPlayer".stream_paused = false
+	else:
+		$"../AudioStreamPlayer".stream_paused = true
+
+
+func _on_audio_stream_player_finished() -> void:
+	# musique finie, on check s'il y a une musique suivante
+	if position_play >= len(playlist_play) - 1:
+		$"../".visible = false
+		$"../AudioStreamPlayer".stop()	# si jamais c'est suivant qui a appelé
+	else:
+		jouer_musique(position_play + 1)
+
+func _on_suivant_pressed() -> void:
+	_on_audio_stream_player_finished()
+
+func _on_precedent_pressed() -> void:
+	if position_play == 0 or $"../AudioStreamPlayer".get_playback_position() >= 5.0:
+		# on change la position de lecture
+		changer_position(0.0)
+	else:
+		jouer_musique(position_play - 1)
+
+
+func _on_barre_volume_value_changed(value: float) -> void:
+	# on modifie les settings et le son (sans sauvegarder pour éviter de le faire à la chaine)
+	Settings.set_setting("volume", $"droite/barre volume".value, false)
+	$"../AudioStreamPlayer".volume_linear = FonctionsGlobal.to_float(Settings.get_setting("volume"))
+
+
+func _on_barre_volume_drag_ended(value_changed: bool) -> void:
+	# on sauvegarde le volume
+	Settings.save_settings()

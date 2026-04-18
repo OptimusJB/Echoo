@@ -16,7 +16,7 @@ func _on_mouse_entered() -> void:
 	
 	# on affiche le play et on cache le numéro
 	$"éléments/gauche/numéro".cacher()
-	$"éléments/gauche/play".afficher()
+	$"éléments/gauche/size play/play".afficher()
 
 func _on_mouse_exited() -> void:
 	focus = false
@@ -26,7 +26,7 @@ func _on_mouse_exited() -> void:
 	add_theme_stylebox_override("panel", stylebox)
 	
 	# on affiche le numéro (si affiher_numero) et on cache le play
-	$"éléments/gauche/play".cacher()
+	$"éléments/gauche/size play/play".cacher()
 	if afficher_numero:
 		$"éléments/gauche/numéro".afficher()
 

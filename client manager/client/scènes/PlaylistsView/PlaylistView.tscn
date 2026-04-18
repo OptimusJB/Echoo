@@ -23,4 +23,5 @@ text = "LIBRARY"
 [node name="ajouter playlist" type="Button" parent="liste playlists/en-tête" unique_id=45620918]
 layout_mode = 2
 size_flags_horizontal = 10
+focus_mode = 0
 text = "ADD_PLAYLIST"
