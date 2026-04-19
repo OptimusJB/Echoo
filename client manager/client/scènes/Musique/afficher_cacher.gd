@@ -1,10 +1,10 @@
 extends Control
 
 func afficher():
-	self_modulate = Color(255, 255, 255, 255)
+	visible = true
 
 func cacher():
-	self_modulate = Color(255, 255, 255, 0)
+	visible = false
 
 func _on_mouse_entered() -> void:
 	custom_minimum_size.x += 5

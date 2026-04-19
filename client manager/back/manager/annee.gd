@@ -18,6 +18,3 @@ func update_annee(new_text: String) -> void:
 
 func _on_focus_exited() -> void:
 	update_annee(text)
-
-func _ready() -> void:
-	old_text = text

@@ -2,13 +2,13 @@
 
 importer="font_data_dynamic"
 type="FontFile"
-uid="uid://csnflw5p3ceff"
-path="res://.godot/imported/police.otf-4d5ceb83153ba6cc3493428d60031453.fontdata"
+uid="uid://c7lf85e1h2vw5"
+path="res://.godot/imported/Sofia Pro Semi Bold Az.otf-81d1222e9c69fa9b8d106aaa2607063e.fontdata"
 
 [deps]
 
-source_file="res://assets/police.otf"
-dest_files=["res://.godot/imported/police.otf-4d5ceb83153ba6cc3493428d60031453.fontdata"]
+source_file="res://assets/sofia-pro/Sofia Pro Semi Bold Az.otf"
+dest_files=["res://.godot/imported/Sofia Pro Semi Bold Az.otf-81d1222e9c69fa9b8d106aaa2607063e.fontdata"]
 
 [params]
 

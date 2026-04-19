@@ -5,7 +5,7 @@ signal disconnected
 var url = "wss://192.168.1.26"
 var port = 25565
 
-var max_buffer = 1.049e+9 # environ 1000mio
+var max_buffer = 1.049e+7 # environ 10mio
 var buffer_slice = 2.097e+6 # environ 2mio
 var reponse = {"text":"", "bytes":null}	# reçu par le serveur
 
@@ -139,7 +139,7 @@ func _process(_delta: float) -> void:
 			last_reponse = Time.get_ticks_msec()
 			timer_ping.start()
 			#print("reset temps")
-			
+			#print("nb available : ", socket.get_available_packet_count())
 		while socket.get_available_packet_count():
 			paquet = socket.get_packet()
 			if socket.was_string_packet():

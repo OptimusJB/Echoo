@@ -4,11 +4,18 @@ var script_get_ressource = load("res://client/scènes/Accueil/easy_get_ressource
 var nom_playlist = ""
 var playlist = []
 var position_play = null	# position actuelle de la musique jouée dans playlist_play
+var position_play_debut = null # première musique jouée (pour savoir où ça commence si on enlève l'aléatoire)
 
 var playlist_play = []	# copie de playlist, en lien avec ce qui est joué actuellement
 
 var player_grab = false	# true si la barre du player est maintenue
 
+
+func shuffle_playlist():
+	var id_musique_actuelle = playlist_play.pop_at(position_play)
+	playlist_play.shuffle()
+	playlist_play.insert(0, id_musique_actuelle)
+	
 func received(message_json, _message_bytes):
 	if not Client.check_keys(message_json, ["type", "resultat"]):
 		push_error("clés invalides")
@@ -32,7 +39,7 @@ func received(message_json, _message_bytes):
 		# on change les infos sur le player
 		$"centre/slider/temps actuel".text = FonctionsGlobal.secondes_to_text(0)
 		$"centre/slider/temps max".text = FonctionsGlobal.secondes_to_text($"../AudioStreamPlayer".stream.get_length())
-		$"gauche/image musique".texture = script_get_ressource.easy_get_image(infos["image_musique"])
+		$"gauche/masque/image musique".texture = await script_get_ressource.easy_get_image(infos["image_musique"])
 		$"gauche/infos musique/nom".text = FonctionsGlobal.to_text(infos["nom_musique"])
 		$"gauche/infos musique/artiste".text = FonctionsGlobal.to_text(infos["nom_artiste"])
 		
@@ -43,9 +50,6 @@ func received(message_json, _message_bytes):
 		# on met le bouton sur pause
 		$"centre/boutons/size jouer/jouer".button_pressed = true
 		
-		# on met le bon volume
-		$"../AudioStreamPlayer".volume_linear = FonctionsGlobal.to_float(Settings.get_setting("volume"))
-	
 		$"../".visible = true
 		$"../AudioStreamPlayer".play()
 		
@@ -61,6 +65,7 @@ func jouer_musique(position_musique:int):
 	$"../AudioStreamPlayer".stop()
 	
 	position_play = position_musique
+	
 	# on demande les infos de la musique au serveur
 	Client.noeud_appelant = self
 	Client.send(JSON.stringify({"type":"get music infos", "id":playlist_play[position_musique]}))
@@ -74,8 +79,26 @@ func creer_playlist_play(position_playlist:int):
 		push_error("position_playlist trop grand")
 		return
 	
-	playlist_play = playlist.slice(position_playlist, len(playlist))
-	jouer_musique(0)
+	if Settings.get_setting("commencer à la chanson cliquee"):
+		playlist_play = playlist.slice(position_playlist, len(playlist))
+		position_play = 0
+	else:
+		playlist_play = playlist.slice(0, len(playlist))
+		position_play = position_playlist
+	position_play_debut = position_playlist
+	
+	# on shuffle si le bouton est cliqué
+	if $"centre/boutons/size aléatoire/aléatoire".button_pressed:
+		shuffle_playlist()
+		
+	# on met le bon volume
+	$"../AudioStreamPlayer".volume_linear = FonctionsGlobal.to_float(Settings.get_setting("volume"))
+	$"droite/barre volume".value = FonctionsGlobal.to_float(Settings.get_setting("volume"))
+	
+	# on retire le repeat
+	$"centre/boutons/size repeter/repeter".reset()
+		
+	jouer_musique(position_playlist)
 
 
 func _on_timer_refresh_timeout() -> void:
@@ -118,10 +141,23 @@ func _on_jouer_toggled(toggled_on: bool) -> void:
 
 
 func _on_audio_stream_player_finished() -> void:
+	var noeud_repeat = $"centre/boutons/size repeter/repeter"
 	# musique finie, on check s'il y a une musique suivante
+	if noeud_repeat.etat_texte[noeud_repeat.etat] == "track":
+		# on relance la même musique
+		jouer_musique(position_play)
+		return
+		
 	if position_play >= len(playlist_play) - 1:
-		$"../".visible = false
-		$"../AudioStreamPlayer".stop()	# si jamais c'est suivant qui a appelé
+		# on check si on est en repeat on, sinon on arrête le player
+		if noeud_repeat.etat_texte[noeud_repeat.etat] == "on":
+			if Settings.get_setting("commencer à la chanson cliquee"):
+				jouer_musique(position_play_debut)
+			else:
+				jouer_musique(0)
+		else:
+			$"../".visible = false
+			$"../AudioStreamPlayer".stop()	# si jamais c'est suivant qui a appelé
 	else:
 		jouer_musique(position_play + 1)
 
@@ -129,7 +165,7 @@ func _on_suivant_pressed() -> void:
 	_on_audio_stream_player_finished()
 
 func _on_precedent_pressed() -> void:
-	if position_play == 0 or $"../AudioStreamPlayer".get_playback_position() >= 5.0:
+	if position_play == 0 or $"../AudioStreamPlayer".get_playback_position() >= 5.0 or $"centre/boutons/size repeter/repeter".etat_texte[$"centre/boutons/size repeter/repeter".etat] == "track":
 		# on change la position de lecture
 		changer_position(0.0)
 	else:
@@ -145,3 +181,19 @@ func _on_barre_volume_value_changed(value: float) -> void:
 func _on_barre_volume_drag_ended(value_changed: bool) -> void:
 	# on sauvegarde le volume
 	Settings.save_settings()
+
+
+func _on_aléatoire_toggled(toggled_on: bool) -> void:
+	if $"../AudioStreamPlayer".has_stream_playback():
+		if toggled_on:
+			# on shuffle
+			shuffle_playlist()
+		else:
+			# on remet le bon ordre
+			# note : s'il y a plusieurs musiques pareilles, on suppose qu'on est au premier
+			var id_musique_actuelle = playlist_play[position_play]
+			if Settings.get_setting("commencer à la chanson cliquee"):
+				playlist_play = playlist.slice(position_play_debut, len(playlist))
+			else:
+				playlist_play = playlist.slice(0, len(playlist))
+			position_play = playlist_play.find(id_musique_actuelle)

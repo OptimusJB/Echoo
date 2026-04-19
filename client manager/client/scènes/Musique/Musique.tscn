@@ -17,6 +17,13 @@ corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3aofp"]
+bg_color = Color(0.15294118, 0.15294118, 0.15294118, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
 [node name="Musique" type="PanelContainer" unique_id=1465903364]
 anchors_preset = 10
 anchor_right = 1.0
@@ -26,6 +33,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_hc07j")
 script = ExtResource("1_gn3mo")
 
 [node name="éléments" type="HBoxContainer" parent="." unique_id=1008157327]
+custom_minimum_size = Vector2(0, 55)
 layout_mode = 2
 size_flags_vertical = 0
 theme = ExtResource("1_hc07j")
@@ -47,7 +55,7 @@ layout_mode = 2
 mouse_filter = 1
 
 [node name="play" type="TextureButton" parent="éléments/gauche/size play" unique_id=1096064595]
-self_modulate = Color(1, 1, 1, 0)
+visible = false
 custom_minimum_size = Vector2(25, 25)
 layout_mode = 1
 anchors_preset = 8
@@ -63,15 +71,21 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-focus_mode = 1
+focus_mode = 0
 mouse_filter = 1
 texture_normal = ExtResource("4_3aofp")
 ignore_texture_size = true
 stretch_mode = 4
 script = ExtResource("3_4p4h5")
 
-[node name="image" type="TextureRect" parent="éléments" unique_id=1234535756]
-custom_minimum_size = Vector2(50, 1)
+[node name="masque" type="PanelContainer" parent="éléments" unique_id=2015497643]
+clip_children = 1
+layout_mode = 2
+mouse_filter = 1
+theme_override_styles/panel = SubResource("StyleBoxFlat_3aofp")
+
+[node name="image" type="TextureRect" parent="éléments/masque" unique_id=1234535756]
+texture_filter = 4
 layout_mode = 2
 texture = ExtResource("5_3aofp")
 expand_mode = 2
@@ -80,6 +94,7 @@ stretch_mode = 4
 [node name="milieu" type="VBoxContainer" parent="éléments" unique_id=718201696]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 4
 
 [node name="titre" type="Label" parent="éléments/milieu" unique_id=1047462541]
 layout_mode = 2

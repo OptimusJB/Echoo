@@ -69,5 +69,5 @@ func creer_musique(id:int, position_playlist:int, nom:String, nom_artiste:String
 	new_noeud.get_node("éléments/milieu/artiste").text = nom_artiste
 	new_noeud.get_node("éléments/album").text = nom_album
 	
-	new_noeud.get_node("éléments/image").texture = await script_get_ressource.easy_get_image(image)
+	new_noeud.get_node("éléments/masque/image").texture = await script_get_ressource.easy_get_image(image)
 	return new_noeud

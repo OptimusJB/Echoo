@@ -16,6 +16,3 @@ func update_genre(new_text: String) -> void:
 
 func _on_focus_exited() -> void:
 	update_genre(text)
-
-func _ready() -> void:
-	old_text = text

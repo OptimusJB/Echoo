@@ -131,6 +131,8 @@ function send(message_envoi, websocketpeer){
         let sous_message;
         while(i < message_envoi.length){
             sous_message = message_envoi.subarray(i, i + buffer_slice); // slice deprecated
+            //console.log("envoi morceau");
+            //console.log("buffer : ", websocketpeer.bufferedAmount / 1.049e+6);
             websocketpeer.send(sous_message);
             i = i + sous_message.length;
             
@@ -265,7 +267,7 @@ function handle(websocketpeer, message_json, message_bytes){
                         qualite = "min";
                         break;
                     case "max":
-                        qualite = "max";
+                        qualite = "moy";
                         break;
                 }
             }
@@ -310,6 +312,7 @@ wss.on("connection", function connection(websocketpeer, req){ // connection d'un
 
     // on met l'ip du websocket
     // TODO checker XforwardedFor
+    // TODO normaliser ip (ipv4, ipv6 compressé, ipv6 non compressé)
     websocketpeer.ip_client = req.socket.remoteAddress;
 
     websocketpeer.on("error", console.error);

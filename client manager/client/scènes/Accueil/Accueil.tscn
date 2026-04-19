@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://d2qbh46v2axke" path="res://client/scènes/Accueil/player.gd" id="6_ydhwd"]
 [ext_resource type="Texture2D" uid="uid://d1wosgciqnqqy" path="res://assets/random_on.png" id="7_ydhwd"]
 [ext_resource type="Script" uid="uid://bhjf3yqfa0q38" path="res://client/scènes/Accueil/resize.gd" id="8_4y3b3"]
+[ext_resource type="Script" uid="uid://clx2vudyigx0l" path="res://client/scènes/Accueil/image_musique.gd" id="8_5hb7a"]
 [ext_resource type="Texture2D" uid="uid://bmqfkrtlnvxpm" path="res://assets/previous.png" id="9_bep4y"]
 [ext_resource type="Texture2D" uid="uid://dewxkaw3q0pmg" path="res://assets/play_player.png" id="10_mep5p"]
 [ext_resource type="Texture2D" uid="uid://d0nar31bka6v6" path="res://assets/pause.png" id="11_fu6rb"]
@@ -16,9 +17,13 @@
 [ext_resource type="Texture2D" uid="uid://cjfuqk16t8egn" path="res://assets/repeat_off.png" id="13_5hb7a"]
 [ext_resource type="Script" uid="uid://c3lmtabi5i43t" path="res://client/scènes/Accueil/repeter.gd" id="15_bep4y"]
 [ext_resource type="Texture2D" uid="uid://5ohqfljbhutl" path="res://assets/icone_base.png" id="16_mep5p"]
+[ext_resource type="Script" uid="uid://bemr8hw8w11i1" path="res://client/scènes/Accueil/gros_plan_cover.gd" id="18_17si7"]
+[ext_resource type="Texture2D" uid="uid://bmnvu85tquim8" path="res://assets/Spoutoufy logo.png" id="19_5q245"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ltm4r"]
+content_margin_left = 20.0
 content_margin_top = 10.0
+content_margin_right = 20.0
 content_margin_bottom = 10.0
 bg_color = Color(0.15199637, 0.15199637, 0.15199631, 1)
 border_width_left = 5
@@ -30,6 +35,13 @@ corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mep5p"]
+bg_color = Color(0.15294118, 0.15294118, 0.15294118, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 
 [node name="Accueil" type="Control" unique_id=644059938]
 layout_mode = 3
@@ -113,11 +125,17 @@ script = ExtResource("6_ydhwd")
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="image musique" type="TextureRect" parent="VBoxContainer/fond player/player/gauche" unique_id=1004443894]
+[node name="masque" type="PanelContainer" parent="VBoxContainer/fond player/player/gauche" unique_id=1378135070]
+clip_children = 1
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_mep5p")
+
+[node name="image musique" type="TextureRect" parent="VBoxContainer/fond player/player/gauche/masque" unique_id=1004443894]
 layout_mode = 2
 texture = ExtResource("16_mep5p")
 expand_mode = 2
 stretch_mode = 4
+script = ExtResource("8_5hb7a")
 
 [node name="infos musique" type="VBoxContainer" parent="VBoxContainer/fond player/player/gauche" unique_id=352005487]
 layout_mode = 2
@@ -175,7 +193,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-focus_mode = 1
+focus_mode = 0
 toggle_mode = true
 texture_normal = ExtResource("6_4y3b3")
 texture_pressed = ExtResource("7_ydhwd")
@@ -205,7 +223,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-focus_mode = 1
+focus_mode = 0
 texture_normal = ExtResource("9_bep4y")
 ignore_texture_size = true
 stretch_mode = 4
@@ -233,7 +251,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-focus_mode = 1
+focus_mode = 0
 toggle_mode = true
 texture_normal = ExtResource("10_mep5p")
 texture_pressed = ExtResource("11_fu6rb")
@@ -263,7 +281,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-focus_mode = 1
+focus_mode = 0
 texture_normal = ExtResource("12_pjwbn")
 ignore_texture_size = true
 stretch_mode = 4
@@ -291,7 +309,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-focus_mode = 1
+focus_mode = 0
 texture_normal = ExtResource("13_5hb7a")
 ignore_texture_size = true
 stretch_mode = 4
@@ -350,7 +368,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-focus_mode = 1
+focus_mode = 0
 texture_normal = ExtResource("13_5hb7a")
 ignore_texture_size = true
 stretch_mode = 4
@@ -361,24 +379,52 @@ custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
-focus_mode = 1
+focus_mode = 0
 max_value = 1.0
 step = 0.1
 value = 1.0
 
 [node name="timer_refresh" type="Timer" parent="VBoxContainer/fond player/player" unique_id=905729081]
-wait_time = 0.3
+wait_time = 0.2
 autostart = true
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="VBoxContainer/fond player" unique_id=191914258]
 
+[node name="gros plan cover" type="ColorRect" parent="." unique_id=475604817]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.44705883)
+script = ExtResource("18_17si7")
+
+[node name="centrage" type="CenterContainer" parent="gros plan cover" unique_id=1397593633]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="cover" type="TextureRect" parent="gros plan cover/centrage" unique_id=1931098221]
+custom_minimum_size = Vector2(700, 700)
+layout_mode = 2
+texture = ExtResource("19_5q245")
+expand_mode = 1
+
 [connection signal="charger_recherche" from="VBoxContainer/marges supérieur/rechercher" to="VBoxContainer/marges corps/corps/Enumeration" method="_on_rechercher_charger_recherche"]
 [connection signal="text_changed" from="VBoxContainer/marges supérieur/rechercher" to="VBoxContainer/marges supérieur/rechercher" method="_on_text_changed"]
 [connection signal="timeout" from="VBoxContainer/marges supérieur/rechercher/timer texte" to="VBoxContainer/marges supérieur/rechercher" method="_on_timer_texte_timeout"]
+[connection signal="gui_input" from="VBoxContainer/fond player/player/gauche/masque/image musique" to="VBoxContainer/fond player/player/gauche/masque/image musique" method="_on_gui_input"]
+[connection signal="image_gros_plan" from="VBoxContainer/fond player/player/gauche/masque/image musique" to="gros plan cover" method="_on_image_musique_image_gros_plan"]
 [connection signal="button_down" from="VBoxContainer/fond player/player/centre/boutons/size aléatoire/aléatoire" to="VBoxContainer/fond player/player/centre/boutons/size aléatoire/aléatoire" method="_on_button_down"]
 [connection signal="button_up" from="VBoxContainer/fond player/player/centre/boutons/size aléatoire/aléatoire" to="VBoxContainer/fond player/player/centre/boutons/size aléatoire/aléatoire" method="_on_button_up"]
 [connection signal="mouse_entered" from="VBoxContainer/fond player/player/centre/boutons/size aléatoire/aléatoire" to="VBoxContainer/fond player/player/centre/boutons/size aléatoire/aléatoire" method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="VBoxContainer/fond player/player/centre/boutons/size aléatoire/aléatoire" to="VBoxContainer/fond player/player/centre/boutons/size aléatoire/aléatoire" method="_on_mouse_exited"]
+[connection signal="toggled" from="VBoxContainer/fond player/player/centre/boutons/size aléatoire/aléatoire" to="VBoxContainer/fond player/player" method="_on_aléatoire_toggled"]
 [connection signal="button_down" from="VBoxContainer/fond player/player/centre/boutons/size precedent/precedent" to="VBoxContainer/fond player/player/centre/boutons/size precedent/precedent" method="_on_button_down"]
 [connection signal="button_up" from="VBoxContainer/fond player/player/centre/boutons/size precedent/precedent" to="VBoxContainer/fond player/player/centre/boutons/size precedent/precedent" method="_on_button_up"]
 [connection signal="mouse_entered" from="VBoxContainer/fond player/player/centre/boutons/size precedent/precedent" to="VBoxContainer/fond player/player/centre/boutons/size precedent/precedent" method="_on_mouse_entered"]
@@ -410,3 +456,4 @@ autostart = true
 [connection signal="value_changed" from="VBoxContainer/fond player/player/droite/barre volume" to="VBoxContainer/fond player/player" method="_on_barre_volume_value_changed"]
 [connection signal="timeout" from="VBoxContainer/fond player/player/timer_refresh" to="VBoxContainer/fond player/player" method="_on_timer_refresh_timeout"]
 [connection signal="finished" from="VBoxContainer/fond player/AudioStreamPlayer" to="VBoxContainer/fond player/player" method="_on_audio_stream_player_finished"]
+[connection signal="gui_input" from="gros plan cover" to="gros plan cover" method="_on_gui_input"]

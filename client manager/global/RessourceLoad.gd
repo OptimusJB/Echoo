@@ -25,6 +25,7 @@ func charger_ressource(chemin_ressource, data:PackedByteArray, cache_max=-1):
 	var ressource
 	var erreur = 0
 	var extension = get_ressource_extension(chemin_ressource)
+	var generer_mipmaps = FonctionsGlobal.to_int(Settings.get_setting("generer mipmaps"))
 	
 	# on check si c'est null
 	if not chemin_ressource:
@@ -34,18 +35,26 @@ func charger_ressource(chemin_ressource, data:PackedByteArray, cache_max=-1):
 	if extension == "png":
 		ressource = Image.new()
 		erreur = ressource.load_png_from_buffer(data)
+		if generer_mipmaps:
+			ressource.generate_mipmaps()
 		ressource = ImageTexture.create_from_image(ressource)
 	elif extension == "jpg" or extension == "jpeg":
 		ressource = Image.new()
 		erreur = ressource.load_jpg_from_buffer(data)
+		if generer_mipmaps:
+			ressource.generate_mipmaps()
 		ressource = ImageTexture.create_from_image(ressource)
 	elif extension == "bmp":
 		ressource = Image.new()
 		erreur = ressource.load_bmp_from_buffer(data)
+		if generer_mipmaps:
+			ressource.generate_mipmaps()
 		ressource = ImageTexture.create_from_image(ressource)
 	elif extension == "svg":
 		ressource = Image.new()
 		erreur = ressource.load_svg_from_buffer(data)
+		if generer_mipmaps:
+			ressource.generate_mipmaps()
 		ressource = ImageTexture.create_from_image(ressource)
 	else:
 		erreur = 1 # tout sauf 0

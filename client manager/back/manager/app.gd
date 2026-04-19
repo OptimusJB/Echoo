@@ -6,6 +6,8 @@ var noeud_musique = load("res://back/manager/musique/musique.tscn")
 var artistes_max_affichage = 20	# nombre max d'affichages avant le bouton "charger plus"
 var artistes = []
 
+var index_actuel_artiste = -1 # pour garder en mémoire où on en est arrivé dans le chargement des artistes
+
 # actifs (permet de ne pas lancer le chargement plusieurs fois)
 var charger_artistes_actif = false
 var charger_albums_actif = false
@@ -75,6 +77,11 @@ func _charger_album_view(id_album):
 	noeud_album_actuel.get_node("infos/annee").text = FonctionsGlobal.to_text_int(annee_album)
 	noeud_album_actuel.get_node("infos/genre").text = FonctionsGlobal.to_text(genre_album)
 	noeud_album_actuel.get_node("id album").text = FonctionsGlobal.to_text(id_album)
+	
+	# on reset le old_text du genre et de l'année
+	noeud_album_actuel.get_node("infos/annee").old_text = noeud_album_actuel.get_node("infos/annee").text
+	noeud_album_actuel.get_node("infos/genre").old_text = noeud_album_actuel.get_node("infos/genre").text
+	
 	
 	var noeud_liste_musiques = get_tree().get_nodes_in_group("liste musiques")[0]
 	# on supprime les potentiels anciens albums
@@ -172,28 +179,29 @@ func ajouter_artistes():
 	charger_artistes_actif = true
 	var new_artiste
 	var noeud_liste_artistes = get_tree().get_nodes_in_group("liste artistes")[0]
-	var index_actuel
 	var i=0
-	while (i<artistes_max_affichage and (noeud_liste_artistes.get_child_count() - 1) < len(artistes[1])):
+	while (i<artistes_max_affichage and index_actuel_artiste + 1 < len(artistes[1])):
 	#for i in range(min(artistes_max_affichage, len(artistes[1]))):
 		# timer pour counter le chargement trop long
 		await get_tree().process_frame
-		index_actuel = noeud_liste_artistes.get_child_count() - 1
+		index_actuel_artiste = index_actuel_artiste + 1
+		#index_actuel = noeud_liste_artistes.get_child_count() - 1
 		new_artiste = noeud_artiste.instantiate()
 		#print("requête : ", artistes[1][i])
-		new_artiste.get_node("LineEdit").text = FonctionsGlobal.to_text(artistes[1][index_actuel]["nom"])
-		new_artiste.get_node("LineEdit").id_artiste = artistes[1][index_actuel]["id"]
+		new_artiste.get_node("LineEdit").text = FonctionsGlobal.to_text(artistes[1][index_actuel_artiste]["nom"])
+		new_artiste.get_node("LineEdit").id_artiste = artistes[1][index_actuel_artiste]["id"]
 		new_artiste.get_node("systeme_image/charger artiste").charger_artiste.connect(_charger_artiste_view)
 		
 		# chargement de l'image
-		var chemin_image = artistes[1][index_actuel]["image"]
+		var chemin_image = artistes[1][index_actuel_artiste]["image"]
 		new_artiste.get_node("systeme_image/image").texture = RessourceLoad.easy_get_image(chemin_image)
+		
 		noeud_liste_artistes.add_child(new_artiste)
 		noeud_liste_artistes.move_child(new_artiste, noeud_liste_artistes.get_child_count() - 2)
 		i = i + 1
 	# on check si tout est affiché
 	#print(noeud_liste_artistes.get_child_count() - 1, len(artistes[1]))
-	if noeud_liste_artistes.get_child_count() - 1 == len(artistes[1]):
+	if index_actuel_artiste + 1 == len(artistes[1]):
 		noeud_liste_artistes.get_node("charger plus").visible = false
 	else:
 		noeud_liste_artistes.get_node("charger plus").visible = true
@@ -219,6 +227,7 @@ func charger_artistes():
 		if enfant is not Button:
 			enfant.free()	# pas queue_free pour le test du get_child_count
 	
+	index_actuel_artiste = -1
 	charger_artistes_actif = false	# pour counter le charger_plus
 	ajouter_artistes()
 

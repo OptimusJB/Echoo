@@ -1,6 +1,6 @@
 [gd_resource type="Theme" format=3 uid="uid://36276l8ev85m"]
 
-[ext_resource type="FontFile" uid="uid://csnflw5p3ceff" path="res://assets/police.otf" id="1_6q3mw"]
+[ext_resource type="FontFile" uid="uid://ddl025awf2lan" path="res://assets/sofia-pro/Sofia Pro Medium Az.otf" id="1_6q3mw"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_g8emd"]
 content_margin_left = 5.0
@@ -8,10 +8,10 @@ content_margin_top = 5.0
 content_margin_right = 5.0
 content_margin_bottom = 5.0
 bg_color = Color(0.34248248, 0.59120107, 0.9996019, 1)
-corner_radius_top_left = 15
-corner_radius_top_right = 15
-corner_radius_bottom_right = 15
-corner_radius_bottom_left = 15
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pfexr"]
 content_margin_left = 5.0
@@ -19,10 +19,10 @@ content_margin_top = 5.0
 content_margin_right = 5.0
 content_margin_bottom = 5.0
 bg_color = Color(0.003921569, 0.39607844, 0.92941177, 1)
-corner_radius_top_left = 15
-corner_radius_top_right = 15
-corner_radius_bottom_right = 15
-corner_radius_bottom_left = 15
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rpy55"]
 content_margin_left = 5.0
@@ -30,10 +30,10 @@ content_margin_top = 5.0
 content_margin_right = 5.0
 content_margin_bottom = 5.0
 bg_color = Color(0.0017068126, 0.31094387, 0.74416757, 1)
-corner_radius_top_left = 15
-corner_radius_top_right = 15
-corner_radius_bottom_right = 15
-corner_radius_bottom_left = 15
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 
 [sub_resource type="ImageTexture" id="ImageTexture_6q3mw"]
 
