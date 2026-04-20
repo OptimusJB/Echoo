@@ -10,15 +10,16 @@ config_version=5
 
 [application]
 
-config/name="Spoutoufy"
+config/name="Echoo"
 config/description="logiciel d'écoute de musique"
 run/main_scene="uid://om336lsnkmbo"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 run/max_fps=60
 run/low_processor_mode=true
+boot_splash/show_image=false
 boot_splash/stretch_mode=0
-boot_splash/image="uid://bmnvu85tquim8"
-config/icon="uid://bmnvu85tquim8"
+boot_splash/image="uid://f3cj2ga0x5wp"
+config/icon="uid://f3cj2ga0x5wp"
 
 [autoload]
 

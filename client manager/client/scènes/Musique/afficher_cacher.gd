@@ -2,6 +2,8 @@ extends Control
 
 func afficher():
 	visible = true
+	# on cache le playing
+	$"../../marges playing/playing".visible = false
 
 func cacher():
 	visible = false

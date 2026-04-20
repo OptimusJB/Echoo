@@ -3,8 +3,8 @@
 [ext_resource type="Theme" uid="uid://36276l8ev85m" path="res://assets/theme_spoutoufy.tres" id="1_yr7gr"]
 [ext_resource type="Script" uid="uid://c7o6lyr1sljve" path="res://client/scènes/Connexion/connexion.gd" id="2_enjtl"]
 [ext_resource type="Script" uid="uid://dp7t23flur4wj" path="res://client/scènes/Connexion/radio.gd" id="2_gykwv"]
-[ext_resource type="Texture2D" uid="uid://bmnvu85tquim8" path="res://assets/Spoutoufy logo.png" id="2_jfbr3"]
 [ext_resource type="Script" uid="uid://b534t1dx6onp" path="res://client/scènes/Connexion/options.gd" id="3_4ebt3"]
+[ext_resource type="Texture2D" uid="uid://f3cj2ga0x5wp" path="res://assets/Echoo logo no bg.png" id="5_4ebt3"]
 [ext_resource type="Script" uid="uid://de6274stljiah" path="res://client/scènes/Connexion/se_connecter.gd" id="7_4ebt3"]
 [ext_resource type="Script" uid="uid://cy7obs2rmgtbo" path="res://client/scènes/Connexion/nouveau_compte.gd" id="8_woofx"]
 
@@ -248,7 +248,7 @@ offset_right = 116.5
 offset_bottom = 50.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_jfbr3")
+texture = ExtResource("5_4ebt3")
 expand_mode = 1
 stretch_mode = 5
 

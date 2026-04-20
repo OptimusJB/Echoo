@@ -1,9 +1,15 @@
 extends PanelContainer
+var player
+
 var focus = false
 var afficher_numero = true	# si false, le bouton n'apparaîtra pas quand on enlève la souris
 
 var id:int
 var position_playlist:int
+
+var dernier_refresh = Time.get_ticks_msec()	# pour l'animation playing
+var numero_frame = 0
+var noeud_animation
 
 signal jouer_musique
 
@@ -32,10 +38,38 @@ func _on_mouse_exited() -> void:
 
 func _ready():
 	# on se connecte au player
-	var player = get_tree().get_first_node_in_group("player")
+	player = get_tree().get_first_node_in_group("player")
 	jouer_musique.connect(player.creer_playlist_play)
+	
+	noeud_animation = get_tree().get_first_node_in_group("animation playing")
 
 func _on_play_pressed() -> void:
 	# position_playlist sert s'il y a plusieurs musiques identiques dans la playlist
 	#jouer_musique.emit(id, position_playlist)
 	jouer_musique.emit(position_playlist)
+
+func _process(delta: float) -> void:
+	# on check le rafaichissement
+	if player.get_node("../AudioStreamPlayer").has_stream_playback():
+		if player.playlist_play[player.position_play] == id:
+			# cette musique est jouée, on check le temps
+			if not $"éléments/gauche/marges playing/playing".visible and not $"éléments/gauche/size play/play".visible:
+				$"éléments/gauche/marges playing/playing".visible = true
+			
+			if not $"éléments/milieu/titre".has_theme_color_override("font_color"):
+				# change également la couleur du texte
+				$"éléments/milieu/titre".add_theme_color_override("font_color", Color(0.004, 0.396, 0.929))
+			
+			if get_window().has_focus():	# on change l'animation seulement si focus
+				if Time.get_ticks_msec() - dernier_refresh >= 30 and not player.get_node("../AudioStreamPlayer").stream_paused:
+					# on passe à la frame suivante (si la musique est jouée)
+					numero_frame = (numero_frame + 1) % 150
+					$"éléments/gauche/marges playing/playing".texture = noeud_animation.sprite_frames.get_frame_texture("default", numero_frame)
+					dernier_refresh = Time.get_ticks_msec()
+		else:
+			if $"éléments/gauche/marges playing/playing".visible:
+				$"éléments/gauche/marges playing/playing".visible = false
+			
+			# on remet la couleur du texte en blanc
+			if $"éléments/milieu/titre".has_theme_color_override("font_color"):
+				$"éléments/milieu/titre".remove_theme_color_override("font_color")

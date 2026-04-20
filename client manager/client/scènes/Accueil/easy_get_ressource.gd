@@ -13,7 +13,7 @@ func easy_get_music(id_musique, qualite):
 	# on vérifie qu'une qualité est disponible
 	if reponse[0]["qualite"] == "non":
 		Notif.add_notif("NO_QUALITY")
-		return null
+		return "no quality"
 		
 	var extension = reponse[0]["resultat"]	# avec le '.' devant
 	

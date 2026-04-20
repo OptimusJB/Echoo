@@ -30,6 +30,10 @@ func received(message_json, _message_bytes):
 	if not musique:
 		Notif.add_notif("GET_MUSIC_FAILED")
 	else:
+		if musique is String and musique == "no quality":
+			Client.is_locked = false
+			_on_suivant_pressed()
+			
 		$"../AudioStreamPlayer".stream = musique
 		
 		# on change le mix target

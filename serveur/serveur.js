@@ -372,6 +372,7 @@ function check_stop(){
     try{
         let fichier_read = fs.readFileSync("stop_server.txt");
         if (fichier_read == "1"){
+            database.close();
             console.log("arrêt du serveur");
             exit();
         }

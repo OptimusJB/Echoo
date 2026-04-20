@@ -113,6 +113,7 @@ focus_mode = 2
 script = ExtResource("5_3t856")
 
 [node name="fond player" type="PanelContainer" parent="VBoxContainer" unique_id=697010720]
+visible = false
 layout_mode = 2
 focus_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_ltm4r")
