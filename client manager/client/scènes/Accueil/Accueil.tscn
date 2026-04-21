@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://cgqyfnmnlool" path="res://client/scènes/PlaylistsView/PlaylistView.tscn" id="3_rdqf3"]
 [ext_resource type="Script" uid="uid://clb6okmwhvjmt" path="res://client/scènes/Accueil/enumeration.gd" id="5_3t856"]
 [ext_resource type="Texture2D" uid="uid://cbsuvjw4vgbop" path="res://assets/random_off.png" id="6_4y3b3"]
+[ext_resource type="PackedScene" uid="uid://hwb67mub0dk1" path="res://client/scènes/Attente/Attente.tscn" id="6_17si7"]
 [ext_resource type="Script" uid="uid://d2qbh46v2axke" path="res://client/scènes/Accueil/player.gd" id="6_ydhwd"]
 [ext_resource type="Texture2D" uid="uid://d1wosgciqnqqy" path="res://assets/random_on.png" id="7_ydhwd"]
 [ext_resource type="Script" uid="uid://bhjf3yqfa0q38" path="res://client/scènes/Accueil/resize.gd" id="8_4y3b3"]
@@ -102,15 +103,26 @@ theme_override_constants/margin_right = 0
 
 [node name="corps" type="HSplitContainer" parent="VBoxContainer/marges corps" unique_id=1227525279]
 layout_mode = 2
+split_offsets = PackedInt32Array(276)
+split_offset = 276
 
 [node name="PlaylistView" parent="VBoxContainer/marges corps/corps" unique_id=281558320 instance=ExtResource("3_rdqf3")]
 layout_mode = 2
 focus_mode = 2
 
-[node name="Enumeration" type="PanelContainer" parent="VBoxContainer/marges corps/corps" unique_id=812830795]
+[node name="musiques" type="HSplitContainer" parent="VBoxContainer/marges corps/corps" unique_id=1264630319]
 layout_mode = 2
+
+[node name="Enumeration" type="PanelContainer" parent="VBoxContainer/marges corps/corps/musiques" unique_id=812830795]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.65
 focus_mode = 2
 script = ExtResource("5_3t856")
+
+[node name="Attente" parent="VBoxContainer/marges corps/corps/musiques" unique_id=1984280448 instance=ExtResource("6_17si7")]
+layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="fond player" type="PanelContainer" parent="VBoxContainer" unique_id=697010720]
 visible = false
@@ -416,9 +428,10 @@ layout_mode = 2
 texture = ExtResource("19_5q245")
 expand_mode = 1
 
-[connection signal="charger_recherche" from="VBoxContainer/marges supérieur/rechercher" to="VBoxContainer/marges corps/corps/Enumeration" method="_on_rechercher_charger_recherche"]
+[connection signal="charger_recherche" from="VBoxContainer/marges supérieur/rechercher" to="VBoxContainer/marges corps/corps/musiques/Enumeration" method="_on_rechercher_charger_recherche"]
 [connection signal="text_changed" from="VBoxContainer/marges supérieur/rechercher" to="VBoxContainer/marges supérieur/rechercher" method="_on_text_changed"]
 [connection signal="timeout" from="VBoxContainer/marges supérieur/rechercher/timer texte" to="VBoxContainer/marges supérieur/rechercher" method="_on_timer_texte_timeout"]
+[connection signal="update_queue" from="VBoxContainer/fond player/player" to="VBoxContainer/marges corps/corps/musiques/Attente" method="update"]
 [connection signal="gui_input" from="VBoxContainer/fond player/player/gauche/masque/image musique" to="VBoxContainer/fond player/player/gauche/masque/image musique" method="_on_gui_input"]
 [connection signal="image_gros_plan" from="VBoxContainer/fond player/player/gauche/masque/image musique" to="gros plan cover" method="_on_image_musique_image_gros_plan"]
 [connection signal="button_down" from="VBoxContainer/fond player/player/centre/boutons/size aléatoire/aléatoire" to="VBoxContainer/fond player/player/centre/boutons/size aléatoire/aléatoire" method="_on_button_down"]

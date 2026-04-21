@@ -96,6 +96,7 @@ func _ready() -> void:
 	timer_ping.autostart = false
 	timer_ping.one_shot = true
 	timer_ping.wait_time = 5 # ping toutes les 5 sec
+	timer_ping.ignore_time_scale = true
 	timer_ping.timeout.connect(timer_ping_timeout)
 	add_child(timer_ping)
 	
@@ -103,6 +104,7 @@ func _ready() -> void:
 	timer_timeout.autostart = false
 	timer_timeout.one_shot = false
 	timer_timeout.wait_time = 10
+	timer_timeout.ignore_time_scale = true
 	timer_timeout.timeout.connect(timer_timeout_timeout)
 	add_child(timer_timeout)
 	

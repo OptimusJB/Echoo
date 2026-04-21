@@ -3,18 +3,23 @@ var script_get_ressource = load("res://client/scènes/Accueil/easy_get_ressource
 
 var nom_playlist = ""
 var playlist = []
-var position_play = null	# position actuelle de la musique jouée dans playlist_play
-var position_play_debut = null # première musique jouée (pour savoir où ça commence si on enlève l'aléatoire)
+var infos_musiques = {}	# clé:id musique, valeur:{"position", "nom", "id_artiste", "nom_artiste", "id_album", "nom_album", "image"}
+
+var position_play = -1	# position actuelle de la musique jouée dans playlist_play
+var position_play_debut = -1 # première musique jouée (pour savoir où ça commence si on enlève l'aléatoire)
 
 var playlist_play = []	# copie de playlist, en lien avec ce qui est joué actuellement
+var infos_musiques_play = {}
 
 var player_grab = false	# true si la barre du player est maintenue
 
+signal update_queue
 
 func shuffle_playlist():
 	var id_musique_actuelle = playlist_play.pop_at(position_play)
 	playlist_play.shuffle()
 	playlist_play.insert(0, id_musique_actuelle)
+	position_play = 0
 	
 func received(message_json, _message_bytes):
 	if not Client.check_keys(message_json, ["type", "resultat"]):
@@ -70,6 +75,9 @@ func jouer_musique(position_musique:int):
 	
 	position_play = position_musique
 	
+	# on change la file d'attente
+	update_queue.emit()
+	
 	# on demande les infos de la musique au serveur
 	Client.noeud_appelant = self
 	Client.send(JSON.stringify({"type":"get music infos", "id":playlist_play[position_musique]}))
@@ -89,6 +97,8 @@ func creer_playlist_play(position_playlist:int):
 	else:
 		playlist_play = playlist.slice(0, len(playlist))
 		position_play = position_playlist
+	
+	infos_musiques_play = infos_musiques.duplicate()
 	position_play_debut = position_playlist
 	
 	# on shuffle si le bouton est cliqué
@@ -102,7 +112,7 @@ func creer_playlist_play(position_playlist:int):
 	# on retire le repeat
 	$"centre/boutons/size repeter/repeter".reset()
 		
-	jouer_musique(position_playlist)
+	jouer_musique(position_play)
 
 
 func _on_timer_refresh_timeout() -> void:
@@ -162,6 +172,8 @@ func _on_audio_stream_player_finished() -> void:
 		else:
 			$"../".visible = false
 			$"../AudioStreamPlayer".stop()	# si jamais c'est suivant qui a appelé
+			position_play += 1	# pour ne rien afficher dans la liste d'attente
+			update_queue.emit()
 	else:
 		jouer_musique(position_play + 1)
 
@@ -201,3 +213,5 @@ func _on_aléatoire_toggled(toggled_on: bool) -> void:
 			else:
 				playlist_play = playlist.slice(0, len(playlist))
 			position_play = playlist_play.find(id_musique_actuelle)
+		
+		update_queue.emit()

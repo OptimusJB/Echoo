@@ -20,7 +20,7 @@ func to_int(texte):
 	if not texte:
 		return 0
 	if texte is float:
-		return round(texte)
+		return int(round(texte))
 	if texte is String and texte.is_valid_int():
 		return int(texte)
 	return 0
@@ -59,7 +59,7 @@ func text_to_secondes(texte:String):
 	var parties = texte.split(":")
 	return int(parties[0]) * 60 + int(parties[1])
 
-func creer_musique(id:int, position_playlist:int, nom:String, nom_artiste:String, nom_album:String, image:String, afficher_numero:bool) -> Node:
+func creer_musique(id:int, position_playlist:int, nom:String, id_artiste:int, nom_artiste:String, id_album:int, nom_album:String, image:String, afficher_numero:bool) -> Node:
 	var new_noeud = noeud_musique.instantiate()
 	new_noeud.afficher_numero = false
 	new_noeud.id = id

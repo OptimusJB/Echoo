@@ -221,7 +221,7 @@ function handle(websocketpeer, message_json, message_bytes){
             let resultat;
             let max_results = 20;
             let est_fin = false;
-            resultat = database_select("SELECT id, nom, image, id_album, nom_album, nom_artiste, type_table FROM (SELECT Musiques.id, Musiques.nom, Albums.image, id_album, Albums.nom AS nom_album, Artistes.nom AS nom_artiste, 'musique' AS type_table FROM Musiques JOIN Albums ON Albums.id = Musiques.id_album JOIN Artistes ON Artistes.id = Albums.id_artiste WHERE Musiques.nom LIKE ? OR Albums.nom LIKE ? UNION ALL SELECT DISTINCT Artistes.id, Artistes.nom, Artistes.image, NULL AS id_album, NULL AS nom_album, NULL AS nom_artiste, 'artiste' AS type_table FROM Artistes LEFT JOIN Albums ON Albums.id_artiste = Artistes.id WHERE Artistes.nom LIKE ? OR Albums.nom LIKE ?) ORDER BY nom ASC LIMIT ? OFFSET ?", ["%" + message_json.recherche + "%", "%" + message_json.recherche + "%", "%" + message_json.recherche + "%", "%" + message_json.recherche + "%", max_results, message_json["nb charges"]]);
+            resultat = database_select("SELECT id, nom, image, id_album, nom_album, id_artiste, nom_artiste, type_table FROM (SELECT Musiques.id, Musiques.nom, Albums.image, id_album, Albums.nom AS nom_album, Artistes.id AS id_artiste, Artistes.nom AS nom_artiste, 'musique' AS type_table FROM Musiques JOIN Albums ON Albums.id = Musiques.id_album JOIN Artistes ON Artistes.id = Albums.id_artiste WHERE Musiques.nom LIKE ? OR Albums.nom LIKE ? UNION ALL SELECT DISTINCT Artistes.id, Artistes.nom, Artistes.image, NULL AS id_album, NULL AS nom_album, NULL AS id_artiste, NULL AS nom_artiste, 'artiste' AS type_table FROM Artistes LEFT JOIN Albums ON Albums.id_artiste = Artistes.id WHERE Artistes.nom LIKE ? OR Albums.nom LIKE ?) ORDER BY nom ASC LIMIT ? OFFSET ?", ["%" + message_json.recherche + "%", "%" + message_json.recherche + "%", "%" + message_json.recherche + "%", "%" + message_json.recherche + "%", max_results, message_json["nb charges"]]);
             //console.log("taille : " + resultat.length);
             //console.log("stringify : " + JSON.stringify({"type":"rechercher", "resultat":resultat, "est fin":est_fin}))
             if (resultat.length < max_results) est_fin = true;
@@ -283,6 +283,13 @@ function handle(websocketpeer, message_json, message_bytes){
                 send(fichier_data, websocketpeer);
                 send(JSON.stringify({"type":"get music", "resultat":extension, "qualite":qualite}), websocketpeer);
             }
+        }
+
+
+        else if(message_json.type == "get multiple musics infos"){
+            let resultat;
+            resultat = database_select("SELECT Musiques.id AS id, Musiques.nom AS nom, Musiques.image AS image, Albums.id AS id_album, Albums.nom AS nom_album, Artistes.id AS id_artiste, Artistes.nom AS nom_artiste FROM Musiques JOIN Albums ON Albums.id = Musiques.id_album JOIN Artistes ON Artistes.id = Albums.id_artiste WHERE Musiques.id IN ?", message_json["musiques"]);
+            send(JSON.stringify({"type":"get multiple musics infos", "resultat":resultat}));
         }
 
 

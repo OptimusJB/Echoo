@@ -3,10 +3,12 @@
 [ext_resource type="Script" uid="uid://cw5vncg1x2yki" path="res://client/scènes/Musique/musique.gd" id="1_gn3mo"]
 [ext_resource type="Theme" uid="uid://36276l8ev85m" path="res://assets/theme_spoutoufy.tres" id="1_hc07j"]
 [ext_resource type="Script" uid="uid://g0e2uxfn44ya" path="res://client/scènes/Musique/afficher_cacher.gd" id="3_4p4h5"]
+[ext_resource type="Script" uid="uid://etafg0mcjoer" path="res://client/scènes/Musique/numéro.gd" id="3_bsctr"]
 [ext_resource type="Texture2D" uid="uid://dabrv4lx5du11" path="res://assets/playing/frame_001_delay-0.033s.png" id="3_hk7cg"]
 [ext_resource type="Texture2D" uid="uid://c0ykbryeky5lq" path="res://assets/play_no_bordures.png" id="4_3aofp"]
 [ext_resource type="Texture2D" uid="uid://5ohqfljbhutl" path="res://assets/icone_base.png" id="5_3aofp"]
 [ext_resource type="Texture2D" uid="uid://cvp0no227ncwj" path="res://assets/playing/frame_000_delay-0.033s.png" id="5_hdsi6"]
+[ext_resource type="Script" uid="uid://dgd4sx8l2c440" path="res://client/scènes/Musique/album.gd" id="8_0pnuq"]
 [ext_resource type="Texture2D" uid="uid://bi3cosww6jv3g" path="res://assets/playing/frame_002_delay-0.033s.png" id="8_bsctr"]
 [ext_resource type="Texture2D" uid="uid://b73k0c56v5gcc" path="res://assets/playing/frame_003_delay-0.033s.png" id="9_0pnuq"]
 [ext_resource type="Texture2D" uid="uid://guax17xs7461" path="res://assets/playing/frame_004_delay-0.033s.png" id="10_xmuge"]
@@ -655,11 +657,12 @@ theme_override_constants/margin_left = 4
 layout_mode = 2
 text = "1"
 horizontal_alignment = 2
-script = ExtResource("3_4p4h5")
+script = ExtResource("3_bsctr")
 
 [node name="size play" type="Control" parent="éléments/gauche" unique_id=1831480361]
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
+size_flags_horizontal = 8
 mouse_filter = 1
 
 [node name="play" type="TextureButton" parent="éléments/gauche/size play" unique_id=1096064595]
@@ -689,14 +692,16 @@ script = ExtResource("3_4p4h5")
 [node name="marges playing" type="MarginContainer" parent="éléments/gauche" unique_id=1799250329]
 layout_mode = 2
 mouse_filter = 2
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_bottom = 15
 
 [node name="playing" type="TextureRect" parent="éléments/gauche/marges playing" unique_id=649318844]
 visible = false
 layout_mode = 2
-size_flags_vertical = 4
+size_flags_horizontal = 8
 mouse_filter = 2
 texture = ExtResource("5_hdsi6")
-expand_mode = 4
+expand_mode = 2
 stretch_mode = 4
 
 [node name="masque" type="PanelContainer" parent="éléments" unique_id=2015497643]
@@ -744,6 +749,7 @@ mouse_filter = 1
 text = "album"
 underline = 1
 text_overrun_behavior = 3
+script = ExtResource("8_0pnuq")
 
 [node name="animation playing" type="AnimatedSprite2D" parent="." unique_id=165131159 groups=["animation playing"]]
 visible = false
