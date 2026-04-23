@@ -20,6 +20,9 @@
 [ext_resource type="Texture2D" uid="uid://5ohqfljbhutl" path="res://assets/icone_base.png" id="16_mep5p"]
 [ext_resource type="Script" uid="uid://bemr8hw8w11i1" path="res://client/scènes/Accueil/gros_plan_cover.gd" id="18_17si7"]
 [ext_resource type="Texture2D" uid="uid://bmnvu85tquim8" path="res://assets/Spoutoufy logo.png" id="19_5q245"]
+[ext_resource type="Texture2D" uid="uid://cplagl60qdg3r" path="res://assets/file off.png" id="19_badus"]
+[ext_resource type="Texture2D" uid="uid://bu3t2fhkifar6" path="res://assets/file on.png" id="20_d8t22"]
+[ext_resource type="Script" uid="uid://kjphaa8bi4so" path="res://client/scènes/Accueil/file_d'attente.gd" id="21_d8t22"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ltm4r"]
 content_margin_left = 20.0
@@ -113,7 +116,7 @@ focus_mode = 2
 [node name="musiques" type="HSplitContainer" parent="VBoxContainer/marges corps/corps" unique_id=1264630319]
 layout_mode = 2
 
-[node name="Enumeration" type="PanelContainer" parent="VBoxContainer/marges corps/corps/musiques" unique_id=812830795]
+[node name="Enumeration" type="PanelContainer" parent="VBoxContainer/marges corps/corps/musiques" unique_id=812830795 groups=["enumeration"]]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.65
@@ -121,6 +124,7 @@ focus_mode = 2
 script = ExtResource("5_3t856")
 
 [node name="Attente" parent="VBoxContainer/marges corps/corps/musiques" unique_id=1984280448 instance=ExtResource("6_17si7")]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -382,10 +386,12 @@ grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 focus_mode = 0
-texture_normal = ExtResource("13_5hb7a")
+toggle_mode = true
+texture_normal = ExtResource("19_badus")
+texture_pressed = ExtResource("20_d8t22")
 ignore_texture_size = true
 stretch_mode = 4
-script = ExtResource("8_4y3b3")
+script = ExtResource("21_d8t22")
 
 [node name="barre volume" type="HSlider" parent="VBoxContainer/fond player/player/droite" unique_id=698870461]
 custom_minimum_size = Vector2(50, 0)
@@ -462,10 +468,13 @@ expand_mode = 1
 [connection signal="drag_ended" from="VBoxContainer/fond player/player/centre/slider/barre" to="VBoxContainer/fond player/player" method="_on_barre_drag_ended"]
 [connection signal="drag_started" from="VBoxContainer/fond player/player/centre/slider/barre" to="VBoxContainer/fond player/player" method="_on_barre_drag_started"]
 [connection signal="value_changed" from="VBoxContainer/fond player/player/centre/slider/barre" to="VBoxContainer/fond player/player" method="_on_barre_value_changed"]
+[connection signal="afficher_file" from="VBoxContainer/fond player/player/droite/size file d\'attente/file d\'attente" to="VBoxContainer/marges corps/corps/musiques/Attente" method="afficher"]
 [connection signal="button_down" from="VBoxContainer/fond player/player/droite/size file d\'attente/file d\'attente" to="VBoxContainer/fond player/player/droite/size file d\'attente/file d\'attente" method="_on_button_down"]
 [connection signal="button_up" from="VBoxContainer/fond player/player/droite/size file d\'attente/file d\'attente" to="VBoxContainer/fond player/player/droite/size file d\'attente/file d\'attente" method="_on_button_up"]
+[connection signal="cacher_file" from="VBoxContainer/fond player/player/droite/size file d\'attente/file d\'attente" to="VBoxContainer/marges corps/corps/musiques/Attente" method="cacher"]
 [connection signal="mouse_entered" from="VBoxContainer/fond player/player/droite/size file d\'attente/file d\'attente" to="VBoxContainer/fond player/player/droite/size file d\'attente/file d\'attente" method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="VBoxContainer/fond player/player/droite/size file d\'attente/file d\'attente" to="VBoxContainer/fond player/player/droite/size file d\'attente/file d\'attente" method="_on_mouse_exited"]
+[connection signal="toggled" from="VBoxContainer/fond player/player/droite/size file d\'attente/file d\'attente" to="VBoxContainer/fond player/player/droite/size file d\'attente/file d\'attente" method="_on_toggled"]
 [connection signal="drag_ended" from="VBoxContainer/fond player/player/droite/barre volume" to="VBoxContainer/fond player/player" method="_on_barre_volume_drag_ended"]
 [connection signal="value_changed" from="VBoxContainer/fond player/player/droite/barre volume" to="VBoxContainer/fond player/player" method="_on_barre_volume_value_changed"]
 [connection signal="timeout" from="VBoxContainer/fond player/player/timer_refresh" to="VBoxContainer/fond player/player" method="_on_timer_refresh_timeout"]

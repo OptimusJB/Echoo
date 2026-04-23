@@ -169,6 +169,9 @@ corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0pnuq"]
+content_margin_right = 10.0
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3aofp"]
 bg_color = Color(0.15294118, 0.15294118, 0.15294118, 1)
 corner_radius_top_left = 10
@@ -654,7 +657,9 @@ layout_mode = 2
 theme_override_constants/margin_left = 4
 
 [node name="numéro" type="Label" parent="éléments/gauche" unique_id=1198589167]
+custom_minimum_size = Vector2(50, 0)
 layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_0pnuq")
 text = "1"
 horizontal_alignment = 2
 script = ExtResource("3_bsctr")
@@ -690,18 +695,22 @@ stretch_mode = 4
 script = ExtResource("3_4p4h5")
 
 [node name="marges playing" type="MarginContainer" parent="éléments/gauche" unique_id=1799250329]
+custom_minimum_size = Vector2(35, 0)
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 15
 
 [node name="playing" type="TextureRect" parent="éléments/gauche/marges playing" unique_id=649318844]
 visible = false
+custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 size_flags_horizontal = 8
+size_flags_vertical = 4
 mouse_filter = 2
 texture = ExtResource("5_hdsi6")
-expand_mode = 2
+expand_mode = 1
 stretch_mode = 4
 
 [node name="masque" type="PanelContainer" parent="éléments" unique_id=2015497643]
@@ -712,9 +721,10 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_3aofp")
 
 [node name="image" type="TextureRect" parent="éléments/masque" unique_id=1234535756]
 texture_filter = 4
+custom_minimum_size = Vector2(60, 0)
 layout_mode = 2
 texture = ExtResource("5_3aofp")
-expand_mode = 2
+expand_mode = 4
 stretch_mode = 4
 
 [node name="milieu" type="VBoxContainer" parent="éléments" unique_id=718201696]
@@ -751,7 +761,7 @@ underline = 1
 text_overrun_behavior = 3
 script = ExtResource("8_0pnuq")
 
-[node name="animation playing" type="AnimatedSprite2D" parent="." unique_id=165131159 groups=["animation playing"]]
+[node name="animation playing" type="AnimatedSprite2D" parent="." unique_id=165131159]
 visible = false
 position = Vector2(27, 33)
 scale = Vector2(0.165, 0.12)
@@ -766,3 +776,4 @@ frame_progress = 0.028980775
 [connection signal="mouse_entered" from="éléments/gauche/size play/play" to="éléments/gauche/size play/play" method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="éléments/gauche/size play/play" to="éléments/gauche/size play/play" method="_on_mouse_exited"]
 [connection signal="pressed" from="éléments/gauche/size play/play" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="éléments/album" to="." method="_on_album_pressed"]

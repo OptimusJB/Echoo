@@ -61,13 +61,19 @@ func text_to_secondes(texte:String):
 
 func creer_musique(id:int, position_playlist:int, nom:String, id_artiste:int, nom_artiste:String, id_album:int, nom_album:String, image:String, afficher_numero:bool) -> Node:
 	var new_noeud = noeud_musique.instantiate()
-	new_noeud.afficher_numero = false
+	if not afficher_numero:	# on ne l'affiche pas pour éviter de créer un espace bizarre
+		new_noeud.get_node("éléments/gauche/numéro").visible = false
+	new_noeud.afficher_numero = afficher_numero
 	new_noeud.id = id
+	new_noeud.id_album = id_album
+	new_noeud.id_artiste = id_artiste
 	new_noeud.position_playlist = position_playlist
 	
+	new_noeud.get_node("éléments/gauche/numéro").text = FonctionsGlobal.to_text(position_playlist + 1)
 	new_noeud.get_node("éléments/milieu/titre").text = nom
 	new_noeud.get_node("éléments/milieu/artiste").text = nom_artiste
 	new_noeud.get_node("éléments/album").text = nom_album
 	
 	new_noeud.get_node("éléments/masque/image").texture = await script_get_ressource.easy_get_image(image)
+	new_noeud.album_clicked.connect(get_tree().get_first_node_in_group("enumeration")._album_clicked)
 	return new_noeud

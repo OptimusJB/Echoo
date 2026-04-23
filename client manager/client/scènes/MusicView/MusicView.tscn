@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://c55ne048dn4yx"]
+
+[ext_resource type="Script" uid="uid://bojwixr7jf26c" path="res://client/scènes/MusicView/music_view.gd" id="1_wr4q2"]
+
+[node name="MusicView" type="ScrollContainer" unique_id=26868371]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_wr4q2")
+
+[node name="liste" type="VBoxContainer" parent="." unique_id=1163818669]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="texte loading" type="Label" parent="liste" unique_id=496556781]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "LOADING"

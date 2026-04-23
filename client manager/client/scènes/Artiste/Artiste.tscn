@@ -37,7 +37,7 @@ size_flags_vertical = 0
 theme = ExtResource("1_6siyv")
 
 [node name="espace" type="Control" parent="éléments" unique_id=1591748627]
-custom_minimum_size = Vector2(34, 0)
+custom_minimum_size = Vector2(39, 0)
 layout_mode = 2
 
 [node name="masque" type="PanelContainer" parent="éléments" unique_id=873011327]
@@ -47,10 +47,10 @@ mouse_filter = 1
 theme_override_styles/panel = SubResource("StyleBoxFlat_087bc")
 
 [node name="image" type="TextureRect" parent="éléments/masque" unique_id=1990597262]
-custom_minimum_size = Vector2(53, 53)
+custom_minimum_size = Vector2(60, 0)
 layout_mode = 2
 texture = SubResource("CompressedTexture2D_unmqm")
-expand_mode = 2
+expand_mode = 4
 stretch_mode = 4
 
 [node name="nom" type="Label" parent="éléments" unique_id=1197125478]

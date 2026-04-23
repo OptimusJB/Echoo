@@ -18,6 +18,8 @@ var is_in_queue	= false	# mettre à true si jamais la musique est dans la file d
 signal jouer_musique
 signal creer_playlist
 
+signal album_clicked
+
 func _on_mouse_entered() -> void:
 	focus = true
 	# on change la couleur du fond
@@ -38,8 +40,8 @@ func _on_mouse_exited() -> void:
 	
 	# on affiche le numéro (si affiher_numero) et on cache le play
 	$"éléments/gauche/size play/play".cacher()
-	if afficher_numero:
-		$"éléments/gauche/numéro".afficher()
+	#if afficher_numero:
+		#$"éléments/gauche/numéro".afficher()
 
 func _ready():
 	# on se connecte au player
@@ -64,11 +66,13 @@ func _process(delta: float) -> void:
 	if player.get_node("../AudioStreamPlayer").has_stream_playback():	# on change l'animation seulement si focus:
 		if not get_window().has_focus():
 			return
-			
 		if player.playlist_play[player.position_play] == id:
 			# cette musique est jouée, on check le temps
 			if not $"éléments/gauche/marges playing/playing".visible and not $"éléments/gauche/size play/play".visible:
 				$"éléments/gauche/marges playing/playing".visible = true
+			
+			#if $"éléments/gauche/numéro".visible:
+				#$"éléments/gauche/numéro".visible = false
 			
 			if not $"éléments/milieu/titre".has_theme_color_override("font_color"):
 				# change également la couleur du texte
@@ -80,6 +84,7 @@ func _process(delta: float) -> void:
 				numero_frame = (numero_frame + 1) % 150
 				$"éléments/gauche/marges playing/playing".texture = noeud_animation.sprite_frames.get_frame_texture("default", numero_frame)
 				dernier_refresh = Time.get_ticks_msec()
+			
 	else:
 		if $"éléments/gauche/marges playing/playing".visible:
 			$"éléments/gauche/marges playing/playing".visible = false
@@ -87,3 +92,14 @@ func _process(delta: float) -> void:
 		# on remet la couleur du texte en blanc
 		if $"éléments/milieu/titre".has_theme_color_override("font_color"):
 			$"éléments/milieu/titre".remove_theme_color_override("font_color")
+	
+	# on affiche ou pas le numéro
+	if not $"éléments/gauche/size play/play".visible and not $"éléments/gauche/marges playing/playing".visible:
+		if not $"éléments/gauche/numéro".est_visible() and afficher_numero:
+			#print("afficher")
+			$"éléments/gauche/numéro".afficher()
+	elif $"éléments/gauche/numéro".est_visible():
+		$"éléments/gauche/numéro".cacher()
+
+func _on_album_pressed() -> void:
+	album_clicked.emit(id_album)

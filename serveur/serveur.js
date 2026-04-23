@@ -195,7 +195,7 @@ function handle(websocketpeer, message_json, message_bytes){
             if (resultat.length > 0){
                 if(resultat[0].banni == 1){
                     console.log("tentative de connexion d'une ip, fermeture socket");
-                    websocketpeer.terminate()
+                    websocketpeer.terminate();
                 }
             }
         }
@@ -241,6 +241,14 @@ function handle(websocketpeer, message_json, message_bytes){
         else if(message_json.type == "get music infos"){
             let resultat;
             resultat = database_select("SELECT Musiques.nom AS nom_musique, Albums.image AS image_musique, Artistes.nom AS nom_artiste FROM Musiques JOIN Albums ON Albums.id = Musiques.id_album JOIN Artistes ON Artistes.id = Albums.id_artiste WHERE Musiques.id = ?", [message_json.id]);
+            
+            // on regarde si la longueur de résultat est valide
+            if (resultat.length != 1){
+                console.log("get music infos : longueur résultat invalide, fermeture socket");
+                websocketpeer.terminate();
+                return;
+
+            }
             send(JSON.stringify({"type":"get music infos", "resultat":resultat[0]}), websocketpeer);
         }
 
@@ -254,6 +262,14 @@ function handle(websocketpeer, message_json, message_bytes){
                 return;
             }
             resultat = database_select("SELECT min, moy, max FROM Musiques WHERE id=?", [message_json["id"]]);
+
+            // on regarde si la longueur de résultat est valide
+            if (resultat.length != 1){
+                console.log("get music : longueur résultat invalide, fermeture socket");
+                websocketpeer.terminate();
+                return;
+
+            }
             
             // on check la qualite a récupérer
             qualite = message_json["qualite"];
@@ -286,12 +302,21 @@ function handle(websocketpeer, message_json, message_bytes){
         }
 
 
-        else if(message_json.type == "get multiple musics infos"){
-            let resultat;
-            resultat = database_select("SELECT Musiques.id AS id, Musiques.nom AS nom, Musiques.image AS image, Albums.id AS id_album, Albums.nom AS nom_album, Artistes.id AS id_artiste, Artistes.nom AS nom_artiste FROM Musiques JOIN Albums ON Albums.id = Musiques.id_album JOIN Artistes ON Artistes.id = Albums.id_artiste WHERE Musiques.id IN ?", message_json["musiques"]);
-            send(JSON.stringify({"type":"get multiple musics infos", "resultat":resultat}));
-        }
 
+        else if(message_json.type == "get musics of album"){
+            let resultat;
+            resultat = database_select("SELECT Musiques.id AS id, Musiques.nom AS nom, Albums.image AS image, Albums.id AS id_album, Albums.nom AS nom_album, Artistes.id AS id_artiste, Artistes.nom AS nom_artiste, Albums.annee AS annee_album, Albums.genre AS genre_album FROM Musiques JOIN Albums ON Albums.id = Musiques.id_album JOIN Artistes ON Artistes.id = Albums.id_artiste WHERE Albums.id = ? ORDER BY Musiques.position_album ASC", [message_json.id_album]);
+            
+            // on regarde si la longueur de résultat est valide
+            if (resultat.length < 1){
+                console.log("get musics of album : longueur résultat invalide, fermeture socket");
+                websocketpeer.terminate();
+                return;
+
+            }
+            
+            send(JSON.stringify({"type":"get musics of album", "resultat":resultat}), websocketpeer);
+        }
 
         
         else{

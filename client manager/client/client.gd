@@ -124,6 +124,9 @@ func _process(_delta: float) -> void:
 			connexion_en_cours = false
 			est_connecte = true
 			print("connexion réussie")
+			
+			# on reset le temps
+			last_reponse = Time.get_ticks_msec()
 			connected.emit()
 		
 	elif socket.get_ready_state() != socket.STATE_CONNECTING:

@@ -34,10 +34,14 @@ func received(message_json, _message_bytes):
 	
 	if not musique:
 		Notif.add_notif("GET_MUSIC_FAILED")
+		Client.is_locked = false
+		_on_suivant_pressed()
+		return
 	else:
 		if musique is String and musique == "no quality":
 			Client.is_locked = false
 			_on_suivant_pressed()
+			return
 			
 		$"../AudioStreamPlayer".stream = musique
 		
@@ -67,9 +71,18 @@ func received(message_json, _message_bytes):
 func jouer_musique(position_musique:int):
 	if Client.is_locked:
 		Notif.add_notif("NOT_ALLOWED")
+		
+		# on cache le player s'il n'y a pas de musique
+		if not $"../AudioStreamPlayer".has_stream_playback():
+			$"../".visible = false
 		return
 	Client.is_locked = true
 	
+	# on s'arrête si position_musique est suspect
+	if position_musique < 0:
+		Client.is_locked = false
+		return
+		
 	# on coupe la musique en cours s'il y en a une
 	$"../AudioStreamPlayer".stop()
 	
@@ -148,6 +161,7 @@ func _on_barre_value_changed(value: float) -> void:
 
 func _on_jouer_toggled(toggled_on: bool) -> void:
 	# toggled_on --> en cours de lecture --> texture pause
+	#print("toggled")
 	if toggled_on:
 		$"../AudioStreamPlayer".stream_paused = false
 	else:
@@ -155,6 +169,10 @@ func _on_jouer_toggled(toggled_on: bool) -> void:
 
 
 func _on_audio_stream_player_finished() -> void:
+	if Client.is_locked:
+		Notif.add_notif("NOT_ALLOWED")
+		return
+		
 	var noeud_repeat = $"centre/boutons/size repeter/repeter"
 	# musique finie, on check s'il y a une musique suivante
 	if noeud_repeat.etat_texte[noeud_repeat.etat] == "track":
@@ -173,6 +191,7 @@ func _on_audio_stream_player_finished() -> void:
 			$"../".visible = false
 			$"../AudioStreamPlayer".stop()	# si jamais c'est suivant qui a appelé
 			position_play += 1	# pour ne rien afficher dans la liste d'attente
+			print("position play : ", position_play)
 			update_queue.emit()
 	else:
 		jouer_musique(position_play + 1)
