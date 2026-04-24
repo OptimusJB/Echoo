@@ -4,7 +4,7 @@ var save_filename="settings.txt"
 var settings = {}
 
 var presets = {"server_manager":{"echelle":1.0, "mode bannissement":0, "taille envoi fichier":5.0, "liste blanche ip":[]},
-"client":{"echelle":1.0, "ip":"", "port":25565, "type connexion":"wss", "charger images":1, "cache max":20, "type son":0, "qualite":"max", "volume":1.0, "generer mipmaps":1, "commencer à la chanson cliquee":0}}
+"client":{"echelle":1.0, "ip":"", "port":25565, "type connexion":"wss", "charger images":1, "cache max":100, "type son":0, "qualite":"max", "volume":1.0, "generer mipmaps":1, "commencer à la chanson cliquee":0}}
 var use_json = false
 
 func save_settings() -> int:

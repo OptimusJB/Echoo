@@ -719,13 +719,17 @@ layout_mode = 2
 mouse_filter = 1
 theme_override_styles/panel = SubResource("StyleBoxFlat_3aofp")
 
+[node name="fond noir" type="ColorRect" parent="éléments/masque" unique_id=526193529]
+layout_mode = 2
+color = Color(0, 0, 0, 1)
+
 [node name="image" type="TextureRect" parent="éléments/masque" unique_id=1234535756]
 texture_filter = 4
-custom_minimum_size = Vector2(60, 0)
+custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
 texture = ExtResource("5_3aofp")
-expand_mode = 4
-stretch_mode = 4
+expand_mode = 1
+stretch_mode = 5
 
 [node name="milieu" type="VBoxContainer" parent="éléments" unique_id=718201696]
 layout_mode = 2
@@ -776,4 +780,5 @@ frame_progress = 0.028980775
 [connection signal="mouse_entered" from="éléments/gauche/size play/play" to="éléments/gauche/size play/play" method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="éléments/gauche/size play/play" to="éléments/gauche/size play/play" method="_on_mouse_exited"]
 [connection signal="pressed" from="éléments/gauche/size play/play" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="éléments/milieu/artiste" to="." method="_on_artiste_pressed"]
 [connection signal="pressed" from="éléments/album" to="." method="_on_album_pressed"]

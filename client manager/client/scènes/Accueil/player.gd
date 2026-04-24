@@ -14,6 +14,7 @@ var infos_musiques_play = {}
 var player_grab = false	# true si la barre du player est maintenue
 
 signal update_queue
+signal charger_artiste
 
 func shuffle_playlist():
 	var id_musique_actuelle = playlist_play.pop_at(position_play)
@@ -204,6 +205,9 @@ func _on_precedent_pressed() -> void:
 		# on change la position de lecture
 		changer_position(0.0)
 	else:
+		if Client.is_locked:
+			Notif.add_notif("NOT_ALLOWED")
+			return
 		jouer_musique(position_play - 1)
 
 
@@ -234,3 +238,8 @@ func _on_aléatoire_toggled(toggled_on: bool) -> void:
 			position_play = playlist_play.find(id_musique_actuelle)
 		
 		update_queue.emit()
+
+
+func _on_artiste_pressed() -> void:
+	if $"../AudioStreamPlayer".has_stream_playback():
+		charger_artiste.emit(infos_musiques_play[playlist_play[position_play]]["id_artiste"])

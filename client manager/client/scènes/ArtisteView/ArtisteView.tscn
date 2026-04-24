@@ -1,0 +1,83 @@
+[gd_scene format=3 uid="uid://bw3ge1in301f3"]
+
+[ext_resource type="Theme" uid="uid://36276l8ev85m" path="res://assets/theme_spoutoufy.tres" id="1_o5e5f"]
+[ext_resource type="Script" uid="uid://coahmidsirn8h" path="res://client/scènes/ArtisteView/artiste_view.gd" id="2_1f8py"]
+[ext_resource type="Texture2D" uid="uid://5ohqfljbhutl" path="res://assets/icone_base.png" id="3_kb7c3"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gupye"]
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 0.0
+content_margin_bottom = 10.0
+bg_color = Color(0.1, 0.1, 0.1, 0.6)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dhtns"]
+corner_radius_top_left = 150
+corner_radius_top_right = 150
+corner_radius_bottom_right = 150
+corner_radius_bottom_left = 150
+
+[node name="ArtisteView" type="ScrollContainer" unique_id=294765084]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_o5e5f")
+script = ExtResource("2_1f8py")
+
+[node name="éléments" type="VBoxContainer" parent="." unique_id=1505871692]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="texte loading" type="Label" parent="éléments" unique_id=1524258815]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "LOADING"
+
+[node name="fond header" type="PanelContainer" parent="éléments" unique_id=2104738594]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_gupye")
+
+[node name="header" type="HBoxContainer" parent="éléments/fond header" unique_id=995899041]
+layout_mode = 2
+
+[node name="masque" type="PanelContainer" parent="éléments/fond header/header" unique_id=68036506]
+clip_children = 1
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_dhtns")
+
+[node name="fond noir" type="ColorRect" parent="éléments/fond header/header/masque" unique_id=1971022388]
+layout_mode = 2
+color = Color(0, 0, 0, 1)
+
+[node name="image" type="TextureRect" parent="éléments/fond header/header/masque" unique_id=1229528673]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+focus_mode = 1
+texture = ExtResource("3_kb7c3")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="nom" type="Label" parent="éléments/fond header/header" unique_id=1295880076]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 44
+text = "nom Artiste"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="texte albums" type="Label" parent="éléments" unique_id=1014199283]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Albums"
+
+[node name="albums" type="HFlowContainer" parent="éléments" unique_id=2089479964]
+layout_mode = 2
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 9

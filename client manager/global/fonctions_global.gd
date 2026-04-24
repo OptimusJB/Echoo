@@ -76,4 +76,5 @@ func creer_musique(id:int, position_playlist:int, nom:String, id_artiste:int, no
 	
 	new_noeud.get_node("éléments/masque/image").texture = await script_get_ressource.easy_get_image(image)
 	new_noeud.album_clicked.connect(get_tree().get_first_node_in_group("enumeration")._album_clicked)
+	new_noeud.artiste_clicked.connect(get_tree().get_first_node_in_group("enumeration")._artiste_clicked)
 	return new_noeud

@@ -147,11 +147,16 @@ clip_children = 1
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_mep5p")
 
+[node name="fond noir" type="ColorRect" parent="VBoxContainer/fond player/player/gauche/masque" unique_id=665258447]
+layout_mode = 2
+color = Color(0, 0, 0, 1)
+
 [node name="image musique" type="TextureRect" parent="VBoxContainer/fond player/player/gauche/masque" unique_id=1004443894]
+custom_minimum_size = Vector2(72, 72)
 layout_mode = 2
 texture = ExtResource("16_mep5p")
-expand_mode = 2
-stretch_mode = 4
+expand_mode = 1
+stretch_mode = 5
 script = ExtResource("8_5hb7a")
 
 [node name="infos musique" type="VBoxContainer" parent="VBoxContainer/fond player/player/gauche" unique_id=352005487]
@@ -437,9 +442,11 @@ expand_mode = 1
 [connection signal="charger_recherche" from="VBoxContainer/marges supérieur/rechercher" to="VBoxContainer/marges corps/corps/musiques/Enumeration" method="_on_rechercher_charger_recherche"]
 [connection signal="text_changed" from="VBoxContainer/marges supérieur/rechercher" to="VBoxContainer/marges supérieur/rechercher" method="_on_text_changed"]
 [connection signal="timeout" from="VBoxContainer/marges supérieur/rechercher/timer texte" to="VBoxContainer/marges supérieur/rechercher" method="_on_timer_texte_timeout"]
+[connection signal="charger_artiste" from="VBoxContainer/fond player/player" to="VBoxContainer/marges corps/corps/musiques/Enumeration" method="_artiste_clicked"]
 [connection signal="update_queue" from="VBoxContainer/fond player/player" to="VBoxContainer/marges corps/corps/musiques/Attente" method="update"]
 [connection signal="gui_input" from="VBoxContainer/fond player/player/gauche/masque/image musique" to="VBoxContainer/fond player/player/gauche/masque/image musique" method="_on_gui_input"]
 [connection signal="image_gros_plan" from="VBoxContainer/fond player/player/gauche/masque/image musique" to="gros plan cover" method="_on_image_musique_image_gros_plan"]
+[connection signal="pressed" from="VBoxContainer/fond player/player/gauche/infos musique/artiste" to="VBoxContainer/fond player/player" method="_on_artiste_pressed"]
 [connection signal="button_down" from="VBoxContainer/fond player/player/centre/boutons/size aléatoire/aléatoire" to="VBoxContainer/fond player/player/centre/boutons/size aléatoire/aléatoire" method="_on_button_down"]
 [connection signal="button_up" from="VBoxContainer/fond player/player/centre/boutons/size aléatoire/aléatoire" to="VBoxContainer/fond player/player/centre/boutons/size aléatoire/aléatoire" method="_on_button_up"]
 [connection signal="mouse_entered" from="VBoxContainer/fond player/player/centre/boutons/size aléatoire/aléatoire" to="VBoxContainer/fond player/player/centre/boutons/size aléatoire/aléatoire" method="_on_mouse_entered"]

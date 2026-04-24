@@ -318,6 +318,21 @@ function handle(websocketpeer, message_json, message_bytes){
             send(JSON.stringify({"type":"get musics of album", "resultat":resultat}), websocketpeer);
         }
 
+
+
+        else if(message_json.type == "get artiste infos"){
+            let resultat;
+            resultat = database_select("SELECT Artistes.nom AS nom_artiste, Artistes.image AS image_artiste, Albums.nom AS nom_album, Albums.id AS id_album, Albums.annee AS annee, Albums.image AS image_album, Albums.genre AS genre_album FROM Artistes LEFT JOIN Albums ON Albums.id_artiste = Artistes.id WHERE Artistes.id = ?", [message_json.id_artiste]);
+            // si pas de résultat, l'artiste n'existe pas (LEFT JOIN)
+            if (resultat.length < 1){
+                console.log("get artiste infos : longueur résultat invalide, fermeture socket");
+                websocketpeer.terminate();
+                return;
+            }
+
+            send(JSON.stringify({"type":"get artiste infos", "resultat":resultat}), websocketpeer);
+        }
+
         
         else{
         console.log("type invalide, fermeture socket");

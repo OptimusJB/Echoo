@@ -39,13 +39,17 @@ clip_children = 1
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_skrrg")
 
+[node name="fond noir" type="ColorRect" parent="éléments/masque" unique_id=2040564865]
+layout_mode = 2
+color = Color(0, 0, 0, 1)
+
 [node name="image" type="TextureRect" parent="éléments/masque" unique_id=1241118837]
-custom_minimum_size = Vector2(0, 120)
+custom_minimum_size = Vector2(200, 200)
 layout_mode = 2
 focus_mode = 1
 texture = ExtResource("1_skrrg")
-expand_mode = 2
-stretch_mode = 4
+expand_mode = 1
+stretch_mode = 5
 
 [node name="marges" type="MarginContainer" parent="éléments" unique_id=625191426]
 layout_mode = 2
@@ -76,3 +80,5 @@ size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 17
 text = "Année ● Genre"
 text_overrun_behavior = 3
+
+[connection signal="pressed" from="éléments/marges/textes/artiste" to="." method="_on_artiste_pressed"]

@@ -19,6 +19,7 @@ signal jouer_musique
 signal creer_playlist
 
 signal album_clicked
+signal artiste_clicked
 
 func _on_mouse_entered() -> void:
 	focus = true
@@ -103,3 +104,7 @@ func _process(delta: float) -> void:
 
 func _on_album_pressed() -> void:
 	album_clicked.emit(id_album)
+
+
+func _on_artiste_pressed() -> void:
+	artiste_clicked.emit(id_artiste)

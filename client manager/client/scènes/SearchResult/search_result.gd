@@ -1,6 +1,6 @@
 extends ScrollContainer
-var noeud_artiste = load("res://client/scènes/Artiste/Artiste.tscn")
-var script_get_ressource = load("res://client/scènes/Accueil/easy_get_ressource.gd").new()
+var noeud_artiste = preload("res://client/scènes/Artiste/Artiste.tscn")
+var script_get_ressource = preload("res://client/scènes/Accueil/easy_get_ressource.gd").new()
 
 var noeud_enum:Node
 var recherche_actuelle
