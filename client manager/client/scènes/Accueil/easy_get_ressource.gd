@@ -3,8 +3,17 @@ signal image_received
 signal music_received
 
 # ATTENTION les fonctions ne vérifient pas Client.is_locked
-
-func easy_get_music(id_musique, qualite):
+func easy_get_image_buffer(chemin_image):
+	# on importe l'image
+	if not chemin_image:
+		return null
+	Client.noeud_appelant = self
+	Client.send(JSON.stringify({"type":"get image", "image":chemin_image}))
+	var reponse = await image_received
+	
+	return [chemin_image.get_extension(), reponse[1]]
+	
+func easy_get_music(id_musique, qualite, return_buffer=false):
 	# on demande la musique au serveur
 	Client.noeud_appelant = self
 	Client.send(JSON.stringify({"type":"get music", "id":id_musique, "qualite":qualite}))
@@ -17,6 +26,10 @@ func easy_get_music(id_musique, qualite):
 		
 	var extension = reponse[0]["resultat"]	# avec le '.' devant
 	
+	# on renvoie le résultat si return_buffer==true
+	if return_buffer:
+		return [extension, reponse[1]]
+		
 	# on charge la musique
 	#print("octets reçus : ", len(reponse[1]))
 	var musique_stream

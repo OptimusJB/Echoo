@@ -1,6 +1,10 @@
 [gd_scene format=3 uid="uid://c55ne048dn4yx"]
 
+[ext_resource type="Theme" uid="uid://36276l8ev85m" path="res://assets/theme_spoutoufy.tres" id="1_e0agn"]
 [ext_resource type="Script" uid="uid://bojwixr7jf26c" path="res://client/scènes/MusicView/music_view.gd" id="1_wr4q2"]
+[ext_resource type="Texture2D" uid="uid://ky8htaemke5l" path="res://assets/download off.png" id="3_3cucl"]
+[ext_resource type="Texture2D" uid="uid://deisahrxjltjo" path="res://assets/download on.png" id="4_njyyf"]
+[ext_resource type="Script" uid="uid://bhjf3yqfa0q38" path="res://client/scènes/Accueil/resize.gd" id="5_3cucl"]
 
 [node name="MusicView" type="ScrollContainer" unique_id=26868371]
 anchors_preset = 15
@@ -8,6 +12,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("1_e0agn")
 script = ExtResource("1_wr4q2")
 
 [node name="liste" type="VBoxContainer" parent="." unique_id=1163818669]
@@ -18,3 +23,52 @@ size_flags_horizontal = 3
 layout_mode = 2
 size_flags_horizontal = 4
 text = "LOADING"
+
+[node name="téléchargement" type="HBoxContainer" parent="liste" unique_id=468800387]
+layout_mode = 2
+
+[node name="size affichage" type="Control" parent="liste/téléchargement" unique_id=1466545371]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="affichage" type="TextureButton" parent="liste/téléchargement/size affichage" unique_id=1278524255]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -15.0
+offset_top = -15.0
+offset_right = 15.0
+offset_bottom = 15.0
+grow_horizontal = 2
+grow_vertical = 2
+toggle_mode = true
+texture_normal = ExtResource("3_3cucl")
+texture_pressed = ExtResource("4_njyyf")
+ignore_texture_size = true
+stretch_mode = 4
+script = ExtResource("5_3cucl")
+
+[node name="boutons action" type="HBoxContainer" parent="liste/téléchargement" unique_id=914427492]
+visible = false
+layout_mode = 2
+
+[node name="télécharger" type="Button" parent="liste/téléchargement/boutons action" unique_id=1577848207]
+layout_mode = 2
+text = "DOWNLOAD_ALL"
+
+[node name="supprimer" type="Button" parent="liste/téléchargement/boutons action" unique_id=1416714750]
+layout_mode = 2
+text = "REMOVE_ALL"
+
+[connection signal="button_down" from="liste/téléchargement/size affichage/affichage" to="liste/téléchargement/size affichage/affichage" method="_on_button_down"]
+[connection signal="button_up" from="liste/téléchargement/size affichage/affichage" to="liste/téléchargement/size affichage/affichage" method="_on_button_up"]
+[connection signal="mouse_entered" from="liste/téléchargement/size affichage/affichage" to="liste/téléchargement/size affichage/affichage" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="liste/téléchargement/size affichage/affichage" to="liste/téléchargement/size affichage/affichage" method="_on_mouse_exited"]
+[connection signal="toggled" from="liste/téléchargement/size affichage/affichage" to="." method="_on_affichage_telechargement_toggled"]
+[connection signal="pressed" from="liste/téléchargement/boutons action/télécharger" to="." method="_on_télécharger_pressed"]
+[connection signal="pressed" from="liste/téléchargement/boutons action/supprimer" to="." method="_on_supprimer_pressed"]

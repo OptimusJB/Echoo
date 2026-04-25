@@ -51,28 +51,63 @@ func received(message_json, _message_bytes):
 		noeud_header.get_node("éléments/marges/textes/infos/texte infos").text = FonctionsGlobal.to_text_int(message_json["resultat"][0]["annee_album"]) + " ● " + FonctionsGlobal.to_text(message_json["resultat"][0]["genre_album"])
 		noeud_header.get_node("éléments/masque/image").texture = await script_get_ressource.easy_get_image(message_json["resultat"][0]["image"])
 		$liste.add_child(noeud_header)
+		$liste.move_child(noeud_header, 1)	# pour le mettre avant les boutons de téléchargement
 		
 	elif type_chargement == "playlist":
 		noeud_player.nom_playlist = FonctionsGlobal.to_text(message_json["resultat"]["nom_playlist"])
 	
 	# on ajoute la légende
-	var noeud_legende = noeud_legende.instantiate()
-	$liste.add_child(noeud_legende)
+	var new_noeud_legende = noeud_legende.instantiate()
+	$liste.add_child(new_noeud_legende)
 	
 	# on crée chaque noeud et on add_child
 	var new_noeud
 	var i = 0#len(noeud_player.playlist)	# pour position_playlist
+	var compteur_download = 0	# nombre de musiques téléchargées
 	
 	for element in message_json["resultat"]:
 		noeud_player.playlist.append(FonctionsGlobal.to_int(element["id"]))
 		noeud_player.infos_musiques[FonctionsGlobal.to_int(element["id"])] = {"position":i, "nom":FonctionsGlobal.to_text(element["nom"]), "id_artiste":FonctionsGlobal.to_int(element["id_artiste"]), "nom_artiste":FonctionsGlobal.to_text(element["nom_artiste"]), "id_album":FonctionsGlobal.to_int(element["id_album"]), "nom_album":FonctionsGlobal.to_text(element["nom_album"]), "image":FonctionsGlobal.to_text(element["image"])}
 		
 		new_noeud = await FonctionsGlobal.creer_musique(FonctionsGlobal.to_int(element["id"]), i, FonctionsGlobal.to_text(element["nom"]), FonctionsGlobal.to_int(element["id_artiste"]), FonctionsGlobal.to_text(element["nom_artiste"]), FonctionsGlobal.to_int(element["id_album"]), FonctionsGlobal.to_text(element["nom_album"]), FonctionsGlobal.to_text(element["image"]), true)
+		if new_noeud.est_telecharge:
+			compteur_download += 1
 		i += 1
 		#new_noeud.get_node("éléments/gauche/numéro").cacher()
 		
 		$"liste".add_child(new_noeud)
 		#$"liste".move_child(new_noeud, $"liste".get_child_count() - 2)
+	
+	# on cache les boutons download selon compteur download
+	if compteur_download == i:
+		# toutes les musiques sont téléchargées
+		$"liste/téléchargement/boutons action/télécharger".visible = false
+		$"liste/téléchargement/boutons action/supprimer".visible = true
+	elif compteur_download == 0:
+		# aucune musique n'est téléchargée
+		$"liste/téléchargement/boutons action/télécharger".visible = true
+		$"liste/téléchargement/boutons action/supprimer".visible = false
 		
 	$"liste/texte loading".visible = false
 	Client.is_locked = false
+
+
+func _on_affichage_telechargement_toggled(toggled_on: bool) -> void:
+	if toggled_on:
+		$"liste/téléchargement/boutons action".visible = true
+	else:
+		$"liste/téléchargement/boutons action".visible = false
+
+
+func _on_télécharger_pressed() -> void:
+	if Client.is_locked:
+		Notif.add_notif("NOT_ALLOWED")
+		return
+	Client.is_locked = true
+	
+	await FonctionsGlobal.telecharger_musiques(get_tree().get_first_node_in_group("player").playlist)
+	Client.is_locked = false
+
+
+func _on_supprimer_pressed() -> void:
+	pass # Replace with function body.
