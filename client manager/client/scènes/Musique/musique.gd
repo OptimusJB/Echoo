@@ -1,4 +1,5 @@
 extends PanelContainer
+var script_get_ressoure = preload("res://client/scènes/Accueil/easy_get_ressource.gd").new()
 var player
 
 var focus = false
@@ -115,8 +116,11 @@ func _process(delta: float) -> void:
 	if FonctionsGlobal.id_current_download != id and $"éléments/milieu/HBoxContainer/dowloading".visible:
 		# fin du téléchargement, on retire le downloading
 		$"éléments/milieu/HBoxContainer/dowloading".visible = false
-		if FonctionsGlobal.est_musique_telecharge(id, Settings.get_setting("qualite")):
+	if script_get_ressoure.est_musique_telecharge(id, Settings.get_setting("qualite")):
+		if not $"éléments/milieu/HBoxContainer/downloaded".visible:
 			$"éléments/milieu/HBoxContainer/downloaded".visible = true
+	elif $"éléments/milieu/HBoxContainer/downloaded".visible:
+		$"éléments/milieu/HBoxContainer/downloaded".visible = false
 			
 	if $"éléments/milieu/HBoxContainer/dowloading".visible and get_window().has_focus():
 		if Time.get_ticks_msec() - dernier_refresh_download >= 30:

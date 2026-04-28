@@ -52,9 +52,10 @@ func connexion_serveur():
 	var err	# résultat des requêtes
 	# on check si c'est pas déjà connecté
 	if socket.get_ready_state() != WebSocketPeer.STATE_CLOSED:
-		push_error("connexion déjà active")
+		print("connexion déjà active, on recrée le socket")
+		socket = WebSocketPeer.new()
 		#print(socket.get_ready_state())
-		return -2
+		#return -2
 	
 	# connexion au serveur
 	var tls = TLSOptions.client()
@@ -178,6 +179,7 @@ func _process(_delta: float) -> void:
 					return
 				
 				nb_reponses_attendues -= 1
+				#print("reçu : ", message_text)
 				noeud_appelant.received(message_text, message_bytes)
 				
 func send(message):	# soit str soit bytes, le stringify doit avoir été fait avant

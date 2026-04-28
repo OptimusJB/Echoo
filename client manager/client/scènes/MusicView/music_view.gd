@@ -69,7 +69,7 @@ func received(message_json, _message_bytes):
 		noeud_player.playlist.append(FonctionsGlobal.to_int(element["id"]))
 		noeud_player.infos_musiques[FonctionsGlobal.to_int(element["id"])] = {"position":i, "nom":FonctionsGlobal.to_text(element["nom"]), "id_artiste":FonctionsGlobal.to_int(element["id_artiste"]), "nom_artiste":FonctionsGlobal.to_text(element["nom_artiste"]), "id_album":FonctionsGlobal.to_int(element["id_album"]), "nom_album":FonctionsGlobal.to_text(element["nom_album"]), "image":FonctionsGlobal.to_text(element["image"])}
 		
-		new_noeud = await FonctionsGlobal.creer_musique(FonctionsGlobal.to_int(element["id"]), i, FonctionsGlobal.to_text(element["nom"]), FonctionsGlobal.to_int(element["id_artiste"]), FonctionsGlobal.to_text(element["nom_artiste"]), FonctionsGlobal.to_int(element["id_album"]), FonctionsGlobal.to_text(element["nom_album"]), FonctionsGlobal.to_text(element["image"]), true)
+		new_noeud = await script_get_ressource.creer_musique(FonctionsGlobal.to_int(element["id"]), i, FonctionsGlobal.to_text(element["nom"]), FonctionsGlobal.to_int(element["id_artiste"]), FonctionsGlobal.to_text(element["nom_artiste"]), FonctionsGlobal.to_int(element["id_album"]), FonctionsGlobal.to_text(element["nom_album"]), FonctionsGlobal.to_text(element["image"]), true)
 		if new_noeud.est_telecharge:
 			compteur_download += 1
 		i += 1
@@ -104,10 +104,29 @@ func _on_télécharger_pressed() -> void:
 		Notif.add_notif("NOT_ALLOWED")
 		return
 	Client.is_locked = true
+	# on désélectionne le bouton nuage
+	$"liste/téléchargement/size affichage/affichage".button_pressed = false
 	
-	await FonctionsGlobal.telecharger_musiques(get_tree().get_first_node_in_group("player").playlist)
+	await script_get_ressource.telecharger_musiques(get_tree().get_first_node_in_group("player").playlist)
+	# on remplace le bouton
+	$"liste/téléchargement/boutons action/télécharger".visible = false
+	$"liste/téléchargement/boutons action/supprimer".visible = true
+	Notif.add_notif("DOWNLOAD_END")
 	Client.is_locked = false
 
 
 func _on_supprimer_pressed() -> void:
-	pass # Replace with function body.
+	if Client.is_locked:
+		Notif.add_notif("NOT_ALLOWED")
+		return
+	Client.is_locked = true
+	
+	# on désélectionne le bouton nuage
+	$"liste/téléchargement/size affichage/affichage".button_pressed = false
+	
+	await script_get_ressource.supprimer_musiques(get_tree().get_first_node_in_group("player").playlist)
+	# on remplace le bouton
+	$"liste/téléchargement/boutons action/télécharger".visible = true
+	$"liste/téléchargement/boutons action/supprimer".visible = false
+	Notif.add_notif("REMOVE_END")
+	Client.is_locked = false

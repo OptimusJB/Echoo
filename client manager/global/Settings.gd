@@ -4,10 +4,10 @@ var save_filename="settings.txt"
 var settings = {}
 
 var presets = {"server_manager":{"echelle":1.0, "mode bannissement":0, "taille envoi fichier":5.0, "liste blanche ip":[]},
-"client":{"echelle":1.0, "ip":"", "port":25565, "type connexion":"wss", "charger images":1, "cache max":100, "type son":0, "qualite":"max", "volume":1.0, "generer mipmaps":1, "commencer à la chanson cliquee":0, "telechargements":{"musiques":{}, "images":{}, "images id":{}, "next image id":0}}}
+"client":{"echelle":1.0, "ip":"", "port":25565, "type connexion":"wss", "charger images":1, "cache max":100, "type son":0, "qualite":"max", "volume":1.0, "generer mipmaps":1, "commencer à la chanson cliquee":0, "telechargements":{"musiques":{}, "images":{}, "images id":{}, "next image id":0, "est commun":1}}}
 var use_json = false
 
-func save_settings() -> int:
+func save_settings(use_debug=true) -> int:
 	# sauvegarde
 	var fichier = FileAccess.open("user://" + save_filename, FileAccess.WRITE)
 	if not fichier:
@@ -20,6 +20,15 @@ func save_settings() -> int:
 	else:
 		fichier.store_var(settings)
 	fichier.close()
+	
+	if use_debug:	# uniquement utile si enregistrement pas en json
+		# on fait un deuxième fichier en json
+		use_json = true
+		var old_save_filename=save_filename
+		save_filename = save_filename.get_basename() + "_debug.txt"
+		save_settings(false)
+		save_filename = old_save_filename
+		use_json = false
 	return 1
 
 func load_settings(preset:String = "null") -> int:

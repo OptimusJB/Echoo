@@ -5,6 +5,7 @@ func disconnected():
 	Client.is_locked = false
 	get_tree().change_scene_to_file("res://client/scènes/Connexion/connexion.tscn")
 	
+
 func _ready() -> void:
 	# on se connecte au disconnected du client
 	Client.disconnected.connect(disconnected)

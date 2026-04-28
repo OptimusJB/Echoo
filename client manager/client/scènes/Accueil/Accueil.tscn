@@ -20,7 +20,9 @@
 [ext_resource type="Texture2D" uid="uid://5ohqfljbhutl" path="res://assets/icone_base.png" id="16_mep5p"]
 [ext_resource type="Script" uid="uid://bemr8hw8w11i1" path="res://client/scènes/Accueil/gros_plan_cover.gd" id="18_17si7"]
 [ext_resource type="Texture2D" uid="uid://bmnvu85tquim8" path="res://assets/Spoutoufy logo.png" id="19_5q245"]
+[ext_resource type="FontFile" uid="uid://e5rqa3c5uq5i" path="res://assets/Roboto_Mono/static/RobotoMono-Medium.ttf" id="19_b1vhq"]
 [ext_resource type="Texture2D" uid="uid://cplagl60qdg3r" path="res://assets/file off.png" id="19_badus"]
+[ext_resource type="Script" uid="uid://pxtl08moocrt" path="res://client/scènes/Accueil/resize_temps.gd" id="19_imhny"]
 [ext_resource type="Texture2D" uid="uid://bu3t2fhkifar6" path="res://assets/file on.png" id="20_d8t22"]
 [ext_resource type="Script" uid="uid://kjphaa8bi4so" path="res://client/scènes/Accueil/file_d'attente.gd" id="21_d8t22"]
 
@@ -341,10 +343,15 @@ script = ExtResource("15_bep4y")
 layout_mode = 2
 size_flags_vertical = 4
 
-[node name="temps actuel" type="Label" parent="VBoxContainer/fond player/player/centre/slider" unique_id=547299972]
+[node name="temps actuel" type="Label" parent="VBoxContainer/fond player/player/centre/slider" unique_id=547299972 node_paths=PackedStringArray("noeud_label_voisin")]
 layout_mode = 2
+size_flags_horizontal = 8
+theme_override_fonts/font = ExtResource("19_b1vhq")
 theme_override_font_sizes/font_size = 17
-text = "2:43"
+text = "1:12"
+horizontal_alignment = 2
+script = ExtResource("19_imhny")
+noeud_label_voisin = NodePath("../temps max")
 
 [node name="barre" type="HSlider" parent="VBoxContainer/fond player/player/centre/slider" unique_id=1735262540]
 custom_minimum_size = Vector2(200, 0)
@@ -356,8 +363,9 @@ scrollable = false
 
 [node name="temps max" type="Label" parent="VBoxContainer/fond player/player/centre/slider" unique_id=1727420931]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("19_b1vhq")
 theme_override_font_sizes/font_size = 17
-text = "4:01"
+text = "2:31"
 
 [node name="droite" type="HBoxContainer" parent="VBoxContainer/fond player/player" unique_id=517591614]
 layout_mode = 2
@@ -436,6 +444,7 @@ grow_vertical = 2
 [node name="cover" type="TextureRect" parent="gros plan cover/centrage" unique_id=1931098221]
 custom_minimum_size = Vector2(700, 700)
 layout_mode = 2
+mouse_filter = 0
 texture = ExtResource("19_5q245")
 expand_mode = 1
 

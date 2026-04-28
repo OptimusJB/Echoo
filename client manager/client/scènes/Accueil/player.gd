@@ -178,7 +178,15 @@ func _on_audio_stream_player_finished() -> void:
 	# musique finie, on check s'il y a une musique suivante
 	if noeud_repeat.etat_texte[noeud_repeat.etat] == "track":
 		# on relance la même musique
-		jouer_musique(position_play)
+		#jouer_musique(position_play) # pas optimisé car on a déjà les données
+		
+		# on change le mix target
+		if $"../AudioStreamPlayer".mix_target != FonctionsGlobal.to_int(Settings.get_setting("type son")):
+			$"../AudioStreamPlayer".mix_target = FonctionsGlobal.to_int(Settings.get_setting("type son"))
+		
+		# on remet bien le bouton lecture
+		$"centre/boutons/size jouer/jouer".button_pressed = true
+		$"../AudioStreamPlayer".play()
 		return
 		
 	if position_play >= len(playlist_play) - 1:

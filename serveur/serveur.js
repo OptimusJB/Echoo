@@ -438,6 +438,9 @@ function check_timeout(){
             console.log("suppression timeout");
             connexions_timeout.delete(client);
             connexions_data.delete(client);
+            // on regarde si le websocketpeer est présent dans la liste des clients
+            console.log("état avant terminate : ", client.readyState);
+            console.log("bytes en attente : ", client.bufferedAmount);
             if (client.readyState == WebSocket.CONNECTING || client.readyState == WebSocket.OPEN) client.terminate();
         }
     }
