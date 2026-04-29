@@ -43,7 +43,7 @@ func easy_get_music(id_musique, qualite, return_buffer=false):
 			else:
 				telechargement_success = true
 				extension = Settings.get_setting("telechargements")["musiques"][id_musique][qualite_dl]
-				print("utilisation de musique téléchargée : ", extension)
+				print("utilisation de musique téléchargée")
 				fichier.close()
 	
 	if not telechargement_success:
@@ -59,9 +59,9 @@ func easy_get_music(id_musique, qualite, return_buffer=false):
 		
 		extension = reponse[0]["resultat"]	# avec le '.' devant
 	
-		# on renvoie le résultat si return_buffer==true
-		if return_buffer:
-			return [extension, reponse[1]]
+	# on renvoie le résultat si return_buffer==true
+	if return_buffer:
+		return [extension, reponse[1]]
 		
 	# on charge la musique
 	#print("octets reçus : ", len(reponse[1]))
@@ -99,13 +99,13 @@ func easy_get_image(chemin_image):
 	else:
 		var telechargement_success = false
 		var reponse = [null, null]
-		var musique_telecharge = false
+		var image_telecharge = false
 		
 		# on regarde si l'image est téléchargée
 		if chemin_image in Settings.get_setting("telechargements")["images id"].keys():
 			var id_image = Settings.get_setting("telechargements")["images id"][chemin_image]
 			if est_image_telecharge(id_image):
-				musique_telecharge = true
+				image_telecharge = true
 				var nom_fichier = str(id_image) + ".image"
 				var fichier = FileAccess.open("user://downloaded/" + nom_fichier, FileAccess.READ)
 				if not fichier:
@@ -125,13 +125,13 @@ func easy_get_image(chemin_image):
 						print("utilisation d'image téléchargée")
 						fichier.close()
 		
-		if not musique_telecharge:	# on ne tente pas de récupérer l'image fail d'ouverture du fichier
+		if not image_telecharge:	# on ne tente pas de récupérer l'image fail d'ouverture du fichier
 			# on importe l'image
 			Client.noeud_appelant = self
 			Client.send(JSON.stringify({"type":"get image", "image":chemin_image}))
 			reponse = await image_received
 		
-		if not (musique_telecharge and not telechargement_success):
+		if not (image_telecharge and not telechargement_success):
 			# on charge l'image
 			RessourceLoad.charger_ressource(chemin_image, reponse[1], Settings.get_setting("cache max"))
 			image = RessourceLoad.get_ressource(chemin_image)
@@ -162,7 +162,7 @@ func est_musique_telecharge(id_musique:int, qualite:String):
 	if Settings.get_setting("telechargements")["est commun"]:
 		# peut importe la qualité de la musique, elle sera considérée comme téléchargée
 		qualite = "commun"
-	return id_musique in Settings.get_setting("telechargements")["musiques"].keys() and Settings.get_setting("telechargements")["musiques"][id_musique] != null
+	return id_musique in Settings.get_setting("telechargements")["musiques"].keys() and Settings.get_setting("telechargements")["musiques"][id_musique][qualite] != null
 	
 func est_musique_existante(id_musique:int):
 	# renvoie true si l'id de la musique est enregistrée

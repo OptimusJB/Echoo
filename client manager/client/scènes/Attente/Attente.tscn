@@ -24,6 +24,7 @@ layout_mode = 2
 layout_mode = 2
 size_flags_vertical = 0
 text = "QUEUE"
+text_overrun_behavior = 3
 
 [node name="scroll" type="ScrollContainer" parent="marges/éléments" unique_id=1933149333]
 layout_mode = 2

@@ -21,6 +21,10 @@ boot_splash/stretch_mode=0
 boot_splash/image="uid://f3cj2ga0x5wp"
 config/icon="uid://f3cj2ga0x5wp"
 
+[audio]
+
+driver/output_latency=100
+
 [autoload]
 
 Settings="*uid://bqv58q2yiuhrd"

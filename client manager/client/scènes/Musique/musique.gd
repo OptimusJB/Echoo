@@ -135,3 +135,29 @@ func _on_album_pressed() -> void:
 
 func _on_artiste_pressed() -> void:
 	artiste_clicked.emit(id_artiste)
+
+func _gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.is_pressed() and event.button_index == MOUSE_BUTTON_RIGHT:
+		# on ouvre le sous menu
+		var sous_menu = get_tree().get_first_node_in_group("sous menu")
+		if is_in_queue:
+			# pas d'options de téléchargement
+			sous_menu.creer_sous_menu(self, ["ajouter à la playlist", tr("VIEW_ARTIST"), "accéder à l'album"])
+		else:
+			var element
+			# on change le bouton selon si la musique est téléchargée ou pas
+			if script_get_ressoure.est_musique_telecharge(id, Settings.get_setting("qualite")):
+				element = tr("DELETE_FROM_DISK")
+			else:
+				element = tr("DOWNLOAD_MUSIC")
+			sous_menu.creer_sous_menu(self, [tr("ADD_TO_PLAYLIST"),  tr("VIEW_ARTIST"), tr("VIEW_ALBUM"), element])
+
+func action(action_choisie):
+	if action_choisie ==  tr("VIEW_ARTIST"):
+		_on_artiste_pressed()
+	elif action_choisie == tr("VIEW_ALBUM"):
+		_on_album_pressed()
+	elif action_choisie == tr("DOWNLOAD_MUSIC"):
+		script_get_ressoure.telecharger_musiques([id])
+	elif action_choisie == tr("DELETE_FROM_DISK"):
+		script_get_ressoure.supprimer_musiques([id])

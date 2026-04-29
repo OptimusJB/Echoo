@@ -1,14 +1,16 @@
 [gd_scene format=3 uid="uid://cgqyfnmnlool"]
 
 [ext_resource type="Theme" uid="uid://36276l8ev85m" path="res://assets/theme_spoutoufy.tres" id="1_yd8us"]
+[ext_resource type="Script" uid="uid://bo64l4pieoodc" path="res://client/scènes/ListPlaylistsView/list_playlist_view.gd" id="2_rsmu4"]
 
-[node name="PlaylistView" type="PanelContainer" unique_id=281558320]
+[node name="ListPlaylistView" type="PanelContainer" unique_id=281558320]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_yd8us")
+script = ExtResource("2_rsmu4")
 
 [node name="liste playlists" type="VBoxContainer" parent="." unique_id=704014067]
 layout_mode = 2
@@ -18,10 +20,14 @@ layout_mode = 2
 
 [node name="bibliotheque" type="Label" parent="liste playlists/en-tête" unique_id=297244335]
 layout_mode = 2
+size_flags_horizontal = 3
 text = "LIBRARY"
+text_overrun_behavior = 3
 
 [node name="ajouter playlist" type="Button" parent="liste playlists/en-tête" unique_id=45620918]
 layout_mode = 2
-size_flags_horizontal = 10
+size_flags_horizontal = 8
 focus_mode = 0
 text = "ADD_PLAYLIST"
+
+[connection signal="pressed" from="liste playlists/en-tête/ajouter playlist" to="." method="_on_ajouter_playlist_pressed"]

@@ -1,5 +1,5 @@
 extends PanelContainer
-
+var script_get_ressource = preload("res://client/scènes/Accueil/easy_get_ressource.gd").new()
 var a_charger = true
 var a_update = false
 
@@ -36,7 +36,7 @@ func charger_file():
 	var new_element
 	for i in range(len(liste_musiques)):
 		#new_element = await FonctionsGlobal.creer_musique(liste_musiques[i], player.infos_musiques_play[liste_musiques[i]]["position"], player.infos_musiques_play[liste_musiques[i]]["nom"], player.infos_musiques_play[liste_musiques[i]]["id_artiste"], player.infos_musiques_play[liste_musiques[i]]["nom_artiste"], player.infos_musiques_play[liste_musiques[i]]["id_album"], player.infos_musiques_play[liste_musiques[i]]["nom_album"], player.infos_musiques_play[liste_musiques[i]]["image"], false)
-		new_element = await FonctionsGlobal.creer_musique(liste_musiques[i], i, player.infos_musiques_play[liste_musiques[i]]["nom"], player.infos_musiques_play[liste_musiques[i]]["id_artiste"], player.infos_musiques_play[liste_musiques[i]]["nom_artiste"], player.infos_musiques_play[liste_musiques[i]]["id_album"], player.infos_musiques_play[liste_musiques[i]]["nom_album"], player.infos_musiques_play[liste_musiques[i]]["image"], false)
+		new_element = await script_get_ressource.creer_musique(liste_musiques[i], i, player.infos_musiques_play[liste_musiques[i]]["nom"], player.infos_musiques_play[liste_musiques[i]]["id_artiste"], player.infos_musiques_play[liste_musiques[i]]["nom_artiste"], player.infos_musiques_play[liste_musiques[i]]["id_album"], player.infos_musiques_play[liste_musiques[i]]["nom_album"], player.infos_musiques_play[liste_musiques[i]]["image"], false)
 		new_element.is_in_queue = true
 		new_element.get_node("éléments/gauche/numéro").cacher()
 		new_element.get_node("éléments/album").cacher()
