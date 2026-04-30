@@ -3,6 +3,7 @@ var script_get_ressource = preload("res://client/scènes/Accueil/easy_get_ressou
 var noeud_playlist = preload("res://client/scènes/Playlist/Playlist.tscn")
 
 signal creer_playlist_received
+
 func _on_ajouter_playlist_pressed() -> void:
 	if Client.is_locked:
 		Notif.add_notif("NOT_ALLOWED")

@@ -38,7 +38,7 @@ func to_float(texte):
 
 func to_text(element):
 	# retourne l'element en str, et "" si null
-	if not element:
+	if element == null:
 		return ""
 	return str(element)
 

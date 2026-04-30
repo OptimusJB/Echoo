@@ -49,7 +49,7 @@ func easy_get_music(id_musique, qualite, return_buffer=false):
 	if not telechargement_success:
 		# on demande la musique au serveur
 		Client.noeud_appelant = self
-		Client.send(JSON.stringify({"type":"get music", "id":id_musique, "qualite":qualite}))
+		Client.send(JSON.stringify({"type":"get music", "id":FonctionsGlobal.to_text(id_musique), "qualite":qualite}))
 		reponse = await music_received
 		
 		# on vérifie qu'une qualité est disponible

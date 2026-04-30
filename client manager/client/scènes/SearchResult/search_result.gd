@@ -39,7 +39,7 @@ func charger_recherche(recherche = null, noeud_enumeration = null):
 	$"liste/resultat recherche".text = "LOADING"
 		
 	Client.noeud_appelant = self
-	Client.send(JSON.stringify({"type":"rechercher", "recherche":recherche_actuelle, "nb charges":nb_charges}))
+	Client.send(JSON.stringify({"type":"rechercher", "recherche":recherche_actuelle, "nb charges":FonctionsGlobal.to_text(nb_charges)}))
 
 func received(message_json, _message_bytes):
 	if not Client.check_keys(message_json, ["type", "resultat", "est fin"]):

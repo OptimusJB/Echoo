@@ -19,6 +19,10 @@ func update_nom(new_text: String) -> void:
 	if int(get_tree().get_nodes_in_group("album actuel")[0].get_node("id album").text) == id_album and get_tree().get_nodes_in_group("parties")[2].visible:
 		#print("changement album")
 		get_tree().get_nodes_in_group("album actuel")[0].get_node("infos/nom").text = new_text
+
+func _exit_tree() -> void:
+	# disconnect pour éviter le crash du groupe vide
+	disconnect("focus_exited", _on_focus_exited)
 	
 func _on_focus_exited() -> void:
 	update_nom(text)

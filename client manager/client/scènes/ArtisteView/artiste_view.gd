@@ -28,7 +28,7 @@ func charger_artiste(id_artiste:int, noeud_enumeration):
 	$"éléments/texte albums".visible = false
 	
 	Client.noeud_appelant = self
-	Client.send(JSON.stringify({"type":"get artiste infos", "id_artiste":id_artiste}))
+	Client.send(JSON.stringify({"type":"get artiste infos", "id_artiste":FonctionsGlobal.to_text(id_artiste)}))
 
 func received(message_json, _message_bytes):
 	if not Client.check_keys(message_json, ["type", "resultat"]):
@@ -41,6 +41,13 @@ func received(message_json, _message_bytes):
 	$"éléments/fond header/header/nom".text = FonctionsGlobal.to_text(message_json["resultat"][0]["nom_artiste"])
 	$"éléments/fond header/header/masque/image".texture = await script_get_ressource.easy_get_image(message_json["resultat"][0]["image_artiste"])
 	
+	# si pas d'albums, on s'arrête là
+	if message_json["resultat"][0]["id_album"] == null:
+		Client.is_locked = false
+		$"éléments/texte loading".visible = false
+		$"éléments/fond header".visible = true
+		return
+		
 	# on crée et ajoute les albums
 	var new_noeud
 	for element in message_json["resultat"]:

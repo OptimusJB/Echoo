@@ -36,6 +36,8 @@ script = ExtResource("2_ybjx0")
 
 [node name="charger playlist" type="Button" parent="." unique_id=1139599881]
 layout_mode = 2
+focus_mode = 0
+mouse_filter = 1
 theme_override_styles/normal = SubResource("StyleBoxEmpty_ug233")
 theme_override_styles/hover = SubResource("StyleBoxFlat_2pheh")
 
@@ -77,3 +79,5 @@ size_flags_horizontal = 3
 size_flags_vertical = 0
 text = "Playlist"
 text_overrun_behavior = 3
+
+[connection signal="pressed" from="charger playlist" to="." method="_on_charger_playlist_pressed"]

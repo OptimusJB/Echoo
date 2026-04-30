@@ -1,11 +1,15 @@
 extends ScrollContainer
 var noeud_header_album = preload("res://client/scènes/HeaderAlbum/HeaderAlbum.tscn")
+var noeud_header_playlist = preload("res://client/scènes/HeaderPlaylist/HeaderPlaylist.tscn")
 var noeud_legende = preload("res://client/scènes/Legende/Legende.tscn")
 
 var script_get_ressource = preload("res://client/scènes/Accueil/easy_get_ressource.gd").new()
 var noeud_enum:Node
 
 var type_chargement=""
+
+var album_infos
+var playlist_infos
 
 func charger_album(id_album:int, noeud_enumeration):
 	# on envoie la recherche au serveur
@@ -28,10 +32,35 @@ func charger_album(id_album:int, noeud_enumeration):
 	noeud_player.nom_playlist = "Album"
 	
 	$"liste/texte loading".visible = true
+	$"liste/téléchargement".visible = false
 		
 	Client.noeud_appelant = self
-	Client.send(JSON.stringify({"type":"get musics of album", "id_album":id_album}))
+	Client.send(JSON.stringify({"type":"get musics of album", "id_album":FonctionsGlobal.to_text(id_album)}))
+	
+func charger_playlist(id_playlist, noeud_enumeration):
+	if Client.is_locked:
+		Notif.add_notif("NOT_ALLOWED")
+		return
+	Client.is_locked = true
 
+	noeud_enum = noeud_enumeration
+	
+	type_chargement = "playlist"
+	# on ajoute le noeud dans la scène
+	for enfant in noeud_enum.get_children():
+		enfant.queue_free()
+	noeud_enum.add_child(self)
+	
+	var noeud_player = get_tree().get_first_node_in_group("player") # pour créer la playlist
+	noeud_player.playlist = []
+	noeud_player.infos_musiques = {}
+	noeud_player.nom_playlist = "Playlist"
+	
+	$"liste/texte loading".visible = true
+		
+	Client.noeud_appelant = self
+	Client.send(JSON.stringify({"type":"get musics of playlist", "id_playlist":FonctionsGlobal.to_text(id_playlist)}))
+	
 func received(message_json, _message_bytes):
 	if not Client.check_keys(message_json, ["type", "resultat"]):
 		push_error("clés invalides")
@@ -52,14 +81,29 @@ func received(message_json, _message_bytes):
 		noeud_header.get_node("éléments/masque/image").texture = await script_get_ressource.easy_get_image(message_json["resultat"][0]["image"])
 		$liste.add_child(noeud_header)
 		$liste.move_child(noeud_header, 1)	# pour le mettre avant les boutons de téléchargement
-		
-	elif type_chargement == "playlist":
-		noeud_player.nom_playlist = FonctionsGlobal.to_text(message_json["resultat"]["nom_playlist"])
 	
+	elif type_chargement == "playlist":
+		noeud_player.nom_playlist = FonctionsGlobal.to_text(message_json["resultat"][0]["nom_playlist"])
+		# on ajoute le header
+		var noeud_header = noeud_header_playlist.instantiate()
+		noeud_header.id_playlist = FonctionsGlobal.to_int(message_json["resultat"][0]["id_playlist"])
+		noeud_header.get_node("éléments/marges/textes/nom").text = FonctionsGlobal.to_text(message_json["resultat"][0]["nom_playlist"])
+		noeud_header.get_node("éléments/marges/textes/pseudo").text = FonctionsGlobal.pseudo
+		noeud_header.get_node("éléments/marges/textes/description").text = FonctionsGlobal.to_text(message_json["resultat"][0]["description_playlist"])
+		noeud_header.get_node("éléments/masque/image").texture = await script_get_ressource.easy_get_image(message_json["resultat"][0]["image_playlist"])
+		$liste.add_child(noeud_header)
+		$liste.move_child(noeud_header, 1)	# pour le mettre avant les boutons de téléchargement
+		
 	# on ajoute la légende
 	var new_noeud_legende = noeud_legende.instantiate()
 	$liste.add_child(new_noeud_legende)
 	
+	# on s'arrête s'il n'y a rien
+	if message_json["resultat"][0]["id"] == null:
+		Client.is_locked = false
+		$"liste/texte loading".visible = false
+		return
+			
 	# on crée chaque noeud et on add_child
 	var new_noeud
 	var i = 0#len(noeud_player.playlist)	# pour position_playlist
@@ -89,6 +133,7 @@ func received(message_json, _message_bytes):
 		$"liste/téléchargement/boutons action/supprimer".visible = false
 		
 	$"liste/texte loading".visible = false
+	$"liste/téléchargement".visible = true
 	Client.is_locked = false
 
 

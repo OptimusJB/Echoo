@@ -18,3 +18,8 @@ func _artiste_clicked(id_artiste:int):
 	var new_scene = scene_artiste_view.instantiate()
 	new_scene.charger_artiste(id_artiste, self)
 	# la scene ArtisteView va automatiquement s'ajouter quand il aura chargé
+
+func _playlist_clicked(id_playlist:int):
+	var new_scene = scene_music_view.instantiate()
+	new_scene.charger_playlist(id_playlist, self)
+	# la scene MusicView va automatiquement s'ajouter quand il aura chargé

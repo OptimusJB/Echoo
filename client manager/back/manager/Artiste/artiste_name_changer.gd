@@ -21,5 +21,9 @@ func update_nom(new_text: String) -> void:
 func _on_focus_exited() -> void:
 	update_nom(text)
 
+func _exit_tree() -> void:
+	# disconnect pour éviter le crash du groupe vide
+	disconnect("focus_exited", _on_focus_exited)
+	
 func _ready() -> void:
 	old_text = text

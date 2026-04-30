@@ -114,6 +114,13 @@ func _ready() -> void:
 	socket.outbound_buffer_size = max_buffer
 	#print("inbound : %d, outbound : %d" % [socket.inbound_buffer_size, socket.outbound_buffer_size])
 
+func verif_no_number(message_json):
+	for element in message_json.values():
+		if element is Dictionary:
+			verif_no_number(element)
+		if element is float:
+			push_error("float repéré pour réponse de type " + str(message_json["type"] + ". élément concerné : " + str(element)))
+			
 func _process(_delta: float) -> void:
 	var paquet
 	socket.poll()
@@ -180,6 +187,7 @@ func _process(_delta: float) -> void:
 				
 				nb_reponses_attendues -= 1
 				#print("reçu : ", message_text)
+				verif_no_number(message_text)	# TODO à enlever à la fin
 				noeud_appelant.received(message_text, message_bytes)
 				
 func send(message):	# soit str soit bytes, le stringify doit avoir été fait avant

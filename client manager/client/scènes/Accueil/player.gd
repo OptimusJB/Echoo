@@ -9,6 +9,7 @@ var position_play = -1	# position actuelle de la musique jouée dans playlist_pl
 var position_play_debut = -1 # première musique jouée (pour savoir où ça commence si on enlève l'aléatoire)
 
 var playlist_play = []	# copie de playlist, en lien avec ce qui est joué actuellement
+var playlist_play_no_random = []	# playlist_play mais pas random
 var infos_musiques_play = {}
 
 var player_grab = false	# true si la barre du player est maintenue
@@ -17,6 +18,7 @@ signal update_queue
 signal charger_artiste
 
 func shuffle_playlist():
+	playlist_play_no_random = playlist_play.duplicate()
 	var id_musique_actuelle = playlist_play.pop_at(position_play)
 	playlist_play.shuffle()
 	playlist_play.insert(0, id_musique_actuelle)
@@ -94,7 +96,7 @@ func jouer_musique(position_musique:int):
 	
 	# on demande les infos de la musique au serveur
 	Client.noeud_appelant = self
-	Client.send(JSON.stringify({"type":"get music infos", "id":playlist_play[position_musique]}))
+	Client.send(JSON.stringify({"type":"get music infos", "id":FonctionsGlobal.to_text(playlist_play[position_musique])}))
 	
 func creer_playlist_play(position_playlist:int):
 	if Client.is_locked:
@@ -112,6 +114,7 @@ func creer_playlist_play(position_playlist:int):
 		playlist_play = playlist.slice(0, len(playlist))
 		position_play = position_playlist
 	
+	playlist_play_no_random = playlist_play.duplicate()
 	infos_musiques_play = infos_musiques.duplicate()
 	position_play_debut = position_playlist
 	
@@ -143,11 +146,11 @@ func _on_timer_refresh_timeout() -> void:
 func _on_barre_drag_started() -> void:
 	player_grab = true
 
-func changer_position(position):
+func changer_position(new_position):
 	var was_paused = $"../AudioStreamPlayer".stream_paused
 	
 	$"../AudioStreamPlayer".stream_paused = false	# seek ne fonctionne pas si aucun son ne joue
-	$"../AudioStreamPlayer".seek(min(position, $"../AudioStreamPlayer".stream.get_length() - 0.01))
+	$"../AudioStreamPlayer".seek(min(new_position, $"../AudioStreamPlayer".stream.get_length() - 0.01))
 	if was_paused:
 		$"../AudioStreamPlayer".stream_paused = true
 		
@@ -171,7 +174,11 @@ func _on_jouer_toggled(toggled_on: bool) -> void:
 
 func _on_audio_stream_player_finished() -> void:
 	if Client.is_locked:
+		
 		Notif.add_notif("NOT_ALLOWED")
+		# on cache le player s'il n'y a pas de musique
+		if not $"../AudioStreamPlayer".has_stream_playback():
+			$"../".visible = false
 		return
 		
 	var noeud_repeat = $"centre/boutons/size repeter/repeter"
@@ -240,9 +247,9 @@ func _on_aléatoire_toggled(toggled_on: bool) -> void:
 			# note : s'il y a plusieurs musiques pareilles, on suppose qu'on est au premier
 			var id_musique_actuelle = playlist_play[position_play]
 			if Settings.get_setting("commencer à la chanson cliquee"):
-				playlist_play = playlist.slice(position_play_debut, len(playlist))
+				playlist_play = playlist_play_no_random.slice(position_play_debut, len(playlist_play_no_random))
 			else:
-				playlist_play = playlist.slice(0, len(playlist))
+				playlist_play = playlist_play_no_random.slice(0, len(playlist_play_no_random))
 			position_play = playlist_play.find(id_musique_actuelle)
 		
 		update_queue.emit()

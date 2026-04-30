@@ -4,6 +4,7 @@ import { exit } from "node:process";
 import sqlite, { DatabaseSync } from 'node:sqlite';
 import { randomInt } from "node:crypto";
 import path from 'node:path';
+import { json } from "node:stream/consumers";
 
 
 let ip="0.0.0.0";
@@ -172,7 +173,7 @@ function handle(websocketpeer, message_json, message_bytes){
                 websocketpeer.est_connecte = true;
                 websocketpeer.pseudo = message_json.pseudo;
                 websocketpeer.mdp = message_json.mdp;
-                send(JSON.stringify({"type":"se connecter", "resultat":"oui", "taille envoi fichier":server_settings["taille envoi fichier"], "id serveur":id_serveur}), websocketpeer);
+                send(JSON.stringify({"type":"se connecter", "resultat":"oui", "taille envoi fichier":server_settings["taille envoi fichier"].toString(), "id serveur":id_serveur.toString()}), websocketpeer);
             }
             else{
                 // mauvais mot de passe
@@ -221,7 +222,7 @@ function handle(websocketpeer, message_json, message_bytes){
             let resultat;
             let max_results = 20;
             let est_fin = false;
-            resultat = database_select("SELECT CAST(id AS TEXT) AS id, nom, image, CAST(id_album AS TEXT) AS id_album, nom_album, CAST(id_artiste AS TEXT) as id_artiste, nom_artiste, type_table FROM (SELECT Musiques.id, Musiques.nom, Albums.image, id_album, Albums.nom AS nom_album, Artistes.id AS id_artiste, Artistes.nom AS nom_artiste, 'musique' AS type_table FROM Musiques JOIN Albums ON Albums.id = Musiques.id_album JOIN Artistes ON Artistes.id = Albums.id_artiste WHERE Musiques.nom LIKE ? OR Albums.nom LIKE ? UNION ALL SELECT DISTINCT Artistes.id, Artistes.nom, Artistes.image, NULL AS id_album, NULL AS nom_album, NULL AS id_artiste, NULL AS nom_artiste, 'artiste' AS type_table FROM Artistes LEFT JOIN Albums ON Albums.id_artiste = Artistes.id WHERE Artistes.nom LIKE ? OR Albums.nom LIKE ?) ORDER BY nom ASC LIMIT ? OFFSET ?", ["%" + message_json.recherche + "%", "%" + message_json.recherche + "%", "%" + message_json.recherche + "%", "%" + message_json.recherche + "%", max_results, message_json["nb charges"]]);
+            resultat = database_select("SELECT CAST(id AS TEXT) AS id, nom, image, CAST(id_album AS TEXT) AS id_album, nom_album, CAST(id_artiste AS TEXT) as id_artiste, nom_artiste, type_table FROM (SELECT Musiques.id, Musiques.nom, Albums.image, id_album, Albums.nom AS nom_album, Artistes.id AS id_artiste, Artistes.nom AS nom_artiste, 'musique' AS type_table FROM Musiques JOIN Albums ON Albums.id = Musiques.id_album JOIN Artistes ON Artistes.id = Albums.id_artiste WHERE Musiques.nom LIKE ? OR Albums.nom LIKE ? UNION ALL SELECT DISTINCT Artistes.id, Artistes.nom, Artistes.image, NULL AS id_album, NULL AS nom_album, NULL AS id_artiste, NULL AS nom_artiste, 'artiste' AS type_table FROM Artistes LEFT JOIN Albums ON Albums.id_artiste = Artistes.id WHERE Artistes.nom LIKE ? OR Albums.nom LIKE ?) ORDER BY nom ASC LIMIT ? OFFSET ?", ["%" + message_json.recherche + "%", "%" + message_json.recherche + "%", "%" + message_json.recherche + "%", "%" + message_json.recherche + "%", max_results, parseInt(message_json["nb charges"])]);
             //console.log("taille : " + resultat.length);
             //console.log("stringify : " + JSON.stringify({"type":"rechercher", "resultat":resultat, "est fin":est_fin}))
             if (resultat.length < max_results) est_fin = true;
@@ -240,7 +241,7 @@ function handle(websocketpeer, message_json, message_bytes){
 
         else if(message_json.type == "get music infos"){
             let resultat;
-            resultat = database_select("SELECT Musiques.nom AS nom_musique, Albums.image AS image_musique, Artistes.nom AS nom_artiste FROM Musiques JOIN Albums ON Albums.id = Musiques.id_album JOIN Artistes ON Artistes.id = Albums.id_artiste WHERE Musiques.id = ?", [message_json.id]);
+            resultat = database_select("SELECT Musiques.nom AS nom_musique, Albums.image AS image_musique, Artistes.nom AS nom_artiste FROM Musiques JOIN Albums ON Albums.id = Musiques.id_album JOIN Artistes ON Artistes.id = Albums.id_artiste WHERE Musiques.id = ?", [parseInt(message_json.id)]);
             
             // on regarde si la longueur de résultat est valide
             if (resultat.length != 1){
@@ -261,7 +262,7 @@ function handle(websocketpeer, message_json, message_bytes){
                 websocketpeer.terminate();
                 return;
             }
-            resultat = database_select("SELECT min, moy, max FROM Musiques WHERE id=?", [message_json["id"]]);
+            resultat = database_select("SELECT min, moy, max FROM Musiques WHERE id=?", [parseInt(message_json["id"])]);
 
             // on regarde si la longueur de résultat est valide
             if (resultat.length != 1){
@@ -305,7 +306,8 @@ function handle(websocketpeer, message_json, message_bytes){
 
         else if(message_json.type == "get musics of album"){
             let resultat;
-            resultat = database_select("SELECT CAST(Musiques.id AS TEXT) AS id, Musiques.nom AS nom, Albums.image AS image, CAST(Albums.id AS TEXT) AS id_album, Albums.nom AS nom_album, CAST(Artistes.id AS TEXT) AS id_artiste, Artistes.nom AS nom_artiste, Albums.annee AS annee_album, Albums.genre AS genre_album FROM Musiques JOIN Albums ON Albums.id = Musiques.id_album JOIN Artistes ON Artistes.id = Albums.id_artiste WHERE Albums.id = ? ORDER BY Musiques.position_album ASC", [message_json.id_album]);
+            resultat = database_select("SELECT DISTINCT CAST(Musiques.id AS TEXT) AS id, Musiques.nom AS nom, Albums.image AS image, CAST(Albums.id AS TEXT) AS id_album, Albums.nom AS nom_album, CAST(Artistes.id AS TEXT) AS id_artiste, Artistes.nom AS nom_artiste, Albums.annee AS annee_album, Albums.genre AS genre_album FROM Albums JOIN Artistes ON Artistes.id = Albums.id_artiste LEFT JOIN Musiques ON Musiques.id_album = Albums.id WHERE Albums.id = ? ORDER BY Musiques.position_album ASC", [parseInt(message_json.id_album)])
+            //resultat = database_select("SELECT CAST(Musiques.id AS TEXT) AS id, Musiques.nom AS nom, Albums.image AS image, CAST(Albums.id AS TEXT) AS id_album, Albums.nom AS nom_album, CAST(Artistes.id AS TEXT) AS id_artiste, Artistes.nom AS nom_artiste, Albums.annee AS annee_album, Albums.genre AS genre_album FROM Musiques JOIN Albums ON Albums.id = Musiques.id_album JOIN Artistes ON Artistes.id = Albums.id_artiste WHERE Albums.id = ? ORDER BY Musiques.position_album ASC", [parseInt(message_json.id_album)]);
             
             // on regarde si la longueur de résultat est valide
             if (resultat.length < 1){
@@ -322,7 +324,7 @@ function handle(websocketpeer, message_json, message_bytes){
 
         else if(message_json.type == "get artiste infos"){
             let resultat;
-            resultat = database_select("SELECT Artistes.nom AS nom_artiste, Artistes.image AS image_artiste, Albums.nom AS nom_album, CAST(Albums.id AS TEXT) AS id_album, Albums.annee AS annee, Albums.image AS image_album, Albums.genre AS genre_album FROM Artistes LEFT JOIN Albums ON Albums.id_artiste = Artistes.id WHERE Artistes.id = ?", [message_json.id_artiste]);
+            resultat = database_select("SELECT Artistes.nom AS nom_artiste, Artistes.image AS image_artiste, Albums.nom AS nom_album, CAST(Albums.id AS TEXT) AS id_album, Albums.annee AS annee, Albums.image AS image_album, Albums.genre AS genre_album FROM Artistes LEFT JOIN Albums ON Albums.id_artiste = Artistes.id WHERE Artistes.id = ?", [parseInt(message_json.id_artiste)]);
             // si pas de résultat, l'artiste n'existe pas (LEFT JOIN)
             if (resultat.length < 1){
                 console.log("get artiste infos : longueur résultat invalide, fermeture socket");
@@ -340,6 +342,25 @@ function handle(websocketpeer, message_json, message_bytes){
             send(JSON.stringify({"type":"creer playlist", "resultat":resultat.lastInsertRowid.toString()}), websocketpeer);
         }
 
+
+
+        else if (message_json.type == "supprimer playlist"){
+            let resultat;
+            // note : on check le pseudo pour être sûr que l'utilisateur est autorisé à supprimer la playlist
+            resultat = database_exec("DELETE FROM UPlaylists WHERE id = ? AND id_utilisateur = (SELECT id FROM Utilisateurs WHERE username = ?)", [parseInt(message_json.id_playlist), websocketpeer.pseudo]);
+            send(JSON.stringify({"type":"supprimer playlist", "resultat":"ok"}), websocketpeer);
+        }
+
+
+
+        else if (message_json.type == "get musics of playlist"){
+            let resultat;
+            resultat = database_select("SELECT CAST(Musiques.id AS TEXT) AS id, Musiques.nom as nom, Albums.image AS image, CAST(Albums.id AS TEXT) AS id_album, Albums.nom AS nom_album, CAST(Artistes.id AS TEXT) AS id_artiste, Artistes.nom AS nom_artiste, Uplaylists.nom AS nom_playlist, Uplaylists.image AS image_playlist, Uplaylists.description AS description_playlist FROM Musiques JOIN Albums ON Albums.id = Musiques.id_album JOIN Artistes ON Artistes.id = Albums.id_artiste JOIN UMusiques ON UMusiques.id_musique = Musiques.id JOIN UPlaylists ON UPlaylists.id = UMusiques.id_playlist JOIN Utilisateurs ON Utilisateurs.id = UPlaylists.id_utilisateur WHERE Uplaylists.id = ? AND Utilisateurs.username = ? ORDER BY UMusiques.position_playlist ASC", [message_json.id_playlist, websocketpeer.pseudo]);
+            //resultat = database_select("SELECT CAST(Musiques.id AS TEXT) AS id, Musiques.nom AS nom, Albums.image AS image, CAST(Albums.id AS TEXT) AS id_album, Albums.nom AS nom_album, CAST(Artistes.id AS TEXT) AS id_artiste, Artistes.nom AS nom_artiste, Albums.annee AS annee_album, Albums.genre AS genre_album FROM Musiques JOIN Albums ON Albums.id = Musiques.id_album JOIN Artistes ON Artistes.id = Albums.id_artiste WHERE Albums.id = ? ORDER BY Musiques.position_album ASC", [parseInt(message_json.id_album)]);
+            // on ne check pas s'il y a un résultat, car on ne sait pas si la playlist n'existe pas ou si c'est pas le bon pseudo ou s'il n'y a pas de musiques
+            send(JSON.stringify({"type":"supprimer playlist", "resultat":resultat}), websocketpeer);
+        }
+
         
         else{
         console.log("type invalide, fermeture socket");
@@ -352,6 +373,22 @@ function handle(websocketpeer, message_json, message_bytes){
     }
 };
 
+function verif_no_number(message_json, test_json=true){
+    let element;
+    for (element in message_json){
+        if (typeof(message_json[element]) == "number"){
+            console.log("float repéré pour requête de type " + message_json["type"]);
+        }
+        else if (test_json){
+            // on teste si c'est un json (très lent)
+            try{
+                JSON.stringify(message_json[element]);
+                verif_no_number(message_json[element]);
+            }
+            catch{}
+        }
+    }
+}
 
 wss.on("connection", function connection(websocketpeer, req){ // connection d'un client
     connexions_timeout.set(websocketpeer, Date.now());
@@ -418,6 +455,7 @@ wss.on("connection", function connection(websocketpeer, req){ // connection d'un
 
         // on lance handle
         // TODO : ajouter try avec catch fermeture socket avec terminate, et aussi avec affichage de l'erreur
+        verif_no_number(message_text); // TODO à enlever à la fin
         handle(websocketpeer, message_text, message_bytes);
     });
 });

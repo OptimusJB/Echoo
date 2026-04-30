@@ -1,7 +1,7 @@
 extends Control
 
 var state = "connexion"
-
+	
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
 		if get_tree().get_nodes_in_group("database")[0].fermer_database():
