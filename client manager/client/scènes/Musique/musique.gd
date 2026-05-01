@@ -161,3 +161,5 @@ func action(action_choisie):
 		script_get_ressoure.telecharger_musiques([id])
 	elif action_choisie == tr("DELETE_FROM_DISK"):
 		script_get_ressoure.supprimer_musiques([id])
+	elif action_choisie == tr("ADD_TO_PLAYLIST"):
+		FonctionsGlobal.id_musique_ajout = id

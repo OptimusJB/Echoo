@@ -118,8 +118,11 @@ func verif_no_number(message_json):
 	for element in message_json.values():
 		if element is Dictionary:
 			verif_no_number(element)
+		if element is Array:
+			for element_liste in element:
+				verif_no_number(element_liste)
 		if element is float:
-			push_error("float repéré pour réponse de type " + str(message_json["type"] + ". élément concerné : " + str(element)))
+			push_error("float repéré pour réponse. élément concerné : " + str(element))
 			
 func _process(_delta: float) -> void:
 	var paquet

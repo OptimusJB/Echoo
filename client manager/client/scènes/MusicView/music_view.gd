@@ -1,4 +1,6 @@
 extends ScrollContainer
+class_name MusicView
+
 var noeud_header_album = preload("res://client/scènes/HeaderAlbum/HeaderAlbum.tscn")
 var noeud_header_playlist = preload("res://client/scènes/HeaderPlaylist/HeaderPlaylist.tscn")
 var noeud_legende = preload("res://client/scènes/Legende/Legende.tscn")
@@ -7,9 +9,7 @@ var script_get_ressource = preload("res://client/scènes/Accueil/easy_get_ressou
 var noeud_enum:Node
 
 var type_chargement=""
-
-var album_infos
-var playlist_infos
+var id_chargement
 
 func charger_album(id_album:int, noeud_enumeration):
 	# on envoie la recherche au serveur
@@ -21,6 +21,7 @@ func charger_album(id_album:int, noeud_enumeration):
 	noeud_enum = noeud_enumeration
 	
 	type_chargement = "album"
+	id_chargement = id_album
 	# on ajoute le noeud dans la scène
 	for enfant in noeud_enum.get_children():
 		enfant.queue_free()
@@ -46,6 +47,7 @@ func charger_playlist(id_playlist, noeud_enumeration):
 	noeud_enum = noeud_enumeration
 	
 	type_chargement = "playlist"
+	id_chargement = id_playlist
 	# on ajoute le noeud dans la scène
 	for enfant in noeud_enum.get_children():
 		enfant.queue_free()
@@ -57,9 +59,31 @@ func charger_playlist(id_playlist, noeud_enumeration):
 	noeud_player.nom_playlist = "Playlist"
 	
 	$"liste/texte loading".visible = true
+	$"liste/téléchargement".visible = false
 		
 	Client.noeud_appelant = self
 	Client.send(JSON.stringify({"type":"get musics of playlist", "id_playlist":FonctionsGlobal.to_text(id_playlist)}))
+
+func ajouter_musiques(liste_musiques):
+	# on crée chaque noeud et on add_child
+	var noeud_player = get_tree().get_first_node_in_group("player")
+	var new_noeud
+	var i = len(noeud_player.playlist)	# pour position_playlist
+	var compteur_download = 0	# nombre de musiques téléchargées
+	for element in liste_musiques:
+		noeud_player.playlist.append(FonctionsGlobal.to_int(element["id"]))
+		noeud_player.infos_musiques[FonctionsGlobal.to_int(element["id"])] = {"position":i, "nom":FonctionsGlobal.to_text(element["nom"]), "id_artiste":FonctionsGlobal.to_int(element["id_artiste"]), "nom_artiste":FonctionsGlobal.to_text(element["nom_artiste"]), "id_album":FonctionsGlobal.to_int(element["id_album"]), "nom_album":FonctionsGlobal.to_text(element["nom_album"]), "image":FonctionsGlobal.to_text(element["image"])}
+		
+		new_noeud = await script_get_ressource.creer_musique(FonctionsGlobal.to_int(element["id"]), i, FonctionsGlobal.to_text(element["nom"]), FonctionsGlobal.to_int(element["id_artiste"]), FonctionsGlobal.to_text(element["nom_artiste"]), FonctionsGlobal.to_int(element["id_album"]), FonctionsGlobal.to_text(element["nom_album"]), FonctionsGlobal.to_text(element["image"]), true)
+		if new_noeud.est_telecharge:
+			compteur_download += 1
+		i += 1
+		#new_noeud.get_node("éléments/gauche/numéro").cacher()
+		
+		$"liste".add_child(new_noeud)
+		#$"liste".move_child(new_noeud, $"liste".get_child_count() - 2)
+	
+	return {"i":i, "compteur_download":compteur_download}
 	
 func received(message_json, _message_bytes):
 	if not Client.check_keys(message_json, ["type", "resultat"]):
@@ -103,24 +127,10 @@ func received(message_json, _message_bytes):
 		Client.is_locked = false
 		$"liste/texte loading".visible = false
 		return
-			
-	# on crée chaque noeud et on add_child
-	var new_noeud
-	var i = 0#len(noeud_player.playlist)	# pour position_playlist
-	var compteur_download = 0	# nombre de musiques téléchargées
 	
-	for element in message_json["resultat"]:
-		noeud_player.playlist.append(FonctionsGlobal.to_int(element["id"]))
-		noeud_player.infos_musiques[FonctionsGlobal.to_int(element["id"])] = {"position":i, "nom":FonctionsGlobal.to_text(element["nom"]), "id_artiste":FonctionsGlobal.to_int(element["id_artiste"]), "nom_artiste":FonctionsGlobal.to_text(element["nom_artiste"]), "id_album":FonctionsGlobal.to_int(element["id_album"]), "nom_album":FonctionsGlobal.to_text(element["nom_album"]), "image":FonctionsGlobal.to_text(element["image"])}
-		
-		new_noeud = await script_get_ressource.creer_musique(FonctionsGlobal.to_int(element["id"]), i, FonctionsGlobal.to_text(element["nom"]), FonctionsGlobal.to_int(element["id_artiste"]), FonctionsGlobal.to_text(element["nom_artiste"]), FonctionsGlobal.to_int(element["id_album"]), FonctionsGlobal.to_text(element["nom_album"]), FonctionsGlobal.to_text(element["image"]), true)
-		if new_noeud.est_telecharge:
-			compteur_download += 1
-		i += 1
-		#new_noeud.get_node("éléments/gauche/numéro").cacher()
-		
-		$"liste".add_child(new_noeud)
-		#$"liste".move_child(new_noeud, $"liste".get_child_count() - 2)
+	var resultat = await ajouter_musiques(message_json["resultat"])
+	var i = resultat["i"]
+	var compteur_download = resultat["compteur_download"]
 	
 	# on cache les boutons download selon compteur download
 	if compteur_download == i:

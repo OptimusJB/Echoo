@@ -23,3 +23,8 @@ func _playlist_clicked(id_playlist:int):
 	var new_scene = scene_music_view.instantiate()
 	new_scene.charger_playlist(id_playlist, self)
 	# la scene MusicView va automatiquement s'ajouter quand il aura chargé
+
+func clear_affichage():
+	# on supprime tous les enfants
+	for element in get_children():
+		element.queue_free()

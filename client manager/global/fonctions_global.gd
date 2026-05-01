@@ -14,6 +14,8 @@ var id_current_download = null	# id de la musique atuellement en train d'être t
 var start_music_selected = null # pour le shift sélection des musiques
 #var musics_selected = [] # liste des musiques sélectionnées
 
+var id_musique_ajout = null	# id de la playlist à ajouter
+
 func to_int(texte):
 	# retourne l'élément en int, 0 si problème
 	if texte is int:

@@ -30,4 +30,9 @@ size_flags_horizontal = 8
 focus_mode = 0
 text = "ADD_PLAYLIST"
 
+[node name="chargement" type="Label" parent="liste playlists" unique_id=527155284]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "LOADING"
+
 [connection signal="pressed" from="liste playlists/en-tête/ajouter playlist" to="." method="_on_ajouter_playlist_pressed"]

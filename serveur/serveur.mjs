@@ -4,7 +4,6 @@ import { exit } from "node:process";
 import sqlite, { DatabaseSync } from 'node:sqlite';
 import { randomInt } from "node:crypto";
 import path from 'node:path';
-import { json } from "node:stream/consumers";
 
 
 let ip="0.0.0.0";
@@ -347,6 +346,7 @@ function handle(websocketpeer, message_json, message_bytes){
         else if (message_json.type == "supprimer playlist"){
             let resultat;
             // note : on check le pseudo pour être sûr que l'utilisateur est autorisé à supprimer la playlist
+            resultat = database_exec("DELETE FROM UMusiques WHERE id IN (SELECT UMusiques.id FROM UMusiques JOIN UPlaylists ON UPlaylists.id = UMusiques.id_playlist JOIN Utilisateurs ON Utilisateurs.id = UPlaylists.id_utilisateur WHERE UPlaylists.id = ? AND username = ?)", [parseInt(message_json.id_playlist), websocketpeer.pseudo]);
             resultat = database_exec("DELETE FROM UPlaylists WHERE id = ? AND id_utilisateur = (SELECT id FROM Utilisateurs WHERE username = ?)", [parseInt(message_json.id_playlist), websocketpeer.pseudo]);
             send(JSON.stringify({"type":"supprimer playlist", "resultat":"ok"}), websocketpeer);
         }
@@ -355,10 +355,42 @@ function handle(websocketpeer, message_json, message_bytes){
 
         else if (message_json.type == "get musics of playlist"){
             let resultat;
-            resultat = database_select("SELECT CAST(Musiques.id AS TEXT) AS id, Musiques.nom as nom, Albums.image AS image, CAST(Albums.id AS TEXT) AS id_album, Albums.nom AS nom_album, CAST(Artistes.id AS TEXT) AS id_artiste, Artistes.nom AS nom_artiste, Uplaylists.nom AS nom_playlist, Uplaylists.image AS image_playlist, Uplaylists.description AS description_playlist FROM Musiques JOIN Albums ON Albums.id = Musiques.id_album JOIN Artistes ON Artistes.id = Albums.id_artiste JOIN UMusiques ON UMusiques.id_musique = Musiques.id JOIN UPlaylists ON UPlaylists.id = UMusiques.id_playlist JOIN Utilisateurs ON Utilisateurs.id = UPlaylists.id_utilisateur WHERE Uplaylists.id = ? AND Utilisateurs.username = ? ORDER BY UMusiques.position_playlist ASC", [message_json.id_playlist, websocketpeer.pseudo]);
-            //resultat = database_select("SELECT CAST(Musiques.id AS TEXT) AS id, Musiques.nom AS nom, Albums.image AS image, CAST(Albums.id AS TEXT) AS id_album, Albums.nom AS nom_album, CAST(Artistes.id AS TEXT) AS id_artiste, Artistes.nom AS nom_artiste, Albums.annee AS annee_album, Albums.genre AS genre_album FROM Musiques JOIN Albums ON Albums.id = Musiques.id_album JOIN Artistes ON Artistes.id = Albums.id_artiste WHERE Albums.id = ? ORDER BY Musiques.position_album ASC", [parseInt(message_json.id_album)]);
+            resultat = database_select("SELECT CAST(Musiques.id AS TEXT) AS id, Musiques.nom as nom, Albums.image AS image, CAST(Albums.id AS TEXT) AS id_album, Albums.nom AS nom_album, CAST(Artistes.id AS TEXT) AS id_artiste, Artistes.nom AS nom_artiste, CAST(UPlaylists.id AS TEXT) AS id_playlist, Uplaylists.nom AS nom_playlist, Uplaylists.image AS image_playlist, Uplaylists.description AS description_playlist FROM UPlaylists JOIN Utilisateurs ON Utilisateurs.id = UPlaylists.id_utilisateur LEFT JOIN UMusiques ON UMusiques.id_playlist = UPlaylists.id LEFT JOIN Musiques ON Musiques.id = UMusiques.id_musique LEFT JOIN Albums ON Albums.id = Musiques.id_album LEFT JOIN Artistes ON Artistes.id = Albums.id_artiste WHERE Uplaylists.id = ? AND Utilisateurs.username = ? ORDER BY UMusiques.position_playlist ASC", [parseInt(message_json.id_playlist), websocketpeer.pseudo]);
             // on ne check pas s'il y a un résultat, car on ne sait pas si la playlist n'existe pas ou si c'est pas le bon pseudo ou s'il n'y a pas de musiques
             send(JSON.stringify({"type":"supprimer playlist", "resultat":resultat}), websocketpeer);
+        }
+
+
+
+        else if (message_json.type == "ajouter musique playlist"){
+            let resultat;
+            // on vérifie d'abord que l'utilisateur est bien celui qui a la playlist
+            resultat = database_select("SELECT UPlaylists.id FROM UPlaylists JOIN Utilisateurs ON Utilisateurs.id = UPlaylists.id_utilisateur WHERE UPlaylists.id = ? AND Utilisateurs.username = ?", [parseInt(message_json.id_playlist), websocketpeer.pseudo]);
+            if (resultat.length < 1){
+                console.log("ajouter musique playlist : longueur résultat invalide, fermeture socket");
+                websocketpeer.terminate();
+                return;
+            }
+            resultat = database_exec("INSERT INTO UMusiques(id_playlist, id_musique, position_playlist) VALUES(?, ?, (SELECT COALESCE(MAX(position_playlist), 0) + 1 FROM UMusiques WHERE id_playlist = ?))", [parseInt(message_json.id_playlist), parseInt(message_json.id_musique), parseInt(message_json.id_playlist)]);
+            
+            // on renvoie les infos de la musique créée (pour l'ajouter directement)
+            resultat = database_select("SELECT CAST(Musiques.id AS TEXT) AS id, Musiques.nom AS nom, Albums.image AS image, CAST(Albums.id AS TEXT) AS id_album, Albums.nom AS nom_album, CAST(Artistes.id AS TEXT) AS id_artiste, Artistes.nom AS nom_artiste FROM Musiques JOIN Albums ON Albums.id = Musiques.id_album JOIN Artistes ON Artistes.id = Albums.id_artiste WHERE Musiques.id = ?", [parseInt(message_json.id_musique)])
+            
+            // on regarde si la longueur de résultat est valide (normalement inutile grâce à la contraite de clé étrangère des requêtes d'avant (crash si problème) mais en met quand même au cas où)
+            if (resultat.length != 1){
+                console.log("ajouter musique playlist 2 : longueur résultat invalide, fermeture socket");
+                websocketpeer.terminate();
+                return;
+
+            }
+            send(JSON.stringify({"type":"ajouter musique playlist", "resultat":resultat}), websocketpeer);
+        }
+
+
+        else if(message_json.type == "get playlists"){
+            let resultat;
+            resultat = database_select("SELECT CAST(UPlaylists.id AS TEXT) AS id, nom, image FROM Uplaylists JOIN Utilisateurs ON Utilisateurs.id = UPlaylists.id_utilisateur WHERE Utilisateurs.username = ?", [websocketpeer.pseudo]);
+            send(JSON.stringify({"type":"get playlists", "resultat":resultat}), websocketpeer);
         }
 
         
@@ -373,7 +405,7 @@ function handle(websocketpeer, message_json, message_bytes){
     }
 };
 
-function verif_no_number(message_json, test_json=true){
+function verif_no_number(message_json, test_json=true, test_tableau=true){
     let element;
     for (element in message_json){
         if (typeof(message_json[element]) == "number"){
@@ -384,6 +416,15 @@ function verif_no_number(message_json, test_json=true){
             try{
                 JSON.stringify(message_json[element]);
                 verif_no_number(message_json[element]);
+            }
+            catch{}
+        }
+        else if (test_tableau){
+            // on teste si c'est un tableau
+            try{
+                message_json[element][0];
+                let i;
+                for(i=0; i<message_json[element].length;i++) verif_no_number(message_json[element][i]);
             }
             catch{}
         }
