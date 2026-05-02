@@ -156,6 +156,10 @@ function check_keys(message_json, liste_cles){
     return 1;
 }
 
+function clean_umusiques_positions(id_playlist){
+    database_select("UPDATE UMusiques AS base SET position_playlist = ordre.position_playlist FROM (SELECT id AS id_temp, ROW_NUMBER() OVER (ORDER BY position_playlist ASC) AS position_playlist FROM UMusiques WHERE id_playlist = ?) AS ordre WHERE id = id_temp", [parseInt(id_playlist)]);
+}
+
 function handle(websocketpeer, message_json, message_bytes){
     // message de la forme {'type':'valeur', ...}
     // TODO ajouter vérification des clés
@@ -387,10 +391,63 @@ function handle(websocketpeer, message_json, message_bytes){
         }
 
 
+
         else if(message_json.type == "get playlists"){
             let resultat;
             resultat = database_select("SELECT CAST(UPlaylists.id AS TEXT) AS id, nom, image FROM Uplaylists JOIN Utilisateurs ON Utilisateurs.id = UPlaylists.id_utilisateur WHERE Utilisateurs.username = ?", [websocketpeer.pseudo]);
             send(JSON.stringify({"type":"get playlists", "resultat":resultat}), websocketpeer);
+        }
+
+
+
+        else if(message_json.type == "remove from playlist"){
+            let resultat;
+            resultat = database_exec("DELETE FROM UMusiques WHERE id IN (SELECT UMusiques.id FROM UMusiques JOIN UPlaylists ON UPlaylists.id = UMusiques.id_playlist JOIN Utilisateurs ON Utilisateurs.id = UPlaylists.id_utilisateur WHERE UPlaylists.id = ? AND UMusiques.position_playlist = ? AND username = ?)", [parseInt(message_json.id_playlist), parseInt(message_json.position_playlist), websocketpeer.pseudo]);
+            clean_umusiques_positions(message_json.id_playlist);
+            send(JSON.stringify({"type":"remove from playlist", "resultat":"ok"}), websocketpeer);
+        }
+
+
+
+        else if(message_json.type == "changer position musique"){
+            try{
+                let resultat;
+                // on vérifie d'abord que l'utilisateur est bien celui qui a la playlist
+                resultat = database_select("SELECT UPlaylists.id FROM UPlaylists JOIN Utilisateurs ON Utilisateurs.id = UPlaylists.id_utilisateur WHERE UPlaylists.id = ? AND Utilisateurs.username = ?", [parseInt(message_json.id_playlist), websocketpeer.pseudo]);
+                if (resultat.length < 1){
+                    console.log("changer position musique : longueur résultat invalide, fermeture socket");
+                    websocketpeer.terminate();
+                    return;
+                }
+
+                let debut = parseInt(message_json.position_debut);
+                let fin = parseInt(message_json.position_fin);
+
+                // on récupère d'abord l'id de la musique a déplacer
+                let id_musique = database_select("SELECT id FROM UMusiques WHERE id_playlist = ? AND position_playlist = ?", [parseInt(message_json.id_playlist), debut])[0]["id"];
+                if (debut != fin){
+                    if (debut > fin){
+                        // on monte
+                        // on fait +1 pour [fin, debut - 1]
+                        resultat = database_exec("UPDATE UMusiques SET position_playlist = position_playlist + 1 WHERE id_playlist = ? AND position_playlist >= ? AND position_playlist <= ?", [parseInt(message_json.id_playlist), fin, debut - 1]);
+                    }
+                    else if(debut < fin){
+                        // on descend
+                        // on fait -1 pour [debut + 1, fin]
+                        resultat = database_exec("UPDATE UMusiques SET position_playlist = position_playlist - 1 WHERE id_playlist = ? AND position_playlist >= ? AND position_playlist <= ?", [parseInt(message_json.id_playlist), debut + 1, fin]);
+                    }
+                    // on met la musique déplacée à la bonne position
+                    resultat = database_exec("UPDATE UMusiques SET position_playlist = ? WHERE id_playlist = ? AND position_playlist = ? AND id = ?", [fin, parseInt(message_json.id_playlist), debut, id_musique]);
+                }
+            }
+            catch{
+                console.log("échec du déplacement, fermeture socket");
+                clean_umusiques_positions(message_json.id_playlist);
+                websocketpeer.terminate();
+                return;
+            }
+            clean_umusiques_positions(message_json.id_playlist); // on le met au cas où
+            send(JSON.stringify({"type":"changer position musique", "resultat":"ok"}), websocketpeer);
         }
 
         

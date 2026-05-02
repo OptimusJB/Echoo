@@ -74,7 +74,11 @@ func ajouter_musiques(liste_musiques):
 		noeud_player.playlist.append(FonctionsGlobal.to_int(element["id"]))
 		noeud_player.infos_musiques[FonctionsGlobal.to_int(element["id"])] = {"position":i, "nom":FonctionsGlobal.to_text(element["nom"]), "id_artiste":FonctionsGlobal.to_int(element["id_artiste"]), "nom_artiste":FonctionsGlobal.to_text(element["nom_artiste"]), "id_album":FonctionsGlobal.to_int(element["id_album"]), "nom_album":FonctionsGlobal.to_text(element["nom_album"]), "image":FonctionsGlobal.to_text(element["image"])}
 		
-		new_noeud = await script_get_ressource.creer_musique(FonctionsGlobal.to_int(element["id"]), i, FonctionsGlobal.to_text(element["nom"]), FonctionsGlobal.to_int(element["id_artiste"]), FonctionsGlobal.to_text(element["nom_artiste"]), FonctionsGlobal.to_int(element["id_album"]), FonctionsGlobal.to_text(element["nom_album"]), FonctionsGlobal.to_text(element["image"]), true)
+		var id_playlist = null
+		if type_chargement == "playlist":
+			id_playlist = id_chargement
+			
+		new_noeud = await script_get_ressource.creer_musique(FonctionsGlobal.to_int(element["id"]), i, FonctionsGlobal.to_text(element["nom"]), FonctionsGlobal.to_int(element["id_artiste"]), FonctionsGlobal.to_text(element["nom_artiste"]), FonctionsGlobal.to_int(element["id_album"]), FonctionsGlobal.to_text(element["nom_album"]), FonctionsGlobal.to_text(element["image"]), true, id_playlist)
 		if new_noeud.est_telecharge:
 			compteur_download += 1
 		i += 1
@@ -185,3 +189,42 @@ func _on_supprimer_pressed() -> void:
 	$"liste/téléchargement/boutons action/supprimer".visible = false
 	Notif.add_notif("REMOVE_END")
 	Client.is_locked = false
+
+func deplacer_musiques(position_musique_depart, position_musique_fin):
+	var index_premiere_musique = 0
+	# on détermine l'index de la première musique (normalement 2)
+	for element in $liste.get_children():
+		if element is objet_musique:
+			index_premiere_musique = element.get_index()
+			break
+	
+	var musique_actuelle
+	if position_musique_depart == position_musique_fin:
+		push_error("position_musique_depart = position_musique_fin")
+		return
+		
+	if position_musique_depart > position_musique_fin:
+		# on monte
+		# on fait +1 pour [fin, debut - 1]
+		for i in range(index_premiere_musique + position_musique_fin, index_premiere_musique + position_musique_depart):
+			musique_actuelle = $liste.get_child(i)
+			musique_actuelle.position_playlist += 1
+			musique_actuelle.get_node("éléments/gauche/numéro").text = FonctionsGlobal.to_text(musique_actuelle.position_playlist + 1)
+		
+	elif position_musique_fin > position_musique_depart:
+		# on descend
+		# on fait -1 pour [debut + 1, fin]
+		for i in range(index_premiere_musique + position_musique_depart + 1, index_premiere_musique + position_musique_fin + 1):
+			musique_actuelle = $liste.get_child(i)
+			musique_actuelle.position_playlist -= 1
+			musique_actuelle.get_node("éléments/gauche/numéro").text = FonctionsGlobal.to_text(musique_actuelle.position_playlist + 1)
+	
+	# on change les infos de la musique que l'on veut déplacer
+	musique_actuelle = $liste.get_child(index_premiere_musique + position_musique_depart)
+	musique_actuelle.position_playlist = position_musique_fin
+	musique_actuelle.get_node("éléments/gauche/numéro").text = FonctionsGlobal.to_text(musique_actuelle.position_playlist + 1)
+	
+	# on change l'odre dans le player et dans l'arbre de scène
+	var player = get_tree().get_first_node_in_group("player")
+	player.playlist.insert(position_musique_fin, player.playlist.pop_at(position_musique_depart))
+	$liste.move_child(musique_actuelle, index_premiere_musique + position_musique_fin)

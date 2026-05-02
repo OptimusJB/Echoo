@@ -8,9 +8,7 @@ var noeud_enum:Node
 func charger_artiste(id_artiste:int, noeud_enumeration):
 	# on envoie la recherche au serveur
 	if Client.is_locked:
-		# un autre recherche est probablement en cours
-		# dans le doute on ne met pas la notif
-		#Notif.add_notif("NOT_ALLOWED")
+		Notif.add_notif("NOT_ALLOWED")
 		return
 	Client.is_locked = true
 
@@ -41,13 +39,15 @@ func received(message_json, _message_bytes):
 	$"éléments/fond header/header/nom".text = FonctionsGlobal.to_text(message_json["resultat"][0]["nom_artiste"])
 	$"éléments/fond header/header/masque/image".texture = await script_get_ressource.easy_get_image(message_json["resultat"][0]["image_artiste"])
 	
+	$"éléments/fond header".visible = true
+	
 	# si pas d'albums, on s'arrête là
 	if message_json["resultat"][0]["id_album"] == null:
 		Client.is_locked = false
 		$"éléments/texte loading".visible = false
-		$"éléments/fond header".visible = true
 		return
-		
+	
+	$"éléments/texte albums".visible = true
 	# on crée et ajoute les albums
 	var new_noeud
 	for element in message_json["resultat"]:
@@ -61,6 +61,4 @@ func received(message_json, _message_bytes):
 		#$"liste".move_child(new_noeud, $"liste".get_child_count() - 2)
 		
 	$"éléments/texte loading".visible = false
-	$"éléments/fond header".visible = true
-	$"éléments/texte albums".visible = true
 	Client.is_locked = false

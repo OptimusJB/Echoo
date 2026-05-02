@@ -17,7 +17,9 @@ func _on_mouse_exited() -> void:
 	custom_minimum_size.y -= 5
 
 func _on_button_down() -> void:
+	accept_event()
 	_on_mouse_entered()
 
 func _on_button_up() -> void:
+	accept_event()
 	_on_mouse_exited()

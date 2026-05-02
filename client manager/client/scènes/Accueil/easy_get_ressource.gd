@@ -356,9 +356,11 @@ func supprimer_musiques(liste_id_musiques):
 			Settings.save_settings()
 
 # création musique
-func creer_musique(id:int, position_playlist:int, nom:String, id_artiste:int, nom_artiste:String, id_album:int, nom_album:String, image:String, afficher_numero:bool) -> Node:
+func creer_musique(id:int, position_playlist:int, nom:String, id_artiste:int, nom_artiste:String, id_album:int, nom_album:String, image:String, afficher_numero=true, id_playlist=null) -> Node:
 	var new_noeud = noeud_musique.instantiate()
-	
+	if id_playlist != null:
+		new_noeud.id_playlist = id_playlist
+		
 	# on check si la musique est téléchargée
 	if est_musique_telecharge(id, Settings.get_setting("qualite")):
 		new_noeud.est_telecharge = true

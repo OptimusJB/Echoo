@@ -53,4 +53,5 @@ func _gui_input(event: InputEvent) -> void:
 func option_finale(option:String):
 	# on cache le sous menu et on appelle la fonction de sortie du noeud appelant
 	visible = false
-	noeud_appelant.action(option)
+	if noeud_appelant:
+		noeud_appelant.action(option)

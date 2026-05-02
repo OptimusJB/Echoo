@@ -1,4 +1,6 @@
 extends PanelContainer
+class_name objet_musique
+
 var script_get_ressoure = preload("res://client/scènes/Accueil/easy_get_ressource.gd").new()
 var player
 
@@ -19,6 +21,7 @@ var numero_frame_download = 0
 var noeud_animation_download
 
 var is_in_queue	= false	# mettre à true si jamais la musique est dans la file d'attente
+var id_playlist = null
 
 var est_telecharge = false
 
@@ -27,6 +30,8 @@ signal creer_playlist
 
 signal album_clicked
 signal artiste_clicked
+
+signal remove_from_playlist_received
 
 func _on_mouse_entered() -> void:
 	focus = true
@@ -38,6 +43,10 @@ func _on_mouse_entered() -> void:
 	# on affiche le play et on cache le numéro
 	$"éléments/gauche/numéro".cacher()
 	$"éléments/gauche/size play/play".afficher()
+	
+	# on envoie l'info au deplacement
+	var noeud_deplacement = get_tree().get_first_node_in_group("deplacement")
+	noeud_deplacement.survol(position_playlist)
 
 func _on_mouse_exited() -> void:
 	focus = false
@@ -70,7 +79,7 @@ func _on_play_pressed() -> void:
 	else:
 		creer_playlist.emit(position_playlist)
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	# on check le rafaichissement du playing
 	if player.get_node("../AudioStreamPlayer").has_stream_playback():	# on change l'animation seulement si focus:
 		if get_window().has_focus():
@@ -89,7 +98,7 @@ func _process(delta: float) -> void:
 				
 				if Time.get_ticks_msec() - dernier_refresh_playing >= 30 and not player.get_node("../AudioStreamPlayer").stream_paused:
 					# on passe à la frame suivante (si la musique est jouée)
-					numero_frame_playing = (numero_frame_playing + 1) % 150
+					numero_frame_playing = (numero_frame_playing + 1) % 11
 					$"éléments/gauche/marges playing/playing".texture = noeud_animation_playing.sprite_frames.get_frame_texture("default", numero_frame_playing)
 					dernier_refresh_playing = Time.get_ticks_msec()
 			
@@ -142,7 +151,7 @@ func _gui_input(event: InputEvent) -> void:
 		var sous_menu = get_tree().get_first_node_in_group("sous menu")
 		if is_in_queue:
 			# pas d'options de téléchargement
-			sous_menu.creer_sous_menu(self, ["ajouter à la playlist", tr("VIEW_ARTIST"), "accéder à l'album"])
+			sous_menu.creer_sous_menu(self, [tr("ADD_TO_PLAYLIST"), tr("VIEW_ARTIST"), tr("VIEW_ALBUM")])
 		else:
 			var element
 			# on change le bouton selon si la musique est téléchargée ou pas
@@ -150,8 +159,52 @@ func _gui_input(event: InputEvent) -> void:
 				element = tr("DELETE_FROM_DISK")
 			else:
 				element = tr("DOWNLOAD_MUSIC")
-			sous_menu.creer_sous_menu(self, [tr("ADD_TO_PLAYLIST"),  tr("VIEW_ARTIST"), tr("VIEW_ALBUM"), element])
+			if id_playlist == null:
+				sous_menu.creer_sous_menu(self, [tr("ADD_TO_PLAYLIST"), tr("VIEW_ARTIST"), tr("VIEW_ALBUM"), element])
+			else:
+				sous_menu.creer_sous_menu(self, [tr("ADD_TO_PLAYLIST"), tr("REMOVE_FROM_PLAYLIST"), tr("VIEW_ARTIST"), tr("VIEW_ALBUM"), element])
+	# déplacement
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		var noeud_deplacement = get_tree().get_first_node_in_group("deplacement")
+		if event.is_pressed():
+			if id_playlist != null:
+				# on lance le décalage
+				noeud_deplacement.lancer_deplacement(id_playlist, position_playlist, $"éléments/masque/image")
+		else:
+			if id_playlist != null:
+				noeud_deplacement.fin_deplacement()
+				
+func remove_from_playlist():
+	if Client.is_locked:
+		Notif.add_notif("NOT_ALLOWED")
+		return
+	Client.is_locked = true
+	
+	# on envoie la requête au serveur
+	Client.noeud_appelant = self
+	Client.send(JSON.stringify({"type":"remove from playlist", "id_playlist":FonctionsGlobal.to_text(id_playlist), "position_playlist":FonctionsGlobal.to_text(position_playlist + 1)}))
+	await remove_from_playlist_received
+	
+	# on supprime la musique du player
+	get_tree().get_first_node_in_group("player").playlist.pop_at(position_playlist)
+	# on change la position de toutes les musiques
+	for musique in $"../".get_children():
+		if musique is objet_musique and musique.position_playlist > position_playlist:
+			musique.position_playlist -= 1
+			musique.get_node("éléments/gauche/numéro").text = FonctionsGlobal.to_text(musique.position_playlist + 1)
+	
+	queue_free()
+	Client.is_locked = false
 
+func received(message_json, message_bytes):
+	if not Client.check_keys(message_json, ["type", "resultat"]):
+		push_error("clés invalides")
+		Client.socket.close()
+		Client.is_locked = false
+		return
+	if message_json["type"] == "remove from playlist":
+		remove_from_playlist_received.emit(message_json, message_bytes)
+		
 func action(action_choisie):
 	if action_choisie ==  tr("VIEW_ARTIST"):
 		_on_artiste_pressed()
@@ -163,3 +216,5 @@ func action(action_choisie):
 		script_get_ressoure.supprimer_musiques([id])
 	elif action_choisie == tr("ADD_TO_PLAYLIST"):
 		FonctionsGlobal.id_musique_ajout = id
+	elif action_choisie == tr("REMOVE_FROM_PLAYLIST"):
+		remove_from_playlist()

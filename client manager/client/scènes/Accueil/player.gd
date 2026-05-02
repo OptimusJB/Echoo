@@ -207,7 +207,6 @@ func _on_audio_stream_player_finished() -> void:
 			$"../".visible = false
 			$"../AudioStreamPlayer".stop()	# si jamais c'est suivant qui a appelé
 			position_play += 1	# pour ne rien afficher dans la liste d'attente
-			print("position play : ", position_play)
 			update_queue.emit()
 	else:
 		jouer_musique(position_play + 1)

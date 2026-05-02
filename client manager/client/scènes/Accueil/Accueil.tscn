@@ -26,6 +26,7 @@
 [ext_resource type="Texture2D" uid="uid://bu3t2fhkifar6" path="res://assets/file on.png" id="20_d8t22"]
 [ext_resource type="Script" uid="uid://kjphaa8bi4so" path="res://client/scènes/Accueil/file_d'attente.gd" id="21_d8t22"]
 [ext_resource type="PackedScene" uid="uid://b27tp6fxvdsew" path="res://global/sous menu/sous menu.tscn" id="26_k2e5l"]
+[ext_resource type="Script" uid="uid://crbvy6jj8bwik" path="res://client/scènes/Accueil/deplacement.gd" id="27_a7daw"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ltm4r"]
 content_margin_left = 20.0
@@ -455,6 +456,28 @@ expand_mode = 1
 [node name="SousMenu" parent="." unique_id=1248340178 groups=["sous menu"] instance=ExtResource("26_k2e5l")]
 visible = false
 layout_mode = 1
+
+[node name="deplacement" type="PanelContainer" parent="." unique_id=1645666401 groups=["deplacement"]]
+visible = false
+layout_mode = 0
+offset_right = 10.0
+offset_bottom = 10.0
+mouse_filter = 2
+script = ExtResource("27_a7daw")
+
+[node name="fond noir" type="ColorRect" parent="deplacement" unique_id=455976032]
+layout_mode = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="image" type="TextureRect" parent="deplacement" unique_id=770486552]
+texture_filter = 4
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("16_mep5p")
+expand_mode = 1
+stretch_mode = 5
 
 [connection signal="charger_recherche" from="VBoxContainer/marges supérieur/rechercher" to="VBoxContainer/marges corps/corps/musiques/Enumeration" method="_on_rechercher_charger_recherche"]
 [connection signal="text_changed" from="VBoxContainer/marges supérieur/rechercher" to="VBoxContainer/marges supérieur/rechercher" method="_on_text_changed"]
