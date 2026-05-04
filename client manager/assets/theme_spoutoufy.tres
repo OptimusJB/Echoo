@@ -132,3 +132,5 @@ LineEdit/styles/normal = SubResource("StyleBoxFlat_6q3mw")
 LinkButton/font_sizes/font_size = 23
 LinkButton/fonts/font = ExtResource("1_6q3mw")
 PanelContainer/styles/panel = SubResource("StyleBoxFlat_tkw1t")
+TextEdit/styles/focus = SubResource("StyleBoxFlat_cc54s")
+TextEdit/styles/normal = SubResource("StyleBoxFlat_6q3mw")
