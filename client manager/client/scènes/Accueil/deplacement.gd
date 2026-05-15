@@ -37,7 +37,7 @@ func fin_deplacement():
 	
 	# on envoie la requête au serveur
 	Client.noeud_appelant = self
-	Client.send(JSON.stringify({"type":"changer position musique", "id_playlist":FonctionsGlobal.to_text(id_playlist), "position_debut":FonctionsGlobal.to_text(position_musique_depart + 1), "position_fin":FonctionsGlobal.to_text(position_musique_fin + 1)}))
+	await Client.send(JSON.stringify({"type":"changer position musique", "id_playlist":FonctionsGlobal.to_text(id_playlist), "position_debut":FonctionsGlobal.to_text(position_musique_depart + 1), "position_fin":FonctionsGlobal.to_text(position_musique_fin + 1)}))
 	await changer_position_musique_received
 	
 	# on lance la procédure de changement de position dans le MusicView

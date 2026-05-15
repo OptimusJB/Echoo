@@ -17,7 +17,7 @@ func charger_playlists():
 	
 	# on envoie la requête au serveur
 	Client.noeud_appelant = self
-	Client.send(JSON.stringify({"type":"get playlists"}))
+	await Client.send(JSON.stringify({"type":"get playlists"}))
 	
 	var resultat = await get_playlists_received
 	# on ajoute les playlists
@@ -45,7 +45,7 @@ func _on_ajouter_playlist_pressed() -> void:
 
 	# on envoie la requête au serveur
 	Client.noeud_appelant = self
-	Client.send(JSON.stringify({"type":"creer playlist"}))
+	await Client.send(JSON.stringify({"type":"creer playlist"}))
 	
 	var resultat = await creer_playlist_received
 	

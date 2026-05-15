@@ -182,7 +182,7 @@ func remove_from_playlist():
 	
 	# on envoie la requête au serveur
 	Client.noeud_appelant = self
-	Client.send(JSON.stringify({"type":"remove from playlist", "id_playlist":FonctionsGlobal.to_text(id_playlist), "position_playlist":FonctionsGlobal.to_text(position_playlist + 1)}))
+	await Client.send(JSON.stringify({"type":"remove from playlist", "id_playlist":FonctionsGlobal.to_text(id_playlist), "position_playlist":FonctionsGlobal.to_text(position_playlist + 1)}))
 	await remove_from_playlist_received
 	
 	# on supprime la musique du player

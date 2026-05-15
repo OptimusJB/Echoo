@@ -22,7 +22,7 @@ func delete_playlist():
 	
 	# on envoie la requête au serveur
 	Client.noeud_appelant = self
-	Client.send(JSON.stringify({"type":"supprimer playlist", "id_playlist":FonctionsGlobal.to_text(id)}))
+	await Client.send(JSON.stringify({"type":"supprimer playlist", "id_playlist":FonctionsGlobal.to_text(id)}))
 	
 	var resultat = await supprimer_playlist_received
 	
@@ -57,7 +57,7 @@ func _on_charger_playlist_pressed() -> void:
 		FonctionsGlobal.id_musique_ajout = null
 		
 		Client.noeud_appelant = self
-		Client.send(JSON.stringify({"type":"ajouter musique playlist", "id_playlist":FonctionsGlobal.to_text(id), "id_musique":FonctionsGlobal.to_text(id_musique_ajout)}))
+		await Client.send(JSON.stringify({"type":"ajouter musique playlist", "id_playlist":FonctionsGlobal.to_text(id), "id_musique":FonctionsGlobal.to_text(id_musique_ajout)}))
 		var resultat = await ajouter_musique_playlist
 		
 		# on check si la playlist est ouverte, si oui on ajoute la musique

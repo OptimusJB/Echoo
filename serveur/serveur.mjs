@@ -14,7 +14,6 @@ let connexions_data = new Map;
 let timeout_time = 10000; // en ms
 
 let buffer_slice = 2.097e+6 // environ 2mio
-
 // on crée le fichier de stop du serveur
 try{
     fs.writeFileSync("stop_server.txt", "0");
@@ -121,25 +120,28 @@ function database_exec(requete, arguments_requete){
 }
 
 function send(message_envoi, websocketpeer){
+    websocketpeer.timeout_block = true;
+    let est_chaine = false
     if (typeof message_envoi == "string"){
-        // c'est une chaine de caractères, donc on envoi tout directement
-        websocketpeer.send(message_envoi + "&SPFEND&");
+        // c'est une chaine de caractères, on la convertit en bytes
+        //websocketpeer.send(message_envoi + "&SPFEND&");
+        message_envoi = Buffer.from(message_envoi + "&SPFEND&", "utf-8");
+        est_chaine = true;
     }
-    else{
-        // on suppose que c'est des bytes, on envoie par morceaux
-        let i = 0;
-        let sous_message;
-        while(i < message_envoi.length){
-            sous_message = message_envoi.subarray(i, i + buffer_slice); // slice deprecated
-            //console.log("envoi morceau");
-            //console.log("buffer : ", websocketpeer.bufferedAmount / 1.049e+6);
-            websocketpeer.send(sous_message);
-            i = i + sous_message.length;
-            
-            //console.log(i + " et " + sous_message.length + " et " + message_envoi.length);
-        }
-        //websocketpeer.send("&SPFEND&");
+    // on envoie par morceaux
+    let i = 0;
+    let sous_message;
+    while(i < message_envoi.length){
+        sous_message = message_envoi.subarray(i, i + buffer_slice); // slice deprecated
+
+        if(est_chaine) sous_message = Buffer.concat([Buffer.from("&SPFCHAINE&", "utf-8"), sous_message]);
+        websocketpeer.send(sous_message);
+        if(est_chaine) i = i + sous_message.length - Buffer.from("&SPFCHAINE&").length
+        else i = i + sous_message.length;
+        
     }
+    websocketpeer.timeout_block = false;
+    //websocketpeer.send("&SPFEND&");
 }
 
 function check_keys(message_json, liste_cles){
@@ -171,7 +173,7 @@ function handle(websocketpeer, message_json, message_bytes){
         
         if(resultat.length > 0){
             // l'utilisateur existe
-            if(resultat[0].password == message_json.mdp && resultat[0].banni == 0){
+            if(resultat[0].password == message_json.mdp && resultat[0].banni != 1){
                 // l'utilisateur peut se connecter
                 websocketpeer.est_connecte = true;
                 websocketpeer.pseudo = message_json.pseudo;
@@ -309,7 +311,7 @@ function handle(websocketpeer, message_json, message_bytes){
 
         else if(message_json.type == "get musics of album"){
             let resultat;
-            resultat = database_select("SELECT DISTINCT CAST(Musiques.id AS TEXT) AS id, Musiques.nom AS nom, Albums.image AS image, CAST(Albums.id AS TEXT) AS id_album, Albums.nom AS nom_album, CAST(Artistes.id AS TEXT) AS id_artiste, Artistes.nom AS nom_artiste, Albums.annee AS annee_album, Albums.genre AS genre_album FROM Albums JOIN Artistes ON Artistes.id = Albums.id_artiste LEFT JOIN Musiques ON Musiques.id_album = Albums.id WHERE Albums.id = ? ORDER BY Musiques.position_album ASC", [parseInt(message_json.id_album)])
+            resultat = database_select("SELECT DISTINCT CAST(Musiques.id AS TEXT) AS id, Musiques.nom AS nom, Albums.image AS image, CAST(Albums.id AS TEXT) AS id_album, Albums.nom AS nom_album, CAST(Artistes.id AS TEXT) AS id_artiste, Artistes.nom AS nom_artiste, CAST(Albums.annee AS TEXT) AS annee_album, Albums.genre AS genre_album FROM Albums JOIN Artistes ON Artistes.id = Albums.id_artiste LEFT JOIN Musiques ON Musiques.id_album = Albums.id WHERE Albums.id = ? ORDER BY Musiques.position_album ASC", [parseInt(message_json.id_album)])
             //resultat = database_select("SELECT CAST(Musiques.id AS TEXT) AS id, Musiques.nom AS nom, Albums.image AS image, CAST(Albums.id AS TEXT) AS id_album, Albums.nom AS nom_album, CAST(Artistes.id AS TEXT) AS id_artiste, Artistes.nom AS nom_artiste, Albums.annee AS annee_album, Albums.genre AS genre_album FROM Musiques JOIN Albums ON Albums.id = Musiques.id_album JOIN Artistes ON Artistes.id = Albums.id_artiste WHERE Albums.id = ? ORDER BY Musiques.position_album ASC", [parseInt(message_json.id_album)]);
             
             // on regarde si la longueur de résultat est valide
@@ -327,7 +329,7 @@ function handle(websocketpeer, message_json, message_bytes){
 
         else if(message_json.type == "get artiste infos"){
             let resultat;
-            resultat = database_select("SELECT Artistes.nom AS nom_artiste, Artistes.image AS image_artiste, Albums.nom AS nom_album, CAST(Albums.id AS TEXT) AS id_album, Albums.annee AS annee, Albums.image AS image_album, Albums.genre AS genre_album FROM Artistes LEFT JOIN Albums ON Albums.id_artiste = Artistes.id WHERE Artistes.id = ?", [parseInt(message_json.id_artiste)]);
+            resultat = database_select("SELECT Artistes.nom AS nom_artiste, Artistes.image AS image_artiste, Albums.nom AS nom_album, CAST(Albums.id AS TEXT) AS id_album, CAST(Albums.annee AS TEXT) AS annee, Albums.image AS image_album, Albums.genre AS genre_album FROM Artistes LEFT JOIN Albums ON Albums.id_artiste = Artistes.id WHERE Artistes.id = ?", [parseInt(message_json.id_artiste)]);
             // si pas de résultat, l'artiste n'existe pas (LEFT JOIN)
             if (resultat.length < 1){
                 console.log("get artiste infos : longueur résultat invalide, fermeture socket");
@@ -361,6 +363,11 @@ function handle(websocketpeer, message_json, message_bytes){
             let resultat;
             resultat = database_select("SELECT CAST(Musiques.id AS TEXT) AS id, Musiques.nom as nom, Albums.image AS image, CAST(Albums.id AS TEXT) AS id_album, Albums.nom AS nom_album, CAST(Artistes.id AS TEXT) AS id_artiste, Artistes.nom AS nom_artiste, CAST(UPlaylists.id AS TEXT) AS id_playlist, Uplaylists.nom AS nom_playlist, Uplaylists.image AS image_playlist, Uplaylists.description AS description_playlist FROM UPlaylists JOIN Utilisateurs ON Utilisateurs.id = UPlaylists.id_utilisateur LEFT JOIN UMusiques ON UMusiques.id_playlist = UPlaylists.id LEFT JOIN Musiques ON Musiques.id = UMusiques.id_musique LEFT JOIN Albums ON Albums.id = Musiques.id_album LEFT JOIN Artistes ON Artistes.id = Albums.id_artiste WHERE Uplaylists.id = ? AND Utilisateurs.username = ? ORDER BY UMusiques.position_playlist ASC", [parseInt(message_json.id_playlist), websocketpeer.pseudo]);
             // on ne check pas s'il y a un résultat, car on ne sait pas si la playlist n'existe pas ou si c'est pas le bon pseudo ou s'il n'y a pas de musiques
+           if (resultat.length < 1){
+                console.log("get musics of playlist : longueur résultat invalide, fermeture socket");
+                websocketpeer.terminate();
+                return;
+            }
             send(JSON.stringify({"type":"supprimer playlist", "resultat":resultat}), websocketpeer);
         }
 
@@ -450,6 +457,39 @@ function handle(websocketpeer, message_json, message_bytes){
             send(JSON.stringify({"type":"changer position musique", "resultat":"ok"}), websocketpeer);
         }
 
+
+
+        else if(message_json.type == "set playlist infos"){
+            let resultat;
+            // on vérifie d'abord que l'utilisateur est bien celui qui a la playlist
+            resultat = database_select("SELECT UPlaylists.id FROM UPlaylists JOIN Utilisateurs ON Utilisateurs.id = UPlaylists.id_utilisateur WHERE UPlaylists.id = ? AND Utilisateurs.username = ?", [parseInt(message_json.id_playlist), websocketpeer.pseudo]);
+            if (resultat.length < 1){
+                console.log("set playlist infos : longueur résultat invalide, fermeture socket");
+                websocketpeer.terminate();
+                return;
+            }
+
+            resultat = database_select("SELECT image FROM UPlaylists WHERE id=?", [parseInt(message_json.id_playlist)]);
+            let chemin_image = resultat[0]["image"];
+            // on regarde si une image a été envoyée
+            if(message_json.image_extension != null){
+                // on crée le dossier de stockage s'il n'est pas là
+                fs.mkdirSync("UPlaylists covers", {recursive:true});
+                // on supprime l'ancienne image
+                
+                if (chemin_image != null) fs.unlinkSync(chemin_image);
+
+                // on stocke l'image sur le disque
+                // note : il n'y a pas le point à l'extension
+                chemin_image = "Uplaylists covers/" + message_json.id_playlist + "." + message_json.image_extension
+                fs.writeFileSync(chemin_image, message_bytes);
+                
+            }
+            // on change le nom, la description et l'image
+            resultat = database_exec("UPDATE UPlaylists SET nom=?, description=?, image=? WHERE id=?", [message_json.nom_playlist, message_json.description, chemin_image, parseInt(message_json.id_playlist)])
+            send(JSON.stringify({"type":"set playlist infos", "resultat":"ok"}), websocketpeer);
+        }
+
         
         else{
         console.log("type invalide, fermeture socket");
@@ -498,6 +538,7 @@ wss.on("connection", function connection(websocketpeer, req){ // connection d'un
     websocketpeer.est_connecte = false;
     websocketpeer.pseudo = "";
     websocketpeer.mdp = "";
+    websocketpeer.timeout_block = false
 
     // on met l'ip du websocket
     // TODO checker XforwardedFor
@@ -506,35 +547,39 @@ wss.on("connection", function connection(websocketpeer, req){ // connection d'un
 
     websocketpeer.on("error", console.error);
     websocketpeer.on("message", function message(data, est_binaire){
-
+        //console.log("reçu");
         // on met à jour le temps
         connexions_timeout.set(websocketpeer, Date.now());
 
 
         if(est_binaire){
-            // on ajoute du binaire dans connexions_data
-            if(!connexions_data.get(websocketpeer).has("bytes")){
+            websocketpeer.send("ok");
+            // on ajoute du binaire dans la bonne liste dans connexions_data
+            if(data.includes("&SPFCHAINE&")){
+                // c'est une partie de chaine, on la met dans text
+                data = data.subarray(Buffer.from("&SPFCHAINE&", "utf-8").length);
+                if(!connexions_data.get(websocketpeer).has("text")){
+                connexions_data.get(websocketpeer).set("text", data);
+                }
+                else connexions_data.get(websocketpeer).set("text", Buffer.concat([connexions_data.get(websocketpeer).get("text"), data]));
+            }
+            else if(!connexions_data.get(websocketpeer).has("bytes")){
                 connexions_data.get(websocketpeer).set("bytes", data);
             }
-            else connexions_data.get(websocketpeer).set(websocketpeer, connexions_data.get(websocketpeer) + data);
+            else{
+                connexions_data.get(websocketpeer).set("bytes", Buffer.concat([connexions_data.get(websocketpeer).get("bytes"), data]));
+            }
         }
         else{
             data = data.toString("utf-8");
              // on check si c'est un ping
             if(data == "quoi"){
-                //console.log("ping reçu")
                 websocketpeer.send("feur");
                 return;
             }
-
-            // on ajoute du texte dans connexions_data
-            if(!connexions_data.get(websocketpeer).has("text")){
-                connexions_data.get(websocketpeer).set("text", data);
-            }
-            else connexions_data.get(websocketpeer).set("text", connexions_data.get(websocketpeer) + data);
         }
-        if (!connexions_data.get(websocketpeer).get("text").includes("&SPFEND&")) return; // le message n'est pas encore complet
-        
+        if (!(connexions_data.get(websocketpeer).get("text") != null && connexions_data.get(websocketpeer).get("text").includes(Buffer.from("&SPFEND&")))) return; // le message n'est pas encore complet
+        connexions_data.get(websocketpeer).set("text", connexions_data.get(websocketpeer).get("text").toString("utf-8"));
         // le message est complet, on enlève  &SPFEND&
         message_text = connexions_data.get(websocketpeer).get("text").split("&SPFEND&")[0];
         message_bytes = connexions_data.get(websocketpeer).get("bytes");
@@ -553,8 +598,11 @@ wss.on("connection", function connection(websocketpeer, req){ // connection d'un
 
         // on lance handle
         // TODO : ajouter try avec catch fermeture socket avec terminate, et aussi avec affichage de l'erreur
-        verif_no_number(message_text); // TODO à enlever à la fin
+        //verif_no_number(message_text); // TODO à enlever à la fin
         handle(websocketpeer, message_text, message_bytes);
+
+        // on remet à jour le temps (potentiel envoi de gros fichiers)
+        connexions_timeout.set(websocketpeer, Date.now());
     });
 });
 
@@ -576,9 +624,10 @@ function check_timeout(){
     //console.log("taille : " + wss.clients.size)
     for(client of connexions_timeout.keys()){
         //console.log("%d > %d", Date.now() - connexions_timeout.get(client), timeout_time);
-        if (Date.now() - connexions_timeout.get(client) > timeout_time){
+        if (Date.now() - connexions_timeout.get(client) > timeout_time && !client.timeout_block){
             // on enlève la connexion de connexions_timeout et connexions_data et on la coupe
             console.log("suppression timeout");
+            console.log("avant timeout : ", client.readyState);
             connexions_timeout.delete(client);
             connexions_data.delete(client);
             if (client.readyState == WebSocket.CONNECTING || client.readyState == WebSocket.OPEN) client.terminate();

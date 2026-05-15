@@ -10,7 +10,7 @@ func easy_get_image_buffer(chemin_image):
 	if not chemin_image:
 		return null
 	Client.noeud_appelant = self
-	Client.send(JSON.stringify({"type":"get image", "image":chemin_image}))
+	await Client.send(JSON.stringify({"type":"get image", "image":chemin_image}))
 	var reponse = await image_received
 	
 	return [chemin_image.get_extension(), reponse[1]]
@@ -49,7 +49,7 @@ func easy_get_music(id_musique, qualite, return_buffer=false):
 	if not telechargement_success:
 		# on demande la musique au serveur
 		Client.noeud_appelant = self
-		Client.send(JSON.stringify({"type":"get music", "id":FonctionsGlobal.to_text(id_musique), "qualite":qualite}))
+		await Client.send(JSON.stringify({"type":"get music", "id":FonctionsGlobal.to_text(id_musique), "qualite":qualite}))
 		reponse = await music_received
 		
 		# on vérifie qu'une qualité est disponible
@@ -128,7 +128,7 @@ func easy_get_image(chemin_image):
 		if not image_telecharge:	# on ne tente pas de récupérer l'image fail d'ouverture du fichier
 			# on importe l'image
 			Client.noeud_appelant = self
-			Client.send(JSON.stringify({"type":"get image", "image":chemin_image}))
+			await Client.send(JSON.stringify({"type":"get image", "image":chemin_image}))
 			reponse = await image_received
 		
 		if not (image_telecharge and not telechargement_success):

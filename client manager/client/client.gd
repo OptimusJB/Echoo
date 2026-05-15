@@ -7,7 +7,8 @@ var port = 25565
 
 var max_buffer = 1.049e+7 # environ 10mio
 var buffer_slice = 2.097e+6 # environ 2mio
-var reponse = {"text":"", "bytes":null}	# reçu par le serveur
+#var buffer_slice = 1
+var reponse = {"text":null, "bytes":null}	# reçu par le serveur
 
 # instance websocket
 var socket = WebSocketPeer.new()
@@ -78,7 +79,7 @@ func connexion_serveur():
 func timer_ping_timeout():
 	#print("rep attendues : ", nb_reponses_attendues)
 	if nb_reponses_attendues == 0 && socket.get_ready_state() == socket.STATE_OPEN:
-		reponse = {"text":"", "bytes":null}
+		reponse = {"text":null, "bytes":null}
 		socket.send_text("quoi")
 		nb_reponses_attendues += 1
 		print("ping envoyé")
@@ -112,6 +113,7 @@ func _ready() -> void:
 	# on augmente les limites de buffer du socket (environ 100mio pour être large)
 	socket.inbound_buffer_size = max_buffer
 	socket.outbound_buffer_size = max_buffer
+	#socket.outbound_buffer_size = 12
 	#print("inbound : %d, outbound : %d" % [socket.inbound_buffer_size, socket.outbound_buffer_size])
 
 func verif_no_number(message_json):
@@ -122,7 +124,7 @@ func verif_no_number(message_json):
 			for element_liste in element:
 				verif_no_number(element_liste)
 		if element is float:
-			push_error("float repéré pour réponse. élément concerné : " + str(element))
+			push_error("float repéré. élément concerné : " + str(element) + "\nmessage_json : " + JSON.stringify(message_json))
 			
 func _process(_delta: float) -> void:
 	var paquet
@@ -136,6 +138,8 @@ func _process(_delta: float) -> void:
 			est_connecte = true
 			print("connexion réussie")
 			
+			# on reset les messages
+			reponse = {"text":null, "bytes":null}
 			# on reset le temps
 			last_reponse = Time.get_ticks_msec()
 			connected.emit()
@@ -157,6 +161,9 @@ func _process(_delta: float) -> void:
 			#print("reset temps")
 			#print("nb available : ", socket.get_available_packet_count())
 		while socket.get_available_packet_count():
+			await get_tree().process_frame
+			socket.poll()
+			
 			paquet = socket.get_packet()
 			if socket.was_string_packet():
 				paquet = paquet.get_string_from_utf8()
@@ -166,23 +173,30 @@ func _process(_delta: float) -> void:
 					print("pong reçu")
 					nb_reponses_attendues -= 1
 					return
-					
-				reponse["text"] += paquet
 			else:
-				if not reponse["bytes"]:
+				socket.send_text("ok")
+				if paquet.slice(0, len("&SPFCHAINE&".to_utf8_buffer())) == "&SPFCHAINE&".to_utf8_buffer():
+					paquet = paquet.slice(len("&SPFCHAINE&".to_utf8_buffer()))
+					if not reponse["text"]:
+						reponse["text"] = paquet
+					else:
+						reponse["text"] += paquet
+						
+				elif not reponse["bytes"]:
 					reponse["bytes"] = paquet
 				else:
 					reponse["bytes"] += paquet
 			
 			# on check si le message entier est parvenu
-			if "&SPFEND&" in reponse["text"]:
+			if not reponse["text"] == null and reponse["text"].slice(len(reponse["text"]) - len("&SPFEND&".to_utf8_buffer())) == "&SPFEND&".to_utf8_buffer():
 				# on tronque pour enlever &SPFEND&
+				reponse["text"] = reponse["text"].get_string_from_utf8()
 				reponse["text"] = reponse["text"].substr(0, len(reponse["text"]) - len("&SPFEND&"))
 				
 				# reponse["text"] doit être sous forme de JSON
 				var message_text = JSON.parse_string(reponse["text"])
 				var message_bytes = reponse["bytes"]
-				reponse = {"text":"", "bytes":null}	# on supprime le contenu de réponse
+				reponse = {"text":null, "bytes":null}	# on supprime le contenu de réponse
 				
 				if message_text == null:
 					print("un message a été reçu, mais le parse en json a échoué")
@@ -194,18 +208,32 @@ func _process(_delta: float) -> void:
 				noeud_appelant.received(message_text, message_bytes)
 				
 func send(message):	# soit str soit bytes, le stringify doit avoir été fait avant
+	var est_chaine = false
 	if message is String:
-		# on envoie directement le message sans découpe (on suppose qu'on est en dessous de la limite)
-		socket.send_text(message + "&SPFEND&")
+		verif_no_number(JSON.parse_string(message))	# TODO à enlever à la fin
+		# on convertit la chaine en bytes
+		est_chaine = true
+		message = (message + "&SPFEND&").to_utf8_buffer()
 		nb_reponses_attendues += 1
-		return
-		
-	# sinon on suppose que c'est des bytes, on découpe
+	
+	var sous_message
 	while message:
-		socket.send(message.slice(0, buffer_slice))
+		await get_tree().process_frame
+		socket.poll()
+		
+		sous_message = message.slice(0, buffer_slice)
+		if est_chaine:
+			sous_message = "&SPFCHAINE&".to_utf8_buffer() + sous_message
+		while len(sous_message) > socket.outbound_buffer_size - socket.get_current_outbound_buffered_amount() or socket.send(sous_message) == ERR_OUT_OF_MEMORY:
+			print("pas assez de place dans le buffer, on attend la prochaine frame")
+			await get_tree().process_frame
+			socket.poll()
+			if socket.get_ready_state() != socket.STATE_OPEN:
+				return
+		if socket.get_ready_state() != socket.STATE_OPEN:
+			return
 		message = message.slice(buffer_slice)
 	#socket.send_text("&SPFEND&")
-	nb_reponses_attendues += 1
 
 func check_keys(message_json:Dictionary, liste_cles:Array):
 	# retourne true si toutes les clés sont dans message_json

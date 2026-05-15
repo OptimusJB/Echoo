@@ -6,6 +6,17 @@
 [ext_resource type="Texture2D" uid="uid://5ohqfljbhutl" path="res://assets/icone_base.png" id="2_08orn"]
 [ext_resource type="Script" uid="uid://ddbisrjimdvly" path="res://client/scènes/PlaylistSettings/file_dialog.gd" id="3_08orn"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v743n"]
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 15.0
+content_margin_bottom = 10.0
+bg_color = Color(0.19793725, 0.19793725, 0.19793719, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gvi82"]
 corner_radius_top_left = 5
 corner_radius_top_right = 5
@@ -14,12 +25,23 @@ corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gvi82"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4lwrj"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0, 0.30980393, 0.74509805, 0.43137255)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ls3x8"]
 content_margin_left = 5.0
 content_margin_top = 5.0
 content_margin_right = 5.0
 content_margin_bottom = 5.0
-bg_color = Color(0.279, 0.279, 0.279, 1)
+bg_color = Color(0.2784314, 0.2784314, 0.2784314, 0.43137255)
 corner_radius_top_left = 5
 corner_radius_top_right = 5
 corner_radius_bottom_right = 5
@@ -60,6 +82,7 @@ grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 theme = ExtResource("1_1wido")
+theme_override_styles/panel = SubResource("StyleBoxFlat_v743n")
 
 [node name="éléments" type="VBoxContainer" parent="fond informations" unique_id=645581643]
 layout_mode = 2
@@ -88,7 +111,7 @@ layout_mode = 2
 color = Color(0, 0, 0, 1)
 
 [node name="image" type="TextureRect" parent="fond informations/éléments/infos/gauche/cache" unique_id=1732406034]
-custom_minimum_size = Vector2(200, 200)
+custom_minimum_size = Vector2(250, 250)
 layout_mode = 2
 size_flags_vertical = 0
 texture = ExtResource("2_08orn")
@@ -100,6 +123,7 @@ layout_mode = 2
 focus_mode = 0
 mouse_filter = 1
 theme_override_styles/normal = SubResource("StyleBoxEmpty_gvi82")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_4lwrj")
 theme_override_styles/hover = SubResource("StyleBoxFlat_ls3x8")
 
 [node name="valider" type="Button" parent="fond informations/éléments/infos/gauche" unique_id=329478144]
@@ -133,7 +157,11 @@ oversampling_override = 1.0
 title = "Open a File"
 position = Vector2i(0, 36)
 file_mode = 0
+access = 2
 use_native_dialog = true
 script = ExtResource("3_08orn")
 
 [connection signal="decharger_settings" from="fond" to="." method="_on_fond_decharger_settings"]
+[connection signal="pressed" from="fond informations/éléments/infos/gauche/cache/changer image" to="FileDialog" method="afficher"]
+[connection signal="pressed" from="fond informations/éléments/infos/gauche/valider" to="." method="_on_valider_pressed"]
+[connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]

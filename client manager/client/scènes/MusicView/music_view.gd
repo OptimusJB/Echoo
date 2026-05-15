@@ -36,7 +36,7 @@ func charger_album(id_album:int, noeud_enumeration):
 	$"liste/téléchargement".visible = false
 		
 	Client.noeud_appelant = self
-	Client.send(JSON.stringify({"type":"get musics of album", "id_album":FonctionsGlobal.to_text(id_album)}))
+	await Client.send(JSON.stringify({"type":"get musics of album", "id_album":FonctionsGlobal.to_text(id_album)}))
 	
 func charger_playlist(id_playlist, noeud_enumeration):
 	if Client.is_locked:
@@ -62,7 +62,7 @@ func charger_playlist(id_playlist, noeud_enumeration):
 	$"liste/téléchargement".visible = false
 		
 	Client.noeud_appelant = self
-	Client.send(JSON.stringify({"type":"get musics of playlist", "id_playlist":FonctionsGlobal.to_text(id_playlist)}))
+	await Client.send(JSON.stringify({"type":"get musics of playlist", "id_playlist":FonctionsGlobal.to_text(id_playlist)}))
 
 func ajouter_musiques(liste_musiques):
 	# on crée chaque noeud et on add_child

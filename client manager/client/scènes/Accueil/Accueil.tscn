@@ -27,6 +27,7 @@
 [ext_resource type="Script" uid="uid://kjphaa8bi4so" path="res://client/scènes/Accueil/file_d'attente.gd" id="21_d8t22"]
 [ext_resource type="PackedScene" uid="uid://b27tp6fxvdsew" path="res://global/sous menu/sous menu.tscn" id="26_k2e5l"]
 [ext_resource type="Script" uid="uid://crbvy6jj8bwik" path="res://client/scènes/Accueil/deplacement.gd" id="27_a7daw"]
+[ext_resource type="PackedScene" uid="uid://dnn54qmu3vjbe" path="res://client/scènes/PlaylistSettings/PlaylistSettings.tscn" id="28_k4agt"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ltm4r"]
 content_margin_left = 20.0
@@ -478,6 +479,10 @@ mouse_filter = 2
 texture = ExtResource("16_mep5p")
 expand_mode = 1
 stretch_mode = 5
+
+[node name="PlaylistSettings" parent="." unique_id=934129773 groups=["playlist settings"] instance=ExtResource("28_k4agt")]
+visible = false
+layout_mode = 1
 
 [connection signal="charger_recherche" from="VBoxContainer/marges supérieur/rechercher" to="VBoxContainer/marges corps/corps/musiques/Enumeration" method="_on_rechercher_charger_recherche"]
 [connection signal="text_changed" from="VBoxContainer/marges supérieur/rechercher" to="VBoxContainer/marges supérieur/rechercher" method="_on_text_changed"]

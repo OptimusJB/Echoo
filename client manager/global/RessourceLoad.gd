@@ -20,7 +20,7 @@ func get_ressource(chemin_ressource):
 		return 0
 	return loaded[chemin_ressource]
 	
-func charger_ressource(chemin_ressource, data:PackedByteArray, cache_max=-1):
+func charger_ressource(chemin_ressource, data, cache_max=-1):
 	# la fonction réécrit dans loaded, même si ça existe déjà
 	var ressource
 	var erreur = 0
@@ -28,7 +28,7 @@ func charger_ressource(chemin_ressource, data:PackedByteArray, cache_max=-1):
 	var generer_mipmaps = FonctionsGlobal.to_int(Settings.get_setting("generer mipmaps"))
 	
 	# on check si c'est null
-	if not chemin_ressource:
+	if not chemin_ressource or not data:
 		set_icone_base(chemin_ressource)
 		return
 		

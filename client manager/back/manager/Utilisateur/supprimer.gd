@@ -27,7 +27,7 @@ func _on_pressed() -> void:
 	if resultat[0]:
 		resultat = noeud_database.exec_sql("DELETE FROM Uplaylists WHERE id_utilisateur=?", [$"../../".id])
 	if not resultat[0]:
-		Notif.add_notif("échec de la suppression des playlistsde l'utilisateur")
+		Notif.add_notif("échec de la suppression des playlists de l'utilisateur")
 		return
 	
 	# on supprime l'utilisateur

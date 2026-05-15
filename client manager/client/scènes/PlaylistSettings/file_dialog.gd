@@ -7,3 +7,6 @@ func _ready() -> void:
 	add_filter("*.jpeg", "images jpeg")
 	add_filter("*.bmp", "images bmp")
 	add_filter("*.svg", "images svg")
+
+func afficher():
+	popup_file_dialog()

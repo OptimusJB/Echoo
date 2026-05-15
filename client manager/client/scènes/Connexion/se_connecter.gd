@@ -39,7 +39,7 @@ func connected():
 	
 	# on envoie
 	Client.noeud_appelant = self
-	Client.send(JSON.stringify({"type":"se connecter", "pseudo":FonctionsGlobal.pseudo, "mdp":FonctionsGlobal.mdp}))
+	await Client.send(JSON.stringify({"type":"se connecter", "pseudo":FonctionsGlobal.pseudo, "mdp":FonctionsGlobal.mdp}))
 
 func received(message_json, _message_bytes):
 	get_tree().get_first_node_in_group("animation logo").play("RESET")

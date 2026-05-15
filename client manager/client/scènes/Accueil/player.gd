@@ -96,7 +96,7 @@ func jouer_musique(position_musique:int):
 	
 	# on demande les infos de la musique au serveur
 	Client.noeud_appelant = self
-	Client.send(JSON.stringify({"type":"get music infos", "id":FonctionsGlobal.to_text(playlist_play[position_musique])}))
+	await Client.send(JSON.stringify({"type":"get music infos", "id":FonctionsGlobal.to_text(playlist_play[position_musique])}))
 	
 func creer_playlist_play(position_playlist:int):
 	if Client.is_locked:

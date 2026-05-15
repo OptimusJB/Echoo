@@ -7,7 +7,7 @@ var presets = {"server_manager":{"echelle":1.0, "mode bannissement":0, "taille e
 "client":{"echelle":1.0, "ip":"", "port":25565, "type connexion":"wss", "charger images":1, "cache max":100, "type son":0, "qualite":"max", "volume":1.0, "generer mipmaps":1, "commencer à la chanson cliquee":0, "telechargements":{"musiques":{}, "images":{}, "images id":{}, "next image id":0, "est commun":1}}}
 var use_json = false
 
-func save_settings(use_debug=true) -> int:
+func save_settings(use_debug=false) -> int:
 	# sauvegarde
 	var fichier = FileAccess.open("user://" + save_filename, FileAccess.WRITE)
 	if not fichier:
@@ -71,5 +71,5 @@ func set_setting(cle:String, valeur, auto_save=true) -> void:
 func get_setting(cle, valeur_base=null):
 	# si pas de valeur, assigne et retourne valeur_base
 	if not cle in settings.keys():
-		set_setting(cle, valeur_base)
+		set_setting(cle, valeur_base, false)
 	return settings[cle]

@@ -23,7 +23,7 @@ func _on_oui_création_pressed() -> void:
 	Client.is_locked = true
 	
 	Client.noeud_appelant = self
-	Client.send(JSON.stringify({"type":"nouveau compte", "pseudo":FonctionsGlobal.pseudo, "mdp":FonctionsGlobal.mdp}))
+	await Client.send(JSON.stringify({"type":"nouveau compte", "pseudo":FonctionsGlobal.pseudo, "mdp":FonctionsGlobal.mdp}))
 	visible = false
 
 func _on_non_création_pressed() -> void:

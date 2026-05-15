@@ -37,10 +37,12 @@ layout_mode = 2
 [node name="masque" type="PanelContainer" parent="éléments" unique_id=340818719]
 clip_children = 1
 layout_mode = 2
+mouse_filter = 1
 theme_override_styles/panel = SubResource("StyleBoxFlat_skrrg")
 
 [node name="fond noir" type="ColorRect" parent="éléments/masque" unique_id=2040564865]
 layout_mode = 2
+mouse_filter = 1
 color = Color(0, 0, 0, 1)
 
 [node name="image" type="TextureRect" parent="éléments/masque" unique_id=1241118837]
@@ -80,3 +82,5 @@ size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 17
 text = "description"
 text_overrun_behavior = 3
+
+[connection signal="gui_input" from="." to="." method="_on_gui_input"]
