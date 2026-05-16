@@ -165,6 +165,7 @@ function clean_umusiques_positions(id_playlist){
 function handle(websocketpeer, message_json, message_bytes){
     // message de la forme {'type':'valeur', ...}
     // TODO ajouter vérification des clés
+    // TODO ajouter timer
     if(message_json.type == "se connecter"){
         let resultat;
         if (server_settings["mode bannissement"] == 0)
@@ -237,8 +238,14 @@ function handle(websocketpeer, message_json, message_bytes){
 
 
         else if(message_json.type == "get image"){
-            // pas besoin de vérif vu qu'on est dans un try
-            let fichier_read = fs.readFileSync(message_json.image);
+            // TODO faire une vérification de l'image demandée
+            let fichier_read
+            try{
+                fichier_read = fs.readFileSync(message_json.image);
+            }
+            catch{
+                fichier_read = Buffer.from([]);
+            }
             send(fichier_read, websocketpeer);
             send(JSON.stringify({"type":"get image", "resultat":"ok"}), websocketpeer);
         }
@@ -477,8 +484,14 @@ function handle(websocketpeer, message_json, message_bytes){
                 fs.mkdirSync("UPlaylists covers", {recursive:true});
                 // on supprime l'ancienne image
                 
-                if (chemin_image != null) fs.unlinkSync(chemin_image);
-
+                try{
+                    if (chemin_image != null) fs.unlinkSync(chemin_image);
+                }
+                catch{
+                    console.log("erreur lors de la suppression de l'ancien fichier cover");
+                }
+                
+                // TODO vérifier l'extension et banaliser les ../../
                 // on stocke l'image sur le disque
                 // note : il n'y a pas le point à l'extension
                 chemin_image = "Uplaylists covers/" + message_json.id_playlist + "." + message_json.image_extension
@@ -553,21 +566,21 @@ wss.on("connection", function connection(websocketpeer, req){ // connection d'un
 
 
         if(est_binaire){
-            websocketpeer.send("ok");
+            //websocketpeer.send("ok");
             // on ajoute du binaire dans la bonne liste dans connexions_data
             if(data.includes("&SPFCHAINE&")){
                 // c'est une partie de chaine, on la met dans text
                 data = data.subarray(Buffer.from("&SPFCHAINE&", "utf-8").length);
                 if(!connexions_data.get(websocketpeer).has("text")){
-                connexions_data.get(websocketpeer).set("text", data);
+                connexions_data.get(websocketpeer).set("text", [data]);
                 }
-                else connexions_data.get(websocketpeer).set("text", Buffer.concat([connexions_data.get(websocketpeer).get("text"), data]));
+                else connexions_data.get(websocketpeer).get("text").push(data);
             }
             else if(!connexions_data.get(websocketpeer).has("bytes")){
-                connexions_data.get(websocketpeer).set("bytes", data);
+                connexions_data.get(websocketpeer).set("bytes", [data]);
             }
             else{
-                connexions_data.get(websocketpeer).set("bytes", Buffer.concat([connexions_data.get(websocketpeer).get("bytes"), data]));
+                connexions_data.get(websocketpeer).get("bytes").push(data);
             }
         }
         else{
@@ -578,11 +591,15 @@ wss.on("connection", function connection(websocketpeer, req){ // connection d'un
                 return;
             }
         }
-        if (!(connexions_data.get(websocketpeer).get("text") != null && connexions_data.get(websocketpeer).get("text").includes(Buffer.from("&SPFEND&")))) return; // le message n'est pas encore complet
-        connexions_data.get(websocketpeer).set("text", connexions_data.get(websocketpeer).get("text").toString("utf-8"));
-        // le message est complet, on enlève  &SPFEND&
-        message_text = connexions_data.get(websocketpeer).get("text").split("&SPFEND&")[0];
-        message_bytes = connexions_data.get(websocketpeer).get("bytes");
+        if (!(connexions_data.get(websocketpeer).get("text") != null && connexions_data.get(websocketpeer).get("text")[connexions_data.get(websocketpeer).get("text").length - 1].includes(Buffer.from("&SPFEND&")))) return; // le message n'est pas encore complet
+        // le message est complet
+        message_text = Buffer.concat(connexions_data.get(websocketpeer).get("text"));
+        message_text = message_text.toString("utf-8");
+        message_text = message_text.split("&SPFEND&")[0];
+        
+        if (connexions_data.get(websocketpeer).get("bytes") != null)
+        message_bytes = Buffer.concat(connexions_data.get(websocketpeer).get("bytes"));
+        else message_bytes = null;
 
         // on supprime le contenu de connexions_data
         connexions_data.set(websocketpeer, new Map);

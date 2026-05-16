@@ -148,7 +148,7 @@ text = "DESCRIPTION"
 text_overrun_behavior = 3
 
 [node name="description" type="TextEdit" parent="fond informations/éléments/infos/droite" unique_id=71831389]
-custom_minimum_size = Vector2(250, 160)
+custom_minimum_size = Vector2(350, 160)
 layout_mode = 2
 placeholder_text = "ADD_A_DESCRIPTION"
 

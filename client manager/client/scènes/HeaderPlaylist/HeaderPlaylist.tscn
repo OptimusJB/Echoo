@@ -37,6 +37,7 @@ layout_mode = 2
 [node name="masque" type="PanelContainer" parent="éléments" unique_id=340818719]
 clip_children = 1
 layout_mode = 2
+size_flags_vertical = 0
 mouse_filter = 1
 theme_override_styles/panel = SubResource("StyleBoxFlat_skrrg")
 
@@ -48,6 +49,7 @@ color = Color(0, 0, 0, 1)
 [node name="image" type="TextureRect" parent="éléments/masque" unique_id=1241118837]
 custom_minimum_size = Vector2(200, 200)
 layout_mode = 2
+size_flags_vertical = 0
 focus_mode = 1
 texture = ExtResource("3_tqfq8")
 expand_mode = 1

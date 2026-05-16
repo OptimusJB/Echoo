@@ -115,6 +115,7 @@ func received(message_json, _message_bytes):
 		# on ajoute le header
 		var noeud_header = noeud_header_playlist.instantiate()
 		noeud_header.id_playlist = FonctionsGlobal.to_int(message_json["resultat"][0]["id_playlist"])
+		noeud_header.image_playlist = FonctionsGlobal.to_text(message_json["resultat"][0]["image_playlist"])
 		noeud_header.get_node("éléments/marges/textes/nom").text = FonctionsGlobal.to_text(message_json["resultat"][0]["nom_playlist"])
 		noeud_header.get_node("éléments/marges/textes/pseudo").text = FonctionsGlobal.pseudo
 		noeud_header.get_node("éléments/marges/textes/description").text = FonctionsGlobal.to_text(message_json["resultat"][0]["description_playlist"])

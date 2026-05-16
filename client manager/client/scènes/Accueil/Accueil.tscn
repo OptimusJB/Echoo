@@ -114,7 +114,7 @@ layout_mode = 2
 split_offsets = PackedInt32Array(300)
 split_offset = 300
 
-[node name="PlaylistView" parent="VBoxContainer/marges corps/corps" unique_id=281558320 instance=ExtResource("3_rdqf3")]
+[node name="ListPlaylistView" parent="VBoxContainer/marges corps/corps" unique_id=281558320 groups=["ListPlaylistView"] instance=ExtResource("3_rdqf3")]
 layout_mode = 2
 focus_mode = 2
 

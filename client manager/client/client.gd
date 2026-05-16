@@ -78,11 +78,15 @@ func connexion_serveur():
 
 func timer_ping_timeout():
 	#print("rep attendues : ", nb_reponses_attendues)
-	if nb_reponses_attendues == 0 && socket.get_ready_state() == socket.STATE_OPEN:
+	if socket.get_ready_state() == socket.STATE_OPEN:
 		reponse = {"text":null, "bytes":null}
-		socket.send_text("quoi")
+		while len("quoi".to_utf8_buffer()) > socket.outbound_buffer_size - socket.get_current_outbound_buffered_amount() or socket.send_text("quoi") == ERR_OUT_OF_MEMORY:
+			#print("pas assez de place dans le buffer pour le ping, on attend la prochaine frame")
+			await get_tree().process_frame
+			socket.poll()
 		nb_reponses_attendues += 1
 		print("ping envoyé")
+	timer_ping.start()
 
 func timer_timeout_timeout():
 	# STATE_CONNECTING à enlever si on veut pas que ça timeout pendant la connexion
@@ -157,12 +161,7 @@ func _process(_delta: float) -> void:
 	if nb_reponses_attendues > 0:
 		if socket.get_available_packet_count():
 			last_reponse = Time.get_ticks_msec()
-			timer_ping.start()
-			#print("reset temps")
-			#print("nb available : ", socket.get_available_packet_count())
-		while socket.get_available_packet_count():
-			await get_tree().process_frame
-			socket.poll()
+			#timer_ping.start()
 			
 			paquet = socket.get_packet()
 			if socket.was_string_packet():
@@ -174,18 +173,18 @@ func _process(_delta: float) -> void:
 					nb_reponses_attendues -= 1
 					return
 			else:
-				socket.send_text("ok")
+				#socket.send_text("ok")
 				if paquet.slice(0, len("&SPFCHAINE&".to_utf8_buffer())) == "&SPFCHAINE&".to_utf8_buffer():
 					paquet = paquet.slice(len("&SPFCHAINE&".to_utf8_buffer()))
 					if not reponse["text"]:
 						reponse["text"] = paquet
 					else:
-						reponse["text"] += paquet
+						reponse["text"].append_array(paquet)
 						
 				elif not reponse["bytes"]:
 					reponse["bytes"] = paquet
 				else:
-					reponse["bytes"] += paquet
+					reponse["bytes"].append_array(paquet)
 			
 			# on check si le message entier est parvenu
 			if not reponse["text"] == null and reponse["text"].slice(len(reponse["text"]) - len("&SPFEND&".to_utf8_buffer())) == "&SPFEND&".to_utf8_buffer():
@@ -225,7 +224,7 @@ func send(message):	# soit str soit bytes, le stringify doit avoir été fait av
 		if est_chaine:
 			sous_message = "&SPFCHAINE&".to_utf8_buffer() + sous_message
 		while len(sous_message) > socket.outbound_buffer_size - socket.get_current_outbound_buffered_amount() or socket.send(sous_message) == ERR_OUT_OF_MEMORY:
-			print("pas assez de place dans le buffer, on attend la prochaine frame")
+			#print("pas assez de place dans le buffer, on attend la prochaine frame")
 			await get_tree().process_frame
 			socket.poll()
 			if socket.get_ready_state() != socket.STATE_OPEN:
@@ -241,4 +240,15 @@ func check_keys(message_json:Dictionary, liste_cles:Array):
 	for cle in liste_cles:
 		if not cle in liste_cles_message:
 			return 0
+	return 1
+
+func send_file(chemin_fichier:String):
+	# fonction optimisée pour l'envoi de fichiers (chargement progressif en ram, et pas de slice qui prend 3 sec)
+	var fichier = FileAccess.open(chemin_fichier, FileAccess.READ)
+	if not fichier:
+		return 0
+	var data = fichier.get_buffer(buffer_slice)
+	while data:
+		await send(data)
+		data = fichier.get_buffer(buffer_slice)
 	return 1

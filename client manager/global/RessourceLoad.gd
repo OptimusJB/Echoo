@@ -19,6 +19,13 @@ func get_ressource(chemin_ressource):
 	if not is_loaded(chemin_ressource):
 		return 0
 	return loaded[chemin_ressource]
+
+func supprimer_ressource(chemin_ressource):
+	# on supprime le contenu
+	if chemin_ressource in loaded.keys():
+		loaded.erase(load_history[0])
+	if chemin_ressource in load_history:
+		load_history.erase(chemin_ressource)
 	
 func charger_ressource(chemin_ressource, data, cache_max=-1):
 	# la fonction réécrit dans loaded, même si ça existe déjà
@@ -26,6 +33,11 @@ func charger_ressource(chemin_ressource, data, cache_max=-1):
 	var erreur = 0
 	var extension = get_ressource_extension(chemin_ressource)
 	var generer_mipmaps = FonctionsGlobal.to_int(Settings.get_setting("generer mipmaps"))
+	
+	if cache_max == -1:
+		cache_max = FonctionsGlobal.to_int(Settings.get_setting("cache max"))
+		if cache_max == null:
+			cache_max = -1
 	
 	# on check si c'est null
 	if not chemin_ressource or not data:

@@ -53,8 +53,8 @@ func received(message_json, _message_bytes):
 		if message_json["resultat"] == "oui":
 			# réussite de la connexion, on stocke les infos du serveur
 			#print("résultat connexion : ", message_json)
-			FonctionsGlobal.id_serveur = message_json["id serveur"]
-			FonctionsGlobal.taille_envoi_fichier = message_json["taille envoi fichier"]
+			FonctionsGlobal.id_serveur = FonctionsGlobal.to_int(message_json["id serveur"])
+			FonctionsGlobal.taille_envoi_fichier = FonctionsGlobal.to_float(message_json["taille envoi fichier"])
 			get_tree().change_scene_to_file("res://client/scènes/Accueil/Accueil.tscn")
 		elif message_json["resultat"] == "non":
 			# mot de passe invalide
