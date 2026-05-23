@@ -121,6 +121,8 @@ func _ready() -> void:
 	#print("inbound : %d, outbound : %d" % [socket.inbound_buffer_size, socket.outbound_buffer_size])
 
 func verif_no_number(message_json):
+	if message_json is not Array and message_json is not Dictionary:
+		return
 	for element in message_json.values():
 		if element is Dictionary:
 			verif_no_number(element)

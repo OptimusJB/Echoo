@@ -4,11 +4,13 @@ var script_get_ressource = preload("res://client/scènes/Accueil/easy_get_ressou
 
 var noeud_enum:Node
 var recherche_actuelle
+var only_dl_actuel:int
 
 var nb_charges = 0
 var first_charge = true
 
-func charger_recherche(recherche = null, noeud_enumeration = null):
+func charger_recherche(recherche = null, only_dl = null, noeud_enumeration = null):
+	# only_dl est un booléen
 	# on envoie la recherche au serveur
 	if Client.is_locked:
 		# un autre recherche est probablement en cours
@@ -19,6 +21,9 @@ func charger_recherche(recherche = null, noeud_enumeration = null):
 	
 	if recherche != null:
 		recherche_actuelle = recherche
+	
+	if only_dl != null:
+		only_dl_actuel = int(only_dl)	# only_dl booléen
 
 	if noeud_enumeration:
 		noeud_enum = noeud_enumeration
@@ -37,9 +42,17 @@ func charger_recherche(recherche = null, noeud_enumeration = null):
 		first_charge = false
 	$"liste/charger plus".visible = false
 	$"liste/resultat recherche".text = "LOADING"
-		
+	
+	var liste_dl = []
+	if only_dl_actuel:
+		# on met dans liste_dl la liste des id des musiques téléchargées
+		liste_dl = Settings.get_setting("telechargements")["musiques"].keys()
+		# on convertit tout en str
+		for index_element in range(len(liste_dl)):
+			liste_dl[index_element] = FonctionsGlobal.to_text(liste_dl[index_element])
+	
 	Client.noeud_appelant = self
-	await Client.send(JSON.stringify({"type":"rechercher", "recherche":recherche_actuelle, "nb charges":FonctionsGlobal.to_text(nb_charges)}))
+	await Client.send(JSON.stringify({"type":"rechercher", "only_dl":FonctionsGlobal.to_text(only_dl_actuel), "only_dl_tableau":liste_dl,"recherche":recherche_actuelle, "nb charges":FonctionsGlobal.to_text(nb_charges)}))
 
 func received(message_json, _message_bytes):
 	if not Client.check_keys(message_json, ["type", "resultat", "est fin"]):
@@ -57,6 +70,7 @@ func received(message_json, _message_bytes):
 	var i = len(noeud_player.playlist)	# pour position_playlist
 	
 	for element in message_json["resultat"]:
+		
 		if element["type_table"] == "musique":
 			# l'élément est une musique
 			noeud_player.playlist.append(FonctionsGlobal.to_int(element["id"]))

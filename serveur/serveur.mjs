@@ -228,7 +228,28 @@ function handle(websocketpeer, message_json, message_bytes){
             let resultat;
             let max_results = 20;
             let est_fin = false;
-            resultat = database_select("SELECT CAST(id AS TEXT) AS id, nom, image, CAST(id_album AS TEXT) AS id_album, nom_album, CAST(id_artiste AS TEXT) as id_artiste, nom_artiste, type_table FROM (SELECT Musiques.id, Musiques.nom, Albums.image, id_album, Albums.nom AS nom_album, Artistes.id AS id_artiste, Artistes.nom AS nom_artiste, 'musique' AS type_table FROM Musiques JOIN Albums ON Albums.id = Musiques.id_album JOIN Artistes ON Artistes.id = Albums.id_artiste WHERE Musiques.nom LIKE ? OR Albums.nom LIKE ? UNION ALL SELECT DISTINCT Artistes.id, Artistes.nom, Artistes.image, NULL AS id_album, NULL AS nom_album, NULL AS id_artiste, NULL AS nom_artiste, 'artiste' AS type_table FROM Artistes LEFT JOIN Albums ON Albums.id_artiste = Artistes.id WHERE Artistes.nom LIKE ? OR Albums.nom LIKE ?) ORDER BY nom ASC LIMIT ? OFFSET ?", ["%" + message_json.recherche + "%", "%" + message_json.recherche + "%", "%" + message_json.recherche + "%", "%" + message_json.recherche + "%", max_results, parseInt(message_json["nb charges"])]);
+            
+            let only_dl = parseInt(message_json.only_dl);
+            let only_dl_tableau = message_json.only_dl_tableau;
+            let i;
+            
+            if(!only_dl){
+                resultat = database_select("SELECT CAST(id AS TEXT) AS id, nom, image, CAST(id_album AS TEXT) AS id_album, nom_album, CAST(id_artiste AS TEXT) as id_artiste, nom_artiste, type_table FROM (SELECT Musiques.id, Musiques.nom, Albums.image, id_album, Albums.nom AS nom_album, Artistes.id AS id_artiste, Artistes.nom AS nom_artiste, 'musique' AS type_table FROM Musiques JOIN Albums ON Albums.id = Musiques.id_album JOIN Artistes ON Artistes.id = Albums.id_artiste WHERE Musiques.nom LIKE ? OR Albums.nom LIKE ? UNION ALL SELECT DISTINCT Artistes.id, Artistes.nom, Artistes.image, NULL AS id_album, NULL AS nom_album, NULL AS id_artiste, NULL AS nom_artiste, 'artiste' AS type_table FROM Artistes LEFT JOIN Albums ON Albums.id_artiste = Artistes.id WHERE Artistes.nom LIKE ? OR Albums.nom LIKE ?) ORDER BY nom ASC LIMIT ? OFFSET ?", ["%" + message_json.recherche + "%", "%" + message_json.recherche + "%", "%" + message_json.recherche + "%", "%" + message_json.recherche + "%", max_results, parseInt(message_json["nb charges"])]);
+            }
+            else{
+                // on crée un tableau de ?
+                let tableau_inter = [];
+
+                // on convertit tous les éléments de only_dl en int
+                for(i=0;i<only_dl_tableau.length;i++){
+                    only_dl_tableau[i] = parseInt(only_dl_tableau[i]);
+                    tableau_inter.push("?");
+                }
+                
+                //tableau_inter.toString() n'affiche pas de []
+                resultat = database_select("SELECT CAST(Musiques.id AS TEXT) AS id, Musiques.nom, Albums.image, CAST(id_album AS TEXT) AS id_album, Albums.nom AS nom_album, CAST(Artistes.id AS TEXT) as id_artiste, Artistes.nom AS nom_artiste, 'musique' AS type_table FROM Musiques JOIN Albums ON Albums.id = Musiques.id_album JOIN Artistes ON Artistes.id = Albums.id_artiste WHERE (Musiques.nom LIKE ? OR Albums.nom LIKE ?) AND Musiques.id IN (" + tableau_inter.toString() + ") LIMIT ? OFFSET ?", ["%" + message_json["recherche"] +"%", "%" + message_json["recherche"] +"%", ...only_dl_tableau, max_results, parseInt(message_json["nb charges"])]);
+            }
+
             //console.log("taille : " + resultat.length);
             //console.log("stringify : " + JSON.stringify({"type":"rechercher", "resultat":resultat, "est fin":est_fin}))
             if (resultat.length < max_results) est_fin = true;

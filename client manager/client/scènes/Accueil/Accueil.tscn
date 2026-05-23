@@ -87,15 +87,23 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 5
 
-[node name="rechercher" type="LineEdit" parent="VBoxContainer/marges supérieur" unique_id=1840486204]
+[node name="centre" type="HBoxContainer" parent="VBoxContainer/marges supérieur" unique_id=876785469]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="rechercher" type="LineEdit" parent="VBoxContainer/marges supérieur/centre" unique_id=1840486204]
 custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
 size_flags_horizontal = 6
 placeholder_text = "SEARCH"
 script = ExtResource("3_23ks8")
 
-[node name="timer texte" type="Timer" parent="VBoxContainer/marges supérieur/rechercher" unique_id=227345036]
+[node name="timer texte" type="Timer" parent="VBoxContainer/marges supérieur/centre/rechercher" unique_id=227345036]
 one_shot = true
+
+[node name="téléchargés" type="CheckBox" parent="VBoxContainer/marges supérieur/centre" unique_id=979334640]
+layout_mode = 2
+text = "ONLY_DL"
 
 [node name="Button" type="Button" parent="VBoxContainer/marges supérieur" unique_id=1592837296]
 layout_mode = 2
@@ -484,9 +492,9 @@ stretch_mode = 5
 visible = false
 layout_mode = 1
 
-[connection signal="charger_recherche" from="VBoxContainer/marges supérieur/rechercher" to="VBoxContainer/marges corps/corps/musiques/Enumeration" method="_on_rechercher_charger_recherche"]
-[connection signal="text_changed" from="VBoxContainer/marges supérieur/rechercher" to="VBoxContainer/marges supérieur/rechercher" method="_on_text_changed"]
-[connection signal="timeout" from="VBoxContainer/marges supérieur/rechercher/timer texte" to="VBoxContainer/marges supérieur/rechercher" method="_on_timer_texte_timeout"]
+[connection signal="charger_recherche" from="VBoxContainer/marges supérieur/centre/rechercher" to="VBoxContainer/marges corps/corps/musiques/Enumeration" method="_on_rechercher_charger_recherche"]
+[connection signal="text_changed" from="VBoxContainer/marges supérieur/centre/rechercher" to="VBoxContainer/marges supérieur/centre/rechercher" method="_on_text_changed"]
+[connection signal="timeout" from="VBoxContainer/marges supérieur/centre/rechercher/timer texte" to="VBoxContainer/marges supérieur/centre/rechercher" method="_on_timer_texte_timeout"]
 [connection signal="charger_artiste" from="VBoxContainer/fond player/player" to="VBoxContainer/marges corps/corps/musiques/Enumeration" method="_artiste_clicked"]
 [connection signal="update_queue" from="VBoxContainer/fond player/player" to="VBoxContainer/marges corps/corps/musiques/Attente" method="update"]
 [connection signal="gui_input" from="VBoxContainer/fond player/player/gauche/masque/image musique" to="VBoxContainer/fond player/player/gauche/masque/image musique" method="_on_gui_input"]
