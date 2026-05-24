@@ -1,0 +1,207 @@
+[gd_scene format=3 uid="uid://bugoseyyayays"]
+
+[ext_resource type="Theme" uid="uid://36276l8ev85m" path="res://assets/theme_spoutoufy.tres" id="1_85niy"]
+[ext_resource type="Script" uid="uid://rnn8e0s5asrg" path="res://client/scènes/SettingsView/settings_view.gd" id="1_rrijc"]
+[ext_resource type="Script" uid="uid://botjaclkocujo" path="res://client/scènes/SettingsView/options_langue.gd" id="3_fdkxh"]
+[ext_resource type="Script" uid="uid://d1w26yyuv6yfa" path="res://client/scènes/SettingsView/nombre_échelle.gd" id="4_g5jm5"]
+[ext_resource type="Script" uid="uid://emrvo1532eg3" path="res://client/scènes/SettingsView/bouton_charger_images.gd" id="5_g5jm5"]
+
+[node name="SettingsView" type="ScrollContainer" unique_id=1436242142]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_85niy")
+script = ExtResource("1_rrijc")
+
+[node name="éléments" type="VBoxContainer" parent="." unique_id=1778695563]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 15
+
+[node name="langue" type="MarginContainer" parent="éléments" unique_id=1662176753]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="éléments/langue" unique_id=1452321653]
+layout_mode = 2
+
+[node name="texte" type="Label" parent="éléments/langue/HBoxContainer" unique_id=1667525858]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "langue"
+text_overrun_behavior = 3
+
+[node name="options langue" type="OptionButton" parent="éléments/langue/HBoxContainer" unique_id=488810539]
+layout_mode = 2
+size_flags_horizontal = 8
+selected = 0
+fit_to_longest_item = false
+item_count = 2
+popup/item_0/text = "français"
+popup/item_0/id = 0
+popup/item_1/text = "anglais"
+popup/item_1/id = 1
+script = ExtResource("3_fdkxh")
+
+[node name="échelle" type="MarginContainer" parent="éléments" unique_id=1439582317]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="éléments/échelle" unique_id=459007035]
+layout_mode = 2
+
+[node name="texte" type="Label" parent="éléments/échelle/HBoxContainer" unique_id=1729445785]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "échelle"
+text_overrun_behavior = 3
+
+[node name="nombre échelle" type="SpinBox" parent="éléments/échelle/HBoxContainer" unique_id=1666329171]
+layout_mode = 2
+size_flags_horizontal = 8
+step = 0.01
+value = 1.0
+allow_greater = true
+custom_arrow_step = 0.25
+custom_arrow_round = true
+script = ExtResource("4_g5jm5")
+
+[node name="charger images" type="MarginContainer" parent="éléments" unique_id=505955900]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="éléments/charger images" unique_id=1138037672]
+layout_mode = 2
+
+[node name="texte" type="Label" parent="éléments/charger images/HBoxContainer" unique_id=1889802092]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "charger images"
+text_overrun_behavior = 3
+
+[node name="bouton charger images" type="CheckButton" parent="éléments/charger images/HBoxContainer" unique_id=1809160512]
+layout_mode = 2
+size_flags_horizontal = 8
+script = ExtResource("5_g5jm5")
+
+[node name="cache max" type="MarginContainer" parent="éléments" unique_id=1009781957]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="éléments/cache max" unique_id=773678817]
+layout_mode = 2
+
+[node name="texte" type="Label" parent="éléments/cache max/HBoxContainer" unique_id=1825172728]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "nombre max d'images dans le cache"
+text_overrun_behavior = 3
+
+[node name="nombre" type="SpinBox" parent="éléments/cache max/HBoxContainer" unique_id=1301045005]
+layout_mode = 2
+size_flags_horizontal = 8
+max_value = 1000.0
+value = 100.0
+allow_greater = true
+custom_arrow_step = 1.0
+custom_arrow_round = true
+
+[node name="type son" type="MarginContainer" parent="éléments" unique_id=1890443889]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="éléments/type son" unique_id=259536146]
+layout_mode = 2
+
+[node name="texte" type="Label" parent="éléments/type son/HBoxContainer" unique_id=1221080843]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "type son"
+text_overrun_behavior = 3
+
+[node name="options" type="OptionButton" parent="éléments/type son/HBoxContainer" unique_id=448699325]
+layout_mode = 2
+size_flags_horizontal = 8
+selected = 0
+fit_to_longest_item = false
+item_count = 3
+popup/item_0/text = "stéréo"
+popup/item_0/id = 0
+popup/item_1/text = "mono"
+popup/item_1/id = 1
+popup/item_2/text = "surround"
+popup/item_2/id = 2
+
+[node name="qualite" type="MarginContainer" parent="éléments" unique_id=428991941]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="éléments/qualite" unique_id=799576525]
+layout_mode = 2
+
+[node name="texte" type="Label" parent="éléments/qualite/HBoxContainer" unique_id=1287915352]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "qualité des musiques"
+text_overrun_behavior = 3
+
+[node name="options" type="OptionButton" parent="éléments/qualite/HBoxContainer" unique_id=2034450698]
+layout_mode = 2
+size_flags_horizontal = 8
+selected = 0
+fit_to_longest_item = false
+item_count = 3
+popup/item_0/text = "élevée"
+popup/item_0/id = 0
+popup/item_1/text = "moyenne"
+popup/item_1/id = 1
+popup/item_2/text = "faible"
+popup/item_2/id = 2
+
+[node name="lisser images" type="MarginContainer" parent="éléments" unique_id=245503865]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="éléments/lisser images" unique_id=159614801]
+layout_mode = 2
+
+[node name="texte" type="Label" parent="éléments/lisser images/HBoxContainer" unique_id=1569469091]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "lisser images"
+text_overrun_behavior = 3
+
+[node name="bouton" type="CheckButton" parent="éléments/lisser images/HBoxContainer" unique_id=925633518]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="commencer chanson clic" type="MarginContainer" parent="éléments" unique_id=1567681603]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="éléments/commencer chanson clic" unique_id=1654080603]
+layout_mode = 2
+
+[node name="texte" type="Label" parent="éléments/commencer chanson clic/HBoxContainer" unique_id=1036411121]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "commencer à la chanson cliquée"
+text_overrun_behavior = 3
+
+[node name="bouton" type="CheckButton" parent="éléments/commencer chanson clic/HBoxContainer" unique_id=1335283702]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="commun" type="MarginContainer" parent="éléments" unique_id=1572665710]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="éléments/commun" unique_id=209007539]
+layout_mode = 2
+
+[node name="texte" type="Label" parent="éléments/commun/HBoxContainer" unique_id=844850976]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "mutualiser qualités musiques téléchargées"
+text_overrun_behavior = 3
+
+[node name="bouton" type="CheckButton" parent="éléments/commun/HBoxContainer" unique_id=1307903236]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[connection signal="item_selected" from="éléments/langue/HBoxContainer/options langue" to="éléments/langue/HBoxContainer/options langue" method="_on_item_selected"]
+[connection signal="value_changed" from="éléments/échelle/HBoxContainer/nombre échelle" to="éléments/échelle/HBoxContainer/nombre échelle" method="_on_value_changed"]
+[connection signal="toggled" from="éléments/charger images/HBoxContainer/bouton charger images" to="éléments/charger images/HBoxContainer/bouton charger images" method="_on_toggled"]

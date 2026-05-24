@@ -111,6 +111,13 @@ corner_radius_top_right = 5
 corner_radius_bottom_right = 5
 corner_radius_bottom_left = 5
 
+[sub_resource type="DPITexture" id="DPITexture_6q3mw"]
+_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><circle cx=\"8\" cy=\"8\" r=\"5.5\" fill=\"#1a1a1a\" stroke=\"#fff\" stroke-opacity=\".75\" stroke-width=\"3\"/></svg>
+"
+color_map = {
+Color(1, 1, 1, 1): Color(0.003921569, 0.39607844, 0.92941177, 1)
+}
+
 [resource]
 Button/font_sizes/font_size = 23
 Button/fonts/font = ExtResource("1_6q3mw")
@@ -132,6 +139,9 @@ LineEdit/styles/normal = SubResource("StyleBoxFlat_6q3mw")
 LinkButton/font_sizes/font_size = 23
 LinkButton/fonts/font = ExtResource("1_6q3mw")
 PanelContainer/styles/panel = SubResource("StyleBoxFlat_tkw1t")
+PopupMenu/font_sizes/font_size = 23
+PopupMenu/fonts/font = ExtResource("1_6q3mw")
+PopupMenu/icons/radio_checked = SubResource("DPITexture_6q3mw")
 TextEdit/font_sizes/font_size = 23
 TextEdit/fonts/font = ExtResource("1_6q3mw")
 TextEdit/styles/focus = SubResource("StyleBoxFlat_cc54s")

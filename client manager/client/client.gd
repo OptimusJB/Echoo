@@ -79,7 +79,10 @@ func connexion_serveur():
 func timer_ping_timeout():
 	#print("rep attendues : ", nb_reponses_attendues)
 	if socket.get_ready_state() == socket.STATE_OPEN:
-		reponse = {"text":null, "bytes":null}
+		# la ligne suivante était là auparavant mais elle posait problème car elle pouvait supprimer une portion de musique dans bytes
+		# je ne sais plus pourquoi elle était là avant, parce que à première vue elle sert à rien
+		# la ligne était déjà là avant la refonte, sous la forme {"text":"", "bytes":null}, à l'époque où ce code s'exécutait seulement quand il n'y avait aucun message en attente de réception
+		# reponse = {"text":null, "bytes":null}
 		while len("quoi".to_utf8_buffer()) > socket.outbound_buffer_size - socket.get_current_outbound_buffered_amount() or socket.send_text("quoi") == ERR_OUT_OF_MEMORY:
 			#print("pas assez de place dans le buffer pour le ping, on attend la prochaine frame")
 			await get_tree().process_frame

@@ -45,7 +45,7 @@ func charger_file():
 			new_element.visible = false
 		$"marges/éléments/scroll/listes musiques".add_child(new_element)
 	
-	$"marges/éléments/file d'attente".text = "QUEUE"
+	$"marges/éléments/file d'attente".text = tr("QUEUE") + " : " + str(player.nom_playlist)
 	a_charger = false
 
 

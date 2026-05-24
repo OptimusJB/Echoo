@@ -495,6 +495,7 @@ layout_mode = 1
 [connection signal="charger_recherche" from="VBoxContainer/marges supérieur/centre/rechercher" to="VBoxContainer/marges corps/corps/musiques/Enumeration" method="_on_rechercher_charger_recherche"]
 [connection signal="text_changed" from="VBoxContainer/marges supérieur/centre/rechercher" to="VBoxContainer/marges supérieur/centre/rechercher" method="_on_text_changed"]
 [connection signal="timeout" from="VBoxContainer/marges supérieur/centre/rechercher/timer texte" to="VBoxContainer/marges supérieur/centre/rechercher" method="_on_timer_texte_timeout"]
+[connection signal="pressed" from="VBoxContainer/marges supérieur/Button" to="VBoxContainer/marges corps/corps/musiques/Enumeration" method="_settings_clicked"]
 [connection signal="charger_artiste" from="VBoxContainer/fond player/player" to="VBoxContainer/marges corps/corps/musiques/Enumeration" method="_artiste_clicked"]
 [connection signal="update_queue" from="VBoxContainer/fond player/player" to="VBoxContainer/marges corps/corps/musiques/Attente" method="update"]
 [connection signal="gui_input" from="VBoxContainer/fond player/player/gauche/masque/image musique" to="VBoxContainer/fond player/player/gauche/masque/image musique" method="_on_gui_input"]

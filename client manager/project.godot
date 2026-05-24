@@ -36,7 +36,7 @@ Veille="*uid://c7vtqgq3chqbi"
 
 [display]
 
-window/stretch/aspect="expand"
+window/stretch/aspect="ignore"
 
 [editor_plugins]
 
