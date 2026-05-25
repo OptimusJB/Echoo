@@ -87,6 +87,12 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 5
 
+[node name="deconnexion" type="Button" parent="VBoxContainer/marges supérieur" unique_id=1378772875]
+layout_mode = 2
+size_flags_horizontal = 0
+focus_mode = 0
+text = "DISCONNECT"
+
 [node name="centre" type="HBoxContainer" parent="VBoxContainer/marges supérieur" unique_id=876785469]
 layout_mode = 2
 size_flags_horizontal = 4

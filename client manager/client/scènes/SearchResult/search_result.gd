@@ -32,6 +32,7 @@ func charger_recherche(recherche = null, only_dl = null, noeud_enumeration = nul
 		# on ajoute la recherche dans la scène
 		for enfant in noeud_enum.get_children():
 			enfant.queue_free()
+		await Client.get_tree().process_frame # on attend que les enfant soient supprimés (pas de problème de nom)
 		noeud_enum.add_child(self)
 		
 		var noeud_player = get_tree().get_first_node_in_group("player") # pour créer la playlist

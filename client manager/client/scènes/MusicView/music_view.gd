@@ -25,6 +25,7 @@ func charger_album(id_album:int, noeud_enumeration):
 	# on ajoute le noeud dans la scène
 	for enfant in noeud_enum.get_children():
 		enfant.queue_free()
+	await Client.get_tree().process_frame # on attend que les enfant soient supprimés (pas de problème de nom)
 	noeud_enum.add_child(self)
 	
 	var noeud_player = get_tree().get_first_node_in_group("player") # pour créer la playlist
@@ -51,6 +52,7 @@ func charger_playlist(id_playlist, noeud_enumeration):
 	# on ajoute le noeud dans la scène
 	for enfant in noeud_enum.get_children():
 		enfant.queue_free()
+	await Client.get_tree().process_frame # on attend que les enfant soient supprimés (pas de problème de nom)
 	noeud_enum.add_child(self)
 	
 	var noeud_player = get_tree().get_first_node_in_group("player") # pour créer la playlist

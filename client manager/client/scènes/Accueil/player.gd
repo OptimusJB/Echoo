@@ -199,10 +199,7 @@ func _on_audio_stream_player_finished() -> void:
 	if position_play >= len(playlist_play) - 1:
 		# on check si on est en repeat on, sinon on arrête le player
 		if noeud_repeat.etat_texte[noeud_repeat.etat] == "on":
-			if Settings.get_setting("commencer à la chanson cliquee"):
-				jouer_musique(position_play_debut)
-			else:
-				jouer_musique(0)
+			jouer_musique(0)
 		else:
 			$"../".visible = false
 			$"../AudioStreamPlayer".stop()	# si jamais c'est suivant qui a appelé
@@ -245,10 +242,7 @@ func _on_aléatoire_toggled(toggled_on: bool) -> void:
 			# on remet le bon ordre
 			# note : s'il y a plusieurs musiques pareilles, on suppose qu'on est au premier
 			var id_musique_actuelle = playlist_play[position_play]
-			if Settings.get_setting("commencer à la chanson cliquee"):
-				playlist_play = playlist_play_no_random.slice(position_play_debut, len(playlist_play_no_random))
-			else:
-				playlist_play = playlist_play_no_random.slice(0, len(playlist_play_no_random))
+			playlist_play = playlist_play_no_random.slice(0, len(playlist_play_no_random))
 			position_play = playlist_play.find(id_musique_actuelle)
 		
 		update_queue.emit()

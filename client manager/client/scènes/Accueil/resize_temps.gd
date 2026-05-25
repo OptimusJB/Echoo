@@ -10,7 +10,7 @@ func check_taille():
 	noeud_label_voisin.custom_minimum_size.x = taille
 	custom_minimum_size.x = taille
 	
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	check_taille()
 	#print(Engine.get_process_frames())
 	

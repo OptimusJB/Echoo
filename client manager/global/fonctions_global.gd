@@ -24,7 +24,7 @@ func to_int(texte):
 		return 0
 	if texte is float:
 		return int(round(texte))
-	if texte is String and texte.is_valid_int():
+	if (texte is String and texte.is_valid_int()) or texte is bool:
 		return int(texte)
 	return 0
 
