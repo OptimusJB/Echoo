@@ -12,6 +12,11 @@ func _on_pressed() -> void:
 		Notif.add_notif("INVALID_INFOS")
 		return
 	
+	# on vérifie que le cooldown est terminé
+	if not $cooldown.is_stopped():
+		Notif.add_notif("COOLDOWN")
+		return
+		
 	Client.is_locked = true
 	# on regarde si on est déhà connecté au serveur
 	if Client.socket.get_ready_state() == Client.socket.STATE_OPEN:
@@ -55,11 +60,17 @@ func received(message_json, _message_bytes):
 			#print("résultat connexion : ", message_json)
 			FonctionsGlobal.id_serveur = FonctionsGlobal.to_int(message_json["id serveur"])
 			FonctionsGlobal.taille_envoi_fichier = FonctionsGlobal.to_float(message_json["taille envoi fichier"])
+			FonctionsGlobal.id_current_download = null
+			FonctionsGlobal.start_music_selected = null
+			FonctionsGlobal.id_musique_ajout = null
 			get_tree().change_scene_to_file("res://client/scènes/Accueil/Accueil.tscn")
+			#get_tree().change_scene_to_packed(preload("res://client/scènes/Accueil/Accueil.tscn"))
+		
 		elif message_json["resultat"] == "non":
 			# mot de passe invalide
 			Notif.add_notif("WRONG_PASSWORD")
 			#Client.socket.close()
+			$cooldown.start()
 			
 		elif message_json["resultat"] == "new":
 			# nouveau compte

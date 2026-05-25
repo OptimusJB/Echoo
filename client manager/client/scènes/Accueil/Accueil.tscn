@@ -498,6 +498,7 @@ stretch_mode = 5
 visible = false
 layout_mode = 1
 
+[connection signal="pressed" from="VBoxContainer/marges supérieur/deconnexion" to="." method="_on_deconnexion_pressed"]
 [connection signal="charger_recherche" from="VBoxContainer/marges supérieur/centre/rechercher" to="VBoxContainer/marges corps/corps/musiques/Enumeration" method="_on_rechercher_charger_recherche"]
 [connection signal="text_changed" from="VBoxContainer/marges supérieur/centre/rechercher" to="VBoxContainer/marges supérieur/centre/rechercher" method="_on_text_changed"]
 [connection signal="timeout" from="VBoxContainer/marges supérieur/centre/rechercher/timer texte" to="VBoxContainer/marges supérieur/centre/rechercher" method="_on_timer_texte_timeout"]

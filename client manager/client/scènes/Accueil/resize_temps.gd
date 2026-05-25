@@ -16,5 +16,6 @@ func _process(_delta: float) -> void:
 	
 	set_process(false)
 	for i in range(30):
+		#print("b : ", get_tree(), " et ",Engine.get_process_frames(), " et ", FonctionsGlobal.nombre)
 		await get_tree().process_frame
 	set_process(true)

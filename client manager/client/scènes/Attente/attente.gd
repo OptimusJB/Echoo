@@ -45,6 +45,7 @@ func charger_file():
 			new_element.visible = false
 		$"marges/éléments/scroll/listes musiques".add_child(new_element)
 	
+	# on met le titrede la playlist / album
 	$"marges/éléments/file d'attente".text = tr("QUEUE") + " : " + str(player.nom_playlist)
 	a_charger = false
 
@@ -68,6 +69,9 @@ func update():
 			noeud_liste_musiques.get_child(i).visible = false
 		else:
 			noeud_liste_musiques.get_child(i).visible = true
+	
+	# on met à jour le titre au cas où le titre de la même playlist à changé
+	$"marges/éléments/file d'attente".text = tr("QUEUE") + " : " + str(noeud_player.nom_playlist)
 	a_update = false
 
 func afficher():

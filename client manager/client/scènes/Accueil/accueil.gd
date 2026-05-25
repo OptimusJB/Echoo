@@ -4,7 +4,6 @@ func disconnected():
 	Notif.add_notif.call_deferred("CONNECTION_FAILED")
 	Client.is_locked = false
 	get_tree().change_scene_to_file("res://client/scènes/Connexion/connexion.tscn")
-	
 
 func _ready() -> void:
 	# on se connecte au disconnected du client
@@ -22,3 +21,16 @@ func _input(event: InputEvent) -> void:
 	elif event.is_action_pressed("clear ram"):
 		RessourceLoad.clear()
 		Notif.add_notif(tr("RAM_CLEAR"))
+
+var retour_au_lobby = false
+func _on_deconnexion_pressed() -> void:
+	#$"retour au lobby".connexion = true
+	#get_tree().change_scene_to_file.call_deferred("res://client/scènes/Connexion/connexion.tscn")
+	# on n'exécute pas change_scene_to_file ici, car celui-ci retire intantanément tout de l'arbre de scène
+	# call_deferred ne marche pas, car celui-ci est exécuté entre _physics_process et _process
+	# donc ça peut poser problème pour d'autres noeuds (voir resize_temps.gd avec sa boucle de process_frame)
+	retour_au_lobby = true
+
+func _process(delta: float) -> void:
+	if retour_au_lobby:
+		get_tree().change_scene_to_file.call_deferred("res://client/scènes/Connexion/connexion.tscn")

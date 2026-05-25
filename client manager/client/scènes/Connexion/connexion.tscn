@@ -290,6 +290,12 @@ size_flags_horizontal = 4
 text = "CONNECT_SERVER"
 script = ExtResource("7_4ebt3")
 
+[node name="cooldown" type="Timer" parent="VBoxContainer/se connecter" unique_id=1001791150]
+wait_time = 3.0
+one_shot = true
+autostart = true
+ignore_time_scale = true
+
 [node name="espace4" type="Control" parent="VBoxContainer" unique_id=2144439050]
 custom_minimum_size = Vector2(0, 10)
 layout_mode = 2

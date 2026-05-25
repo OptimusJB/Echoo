@@ -90,7 +90,11 @@ func _on_valider_pressed() -> void:
 			if chemin_image:
 				playlist.get_node("marges/éléments/cache/image").texture = RessourceLoad.easy_get_image(chemin_image)
 			playlist.get_node("marges/éléments/nom").text = nom_playlist
-
+	
+	# on change le nom enregistré dans le player
+	var noeud_player = get_tree().get_first_node_in_group("player")
+	noeud_player.nom_playlist = nom_playlist
+	
 	Client.is_locked = false
 	$fond.can_remove = true
 
