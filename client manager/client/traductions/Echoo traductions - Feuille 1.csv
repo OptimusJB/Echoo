@@ -1,0 +1,78 @@
+,fr,en
+USERNAME,Nom d'utilisateur,Username
+PASSWORD,Mot de passe,Password
+CHOOSE_SERVER,Choisir serveur,Choose server
+CONNECT_SERVER,Se connecter au serveur,Connect to server
+CONFIRM,Valider,Confirm
+WARNING_WS,Note : les communications avec le serveur ne sont pas sécurisées. À utiliser à vos risques et périls,Note: Communications with the server are not secure. Use at your own risk.
+NOTIF_SERVER_CHANGED,Paramètres serveur changés,Server settings changed
+INVALID_INFOS,Pseudo ou mot de passe invalide,Invalid username or password
+CONNECTION_FAILED,Échec de la connexion au serveur,Failed to connect to the server
+LOGGING_IN,Connexion en cours...,Logging in...
+NOT_ALLOWED,Vous ne pouvez pas faire cela actuellement,You can't do that at the moment
+WRONG_PASSWORD,Le mot de passe est invalide,The password is incorrect
+NEW_SUCCESS,Le compte a été créé,The account has been created
+NEW_FAIL,La création du compte a échoué,Account creation failed
+SEARCH,Rechercher,Search
+LIBRARY,Bibliothèque,Library
+ADD_PLAYLIST,Ajouter playlist,Add playlist
+SETTINGS,Paramètres,Settings
+SEARCH_RESULTS,Résultats de la recherche,Search results
+LOADING,Chargement en cours,Loading
+GET_MUSIC_FAILED,Impossible de lire cette musique,Unable to play this music
+QUALITY_NOT_AVAILABLE,"Qualité %s non disponible, qualité utilisée : %s","Quality %s not available, quality used: %s"
+NO_QUALITY,Pas de qualités disponibles,No qualities available
+QUEUE,File d'attente,Queue
+TITLE,Titre,Title
+ALBUM,Album,Album
+DOWNLOAD_ALL,Télécharger tout,Download all
+REMOVE_ALL,Supprimer tout,Remove all
+DOWNLOAD_FAILED,Échec du téléchargement,Download failed
+DOWNLOAD_END,Les musiques ont été téléchargées,The tracks have been downloaded
+REMOVE_END,Les musiques ont été supprimées du disque,The files have been deleted from the hard drive
+GET_MUSIC_DOWNLOAD_FAILED,Impossible de récupérer le fichier téléchargé,Unable to retrieve the downloaded file
+CREATE_PLAYLIST_FAILED,Impossible de créer la playlist,Unable to create the playlist
+DOWNLOAD_MUSIC,Télécharger la musique,Download the music
+DELETE_FROM_DISK,Supprimer du disque,Delete from the disk
+VIEW_ARTIST,Accéder à l'artiste,View the artist
+VIEW_ALBUM,Accéder à l'album,View the album
+ADD_TO_PLAYLIST,Ajouter à la playlist,Add to playlist
+DELETE_PLAYLIST,Supprimer la playlist,Delete playlist
+OPEN_PLAYLIST,Ouvrir la playlist,Open playlist
+REMOVE_FROM_PLAYLIST,Supprimer de la playlist,Remove from playlist
+EDIT_DETAILS,Modifier les informations,Edit details
+ADD_A_DESCRIPTION,Ajoutez ici une description,Add a description here
+NAME,Nom,Name
+DESCRIPTION,Description,Description
+UPDATED_INFORMATION,Informations modifiées,Updated information
+INFORMATION_FAIL,Échec de la modification des informations,Failed to update the information
+INVALID_IMAGE,Image invalide,Invalid image
+IMAGE_TOO_BIG,Image trop grande (max %f Mio),Image too large (max %f MiB)
+ONLY_DL,Téléchargés,Downloaded
+NEW_SCALE,Nouvelle échelle : ,New scale : 
+RAM_CLEAR,Fichiers stockés en ram supprimés,Files stored in RAM deleted
+SETTING_LANGUAGE,Langue,Language
+SETTING_SCALE,Échelle du logiciel,Software scale
+SETTING_IMAGES,Charger les images,Load images
+SETTING_MAX_CACHE,Nombre max d'images dans le cache,Maximum number of images in the cache
+SETTING_TYPE,Sortie son,Audio output
+SETTING_QUALITY,Qualité des musiques,Music quality
+SETTING_MIPMAPS,Lisser les images,Smooth the images
+SETTING_START,Commencer à la chanson cliquée,Start with the selected song
+SETTING_COMMUN,Mutualiser qualités musiques téléchargées,Pool downloaded music files
+SETTING_RAM_CLEAR,Vider le cache,Clear cache
+FRENCH,Français,French
+ENGLISH,Anglais,English
+STEREO,Stéréo,Stereo
+MONO,Mono,Mono
+SURROUND,Spatial,Surround
+MAX,Élevée,High
+MOY,Moyenne,Medium
+MIN,Faible,Low
+SETTING_SCALE_TEXT,Vous pouvez également changer ce paramètre avec ctrl + flèches gauches et droites,You can also change this setting using Ctrl + the left and right arrow keys
+SETTING_MAX_CACHE_TEXT,"Mettre un nombre bas réduit la ram utilisée, mais peut augmenter la bande passante","Setting a low number reduces RAM usage, but may increase bandwidth"
+SETTING_MIPMAPS_TEXT,"Désactiver cette option réduit la ram utilisée, mais rend les images pixélisées","Disabling this option reduces RAM usage, but makes the images look pixelated"
+SETTING_START_TEXT,"Si cette option est activée, la file d'attente commencera à la musique sélectionnée, et bouclera sur cette même musique","If this option is enabled, the queue will start with the selected track and loop back to that same track"
+DISCONNECT,Déconnexion,Log out
+COOLDOWN,Cooldown de connexion,Connection cooldown
+ALREADY_CONNECTED,Vous êtes déjà connecté sur un autre appareil,You are already logged in on another device

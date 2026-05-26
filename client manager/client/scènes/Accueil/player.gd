@@ -1,5 +1,5 @@
 extends HBoxContainer
-var script_get_ressource = load("res://client/scènes/Accueil/easy_get_ressource.gd").new()
+var script_get_ressource = preload("res://client/scènes/Accueil/easy_get_ressource.gd").new()
 
 var nom_playlist = ""
 var playlist = []

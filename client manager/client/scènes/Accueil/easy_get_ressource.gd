@@ -1,5 +1,5 @@
 extends Node
-var noeud_musique = load("res://client/scènes/Musique/Musique.tscn")
+var noeud_musique = preload("res://client/scènes/Musique/Musique.tscn")
 signal image_received
 signal music_received
 
@@ -78,7 +78,7 @@ func easy_get_music(id_musique, qualite, return_buffer=false):
 		return null
 	
 	if not telechargement_success and reponse[0]["qualite"] != qualite:
-		Notif.add_notif(tr("QUALITY_NOT_AVAILABLE") % [qualite, reponse[0]["qualite"]])
+		Notif.add_notif(tr("QUALITY_NOT_AVAILABLE") % [tr(qualite.to_upper()), tr(reponse[0]["qualite"].to_upper())])
 	return musique_stream
 	
 func easy_get_image(chemin_image):

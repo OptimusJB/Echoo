@@ -1,7 +1,9 @@
 extends Control
+var close_no_message = false # si true, n'envoie pas le message la notif de déconnexion
 
 func disconnected():
-	Notif.add_notif.call_deferred("CONNECTION_FAILED")
+	if not close_no_message:
+		Notif.add_notif.call_deferred("CONNECTION_FAILED")
 	Client.is_locked = false
 	get_tree().change_scene_to_file("res://client/scènes/Connexion/connexion.tscn")
 
@@ -33,4 +35,6 @@ func _on_deconnexion_pressed() -> void:
 
 func _process(delta: float) -> void:
 	if retour_au_lobby:
+		#close_no_message = true
+		#Client.socket.close()
 		get_tree().change_scene_to_file.call_deferred("res://client/scènes/Connexion/connexion.tscn")

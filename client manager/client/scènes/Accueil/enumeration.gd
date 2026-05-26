@@ -1,8 +1,8 @@
 extends PanelContainer
-var scene_search_result = load("res://client/scènes/SearchResult/SearchResult.tscn")
-var scene_music_view = load("res://client/scènes/MusicView/MusicView.tscn")
-var scene_artiste_view = load("res://client/scènes/ArtisteView/ArtisteView.tscn")
-var scene_settings_view = load("res://client/scènes/SettingsView/SettingsView.tscn")
+var scene_search_result = preload("res://client/scènes/SearchResult/SearchResult.tscn")
+var scene_music_view = preload("res://client/scènes/MusicView/MusicView.tscn")
+var scene_artiste_view = preload("res://client/scènes/ArtisteView/ArtisteView.tscn")
+var scene_settings_view = preload("res://client/scènes/SettingsView/SettingsView.tscn")
 
 func _on_rechercher_charger_recherche(recherche, only_dl) -> void:
 	# on ajoute le search result et on lance sa fonction

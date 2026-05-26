@@ -1,5 +1,5 @@
 extends Node
-var noeud_musique = load("res://client/scènes/Musique/Musique.tscn")
+var noeud_musique = preload("res://client/scènes/Musique/Musique.tscn")
 #var script_get_ressource = load("res://client/scènes/Accueil/easy_get_ressource.gd").new()
 
 # variables globales

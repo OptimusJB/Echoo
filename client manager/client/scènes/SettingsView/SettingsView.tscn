@@ -25,7 +25,7 @@ script = ExtResource("1_rrijc")
 [node name="éléments" type="VBoxContainer" parent="." unique_id=1778695563]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 15
+theme_override_constants/separation = 25
 
 [node name="langue" type="MarginContainer" parent="éléments" unique_id=1662176753]
 layout_mode = 2
@@ -69,9 +69,11 @@ text = "SETTING_SCALE"
 text_overrun_behavior = 3
 
 [node name="sous-texte" type="Label" parent="éléments/échelle/HBoxContainer/VBoxContainer" unique_id=1216331077]
+custom_minimum_size = Vector2(10, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
 text = "SETTING_SCALE_TEXT"
+autowrap_mode = 3
 
 [node name="nombre échelle" type="SpinBox" parent="éléments/échelle/HBoxContainer" unique_id=1666329171]
 layout_mode = 2
@@ -120,9 +122,11 @@ text = "SETTING_MAX_CACHE"
 text_overrun_behavior = 3
 
 [node name="sous-texte" type="Label" parent="éléments/cache max/HBoxContainer/VBoxContainer" unique_id=1237819613]
+custom_minimum_size = Vector2(10, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
 text = "SETTING_MAX_CACHE_TEXT"
+autowrap_mode = 3
 
 [node name="nombre cache max" type="SpinBox" parent="éléments/cache max/HBoxContainer" unique_id=1301045005]
 layout_mode = 2
@@ -182,11 +186,11 @@ size_flags_vertical = 0
 selected = 0
 fit_to_longest_item = false
 item_count = 3
-popup/item_0/text = "HIGH"
+popup/item_0/text = "MAX"
 popup/item_0/id = 0
-popup/item_1/text = "MEDIUM"
+popup/item_1/text = "MOY"
 popup/item_1/id = 1
-popup/item_2/text = "LOW"
+popup/item_2/text = "MIN"
 popup/item_2/id = 2
 script = ExtResource("8_6b2pv")
 
@@ -207,9 +211,11 @@ text = "SETTING_MIPMAPS"
 text_overrun_behavior = 3
 
 [node name="sous-texte" type="Label" parent="éléments/lisser images/HBoxContainer/VBoxContainer" unique_id=656595688]
+custom_minimum_size = Vector2(10, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
 text = "SETTING_MIPMAPS_TEXT"
+autowrap_mode = 3
 
 [node name="bouton lisser images" type="CheckButton" parent="éléments/lisser images/HBoxContainer" unique_id=925633518]
 layout_mode = 2
@@ -234,9 +240,11 @@ text = "SETTING_START"
 text_overrun_behavior = 3
 
 [node name="sous-texte" type="Label" parent="éléments/commencer chanson clic/HBoxContainer/VBoxContainer" unique_id=1896414253]
+custom_minimum_size = Vector2(10, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
 text = "SETTING_START_TEXT"
+autowrap_mode = 3
 
 [node name="bouton chanson clic" type="CheckButton" parent="éléments/commencer chanson clic/HBoxContainer" unique_id=1335283702]
 layout_mode = 2

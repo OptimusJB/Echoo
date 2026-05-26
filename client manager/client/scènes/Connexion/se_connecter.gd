@@ -75,6 +75,10 @@ func received(message_json, _message_bytes):
 		elif message_json["resultat"] == "new":
 			# nouveau compte
 			$"../nouveau compte".visible = true
+		
+		elif message_json["resultat"] == "deja co":
+			Notif.add_notif("ALREADY_CONNECTED")
+			
 	Client.is_locked = false
 	
 func disconnected():

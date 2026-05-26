@@ -40,7 +40,7 @@ window/stretch/aspect="ignore"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/godot-sqlite/plugin.cfg")
+enabled=PackedStringArray()
 
 [global_group]
 
@@ -67,7 +67,7 @@ echelle_down={
 [internationalization]
 
 locale/translation_remaps={}
-locale/translations=PackedStringArray("res://client/traductions/Spoutoufy traductions - Feuille 1.en.translation", "res://client/traductions/Spoutoufy traductions - Feuille 1.fr.translation")
+locale/translations=PackedStringArray("res://client/traductions/Echoo traductions - Feuille 1.en.translation", "res://client/traductions/Echoo traductions - Feuille 1.fr.translation")
 
 [physics]
 

@@ -162,6 +162,15 @@ function clean_umusiques_positions(id_playlist){
     database_select("UPDATE UMusiques AS base SET position_playlist = ordre.position_playlist FROM (SELECT id AS id_temp, ROW_NUMBER() OVER (ORDER BY position_playlist ASC) AS position_playlist FROM UMusiques WHERE id_playlist = ?) AS ordre WHERE id = id_temp", [parseInt(id_playlist)]);
 }
 
+function check_connected(pseudo){
+    // retourne 1 si l'utilisateur est déjà connecté, 0 sinon
+    let client;
+    for(client of connexions_timeout.keys()){
+        if(client.pseudo == pseudo) return 1;
+    }
+    return 0;
+}
+
 function handle(websocketpeer, message_json, message_bytes){
     // message de la forme {'type':'valeur', ...}
     // TODO ajouter vérification des clés
@@ -175,11 +184,14 @@ function handle(websocketpeer, message_json, message_bytes){
         if(resultat.length > 0){
             // l'utilisateur existe
             if(resultat[0].password == message_json.mdp && resultat[0].banni != 1){
-                // l'utilisateur peut se connecter
-                websocketpeer.est_connecte = true;
-                websocketpeer.pseudo = message_json.pseudo;
-                websocketpeer.mdp = message_json.mdp;
-                send(JSON.stringify({"type":"se connecter", "resultat":"oui", "taille envoi fichier":server_settings["taille envoi fichier"].toString(), "id serveur":id_serveur.toString()}), websocketpeer);
+                // l'utilisateur peut se connecter, mais avant on vérifie qu'il n'est pas déjà connecté
+                if(check_connected(message_json.pseudo)) send(JSON.stringify({"type":"se connecter", "resultat":"deja co"}), websocketpeer);
+                else{
+                    websocketpeer.est_connecte = true;
+                    websocketpeer.pseudo = message_json.pseudo;
+                    websocketpeer.mdp = message_json.mdp;
+                    send(JSON.stringify({"type":"se connecter", "resultat":"oui", "taille envoi fichier":server_settings["taille envoi fichier"].toString(), "id serveur":id_serveur.toString()}), websocketpeer);
+                }
             }
             else{
                 // mauvais mot de passe

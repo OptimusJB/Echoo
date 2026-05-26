@@ -1,7 +1,7 @@
 extends "res://client/scènes/Accueil/resize.gd"
 var etat = 0
 var etat_texte = {0:"off", 1:"on", 2:"track"}
-var etat_textures = {0:load("res://assets/repeat_off.png"), 1:load("res://assets/repeat_on.png"), 2:load("res://assets/repeat_track.png")}
+var etat_textures = {0:preload("res://assets/repeat_off.png"), 1:preload("res://assets/repeat_on.png"), 2:preload("res://assets/repeat_track.png")}
 
 signal changed
 
