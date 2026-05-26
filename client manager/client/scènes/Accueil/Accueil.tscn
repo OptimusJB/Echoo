@@ -125,10 +125,13 @@ theme_override_constants/margin_right = 0
 
 [node name="corps" type="HSplitContainer" parent="VBoxContainer/marges corps" unique_id=1227525279]
 layout_mode = 2
-split_offsets = PackedInt32Array(300)
-split_offset = 300
+split_offsets = PackedInt32Array(322)
+split_offset = 322
 
-[node name="ListPlaylistView" parent="VBoxContainer/marges corps/corps" unique_id=281558320 groups=["ListPlaylistView"] instance=ExtResource("3_rdqf3")]
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/marges corps/corps" unique_id=54361589]
+layout_mode = 2
+
+[node name="ListPlaylistView" parent="VBoxContainer/marges corps/corps/PanelContainer" unique_id=281558320 groups=["ListPlaylistView"] instance=ExtResource("3_rdqf3")]
 layout_mode = 2
 focus_mode = 2
 

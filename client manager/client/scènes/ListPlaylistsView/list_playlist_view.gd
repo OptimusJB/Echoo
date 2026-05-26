@@ -1,4 +1,4 @@
-extends PanelContainer
+extends ScrollContainer
 var script_get_ressource = preload("res://client/scènes/Accueil/easy_get_ressource.gd").new()
 var noeud_playlist = preload("res://client/scènes/Playlist/Playlist.tscn")
 

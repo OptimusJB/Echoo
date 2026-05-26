@@ -1,7 +1,8 @@
 extends Node
 # script augmentant le temps d'attente si la fenêtre n'est pas focus
 
-var disable_veille = false
+var disable_veille = false	# variable interne pour settings_view
+var full_disable_veille = false
 
 func mode_normal():
 	OS.low_processor_usage_mode_sleep_usec = 6900
@@ -9,7 +10,7 @@ func mode_normal():
 	pass
 	
 func mode_veille():
-	if disable_veille:
+	if disable_veille or full_disable_veille:
 		return
 	OS.low_processor_usage_mode_sleep_usec = 6900*64#6900*32
 	#OS.low_processor_usage_mode_sleep_usec = 6900*2

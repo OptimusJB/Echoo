@@ -240,6 +240,17 @@ custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
 texture = ExtResource("4_5rmsu")
 expand_mode = 1
+stretch_mode = 5
+
+[node name="fond noir" type="ColorRect" parent="App/VBoxContainer/HSplitContainer/split albums titres/Albums/VBoxContainer/artiste actuel/image artiste" unique_id=693657493]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
 
 [node name="nom artiste" type="Label" parent="App/VBoxContainer/HSplitContainer/split albums titres/Albums/VBoxContainer/artiste actuel" unique_id=1775433762]
 layout_mode = 2
@@ -298,9 +309,21 @@ layout_mode = 2
 [node name="image album" type="TextureRect" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel" unique_id=1438462912]
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
+size_flags_horizontal = 4
 size_flags_vertical = 0
 texture = ExtResource("4_5rmsu")
 expand_mode = 1
+stretch_mode = 5
+
+[node name="fond noir" type="ColorRect" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/image album" unique_id=1407053969]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
 
 [node name="infos" type="VBoxContainer" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel" unique_id=387234146]
 layout_mode = 2

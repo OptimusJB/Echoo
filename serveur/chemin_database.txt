@@ -1,1 +1,1 @@
-C:\Users\jean_\AppData\Roaming\Godot\app_userdata\Spoutoufy\server_data.db
+C:\Users\jean_\AppData\Roaming\Godot\app_userdata\Echoo\server_data.db

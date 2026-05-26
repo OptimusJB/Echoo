@@ -392,6 +392,23 @@ function handle(websocketpeer, message_json, message_bytes){
         else if (message_json.type == "supprimer playlist"){
             let resultat;
             // note : on check le pseudo pour être sûr que l'utilisateur est autorisé à supprimer la playlist
+            resultat = database_select("SELECT UPlaylists.id FROM UPlaylists JOIN Utilisateurs ON Utilisateurs.id = UPlaylists.id_utilisateur WHERE UPlaylists.id = ? AND Utilisateurs.username = ?", [parseInt(message_json.id_playlist), websocketpeer.pseudo]);
+            if (resultat.length < 1){
+                console.log("ajouter musique playlist : longueur résultat invalide, fermeture socket");
+                websocketpeer.terminate();
+                return;
+            }
+
+            // on tente de supprimer l'image associée
+            resultat = database_select("SELECT image FROM Uplaylists WHERE id = ?", [message_json.id_playlist]);
+            if(resultat[0].image){
+                try{
+                    fs.unlinkSync(resultat[0].image);
+                }
+                catch{
+                    console.log("échec de la suppression de la cover de playlist");
+                }
+            }
             resultat = database_exec("DELETE FROM UMusiques WHERE id IN (SELECT UMusiques.id FROM UMusiques JOIN UPlaylists ON UPlaylists.id = UMusiques.id_playlist JOIN Utilisateurs ON Utilisateurs.id = UPlaylists.id_utilisateur WHERE UPlaylists.id = ? AND username = ?)", [parseInt(message_json.id_playlist), websocketpeer.pseudo]);
             resultat = database_exec("DELETE FROM UPlaylists WHERE id = ? AND id_utilisateur = (SELECT id FROM Utilisateurs WHERE username = ?)", [parseInt(message_json.id_playlist), websocketpeer.pseudo]);
             send(JSON.stringify({"type":"supprimer playlist", "resultat":"ok"}), websocketpeer);
@@ -527,7 +544,7 @@ function handle(websocketpeer, message_json, message_bytes){
                 // TODO vérifier l'extension et banaliser les ../../
                 // on stocke l'image sur le disque
                 // note : il n'y a pas le point à l'extension
-                chemin_image = "Uplaylists covers/" + message_json.id_playlist + "." + message_json.image_extension
+                chemin_image = import.meta.dirname + "/Uplaylists covers/" + message_json.id_playlist + "." + message_json.image_extension
                 fs.writeFileSync(chemin_image, message_bytes);
                 
             }

@@ -14,6 +14,9 @@ func _ready() -> void:
 	get_window().title = "Server Manager"
 	get_tree().auto_accept_quit = false	# pour NOTIFICATION_WM_CLOSE_REQUEST
 	
+	# on désactive la veille
+	Veille.full_disable_veille = true
+	
 	# on charge les settings
 	Settings.use_json = true
 	Settings.save_filename = "server_settings.txt"
