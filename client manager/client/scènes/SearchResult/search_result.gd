@@ -89,8 +89,8 @@ func received(message_json, _message_bytes):
 			# l'élément est un artiste
 			new_noeud = noeud_artiste.instantiate()
 			new_noeud.id = FonctionsGlobal.to_int(element["id"])
-			new_noeud.get_node("éléments/nom").text = FonctionsGlobal.to_text(element["nom"])
-			new_noeud.get_node("éléments/masque/image").texture = await script_get_ressource.easy_get_image(element["image"])
+			new_noeud.get_node("marges/éléments/nom").text = FonctionsGlobal.to_text(element["nom"])
+			new_noeud.get_node("marges/éléments/masque/image").texture = await script_get_ressource.easy_get_image(element["image"])
 			
 			$"liste".add_child(new_noeud)
 			$"liste".move_child(new_noeud, $"liste".get_child_count() - 2)

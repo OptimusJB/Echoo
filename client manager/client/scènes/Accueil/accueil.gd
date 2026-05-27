@@ -33,8 +33,8 @@ func _on_deconnexion_pressed() -> void:
 	# donc ça peut poser problème pour d'autres noeuds (voir resize_temps.gd avec sa boucle de process_frame)
 	retour_au_lobby = true
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if retour_au_lobby:
-		#close_no_message = true
-		#Client.socket.close()
-		get_tree().change_scene_to_file.call_deferred("res://client/scènes/Connexion/connexion.tscn")
+		close_no_message = true
+		Client.socket.close()
+		#get_tree().change_scene_to_file.call_deferred("res://client/scènes/Connexion/connexion.tscn")

@@ -25,13 +25,15 @@ func delete_playlist():
 	Client.noeud_appelant = self
 	await Client.send(JSON.stringify({"type":"supprimer playlist", "id_playlist":FonctionsGlobal.to_text(id)}))
 	
-	var resultat = await supprimer_playlist_received
+	var _resultat = await supprimer_playlist_received
 	
 	# on supprime la playlist de l'affichage
 	queue_free()
 	
 	# on enlève l'affichage si c'est cette playlist
-	var noeud_affichage_actuel = get_tree().get_first_node_in_group("enumeration").get_child(0)
+	var noeud_affichage_actuel = get_tree().get_first_node_in_group("enumeration")
+	if noeud_affichage_actuel.get_child_count() > 0:
+		noeud_affichage_actuel = noeud_affichage_actuel.get_child(0)
 	if noeud_affichage_actuel is MusicView and noeud_affichage_actuel.type_chargement == "playlist" and noeud_affichage_actuel.id_chargement == id:
 		noeud_affichage_actuel.get_node("../").clear_affichage()
 	
@@ -84,7 +86,7 @@ func _ready() -> void:
 	var noeud_enumeration = get_tree().get_first_node_in_group("enumeration")
 	charger_playlist.connect(noeud_enumeration._playlist_clicked)
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	# on regarde si une musique est en cours d'ajout
 	if FonctionsGlobal.id_musique_ajout != null:
 		if $"charger playlist".has_theme_stylebox_override("normal"):

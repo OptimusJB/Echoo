@@ -24,6 +24,17 @@ layout_mode = 2
 size_flags_horizontal = 0
 texture = ExtResource("1_vpkwp")
 expand_mode = 1
+stretch_mode = 5
+
+[node name="fond noir" type="ColorRect" parent="systeme_image/image" unique_id=999300593]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
 
 [node name="charger artiste" type="Button" parent="systeme_image" unique_id=1404402952]
 layout_mode = 2

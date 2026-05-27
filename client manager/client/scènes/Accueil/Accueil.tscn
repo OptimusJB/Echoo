@@ -28,6 +28,7 @@
 [ext_resource type="PackedScene" uid="uid://b27tp6fxvdsew" path="res://global/sous menu/sous menu.tscn" id="26_k2e5l"]
 [ext_resource type="Script" uid="uid://crbvy6jj8bwik" path="res://client/scènes/Accueil/deplacement.gd" id="27_a7daw"]
 [ext_resource type="PackedScene" uid="uid://dnn54qmu3vjbe" path="res://client/scènes/PlaylistSettings/PlaylistSettings.tscn" id="28_k4agt"]
+[ext_resource type="Script" uid="uid://ca5e0gwtn0b1m" path="res://client/scènes/Accueil/input_handler.gd" id="29_1rdss"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ltm4r"]
 content_margin_left = 20.0
@@ -500,6 +501,12 @@ stretch_mode = 5
 [node name="PlaylistSettings" parent="." unique_id=934129773 groups=["playlist settings"] instance=ExtResource("28_k4agt")]
 visible = false
 layout_mode = 1
+
+[node name="input handler" type="Control" parent="." unique_id=1013558852]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("29_1rdss")
 
 [connection signal="pressed" from="VBoxContainer/marges supérieur/deconnexion" to="." method="_on_deconnexion_pressed"]
 [connection signal="charger_recherche" from="VBoxContainer/marges supérieur/centre/rechercher" to="VBoxContainer/marges corps/corps/musiques/Enumeration" method="_on_rechercher_charger_recherche"]

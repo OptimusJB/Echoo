@@ -23,6 +23,9 @@ func _on_mouse_exited() -> void:
 	add_theme_stylebox_override("panel", stylebox)
 
 
-func _on_gui_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and not event.is_pressed() and event.button_index == MOUSE_BUTTON_LEFT:
-		charger_artiste.emit(id)
+#func _on_gui_input(event: InputEvent) -> void:
+	#if event is InputEventMouseButton and not event.is_pressed() and event.button_index == MOUSE_BUTTON_LEFT:
+		#charger_artiste.emit(id)
+
+func _on_charger_artiste_pressed() -> void:
+	charger_artiste.emit(id)

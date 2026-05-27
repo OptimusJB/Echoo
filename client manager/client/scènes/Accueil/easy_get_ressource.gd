@@ -292,7 +292,7 @@ func telecharger_musiques(liste_id_musiques):
 
 func supprimer_musiques(liste_id_musiques):
 	# WARNING la fonction de vérifie pas si le client est bloqué
-	var noeud_player = Client.get_tree().get_first_node_in_group("player")
+	var _noeud_player = Client.get_tree().get_first_node_in_group("player")
 	var qualite = Settings.get_setting("qualite")	# qualité demandé à easy_get_music
 		
 	if Settings.get_setting("telechargements")["est commun"]:

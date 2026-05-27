@@ -58,6 +58,6 @@ func received(message_json, message_bytes):
 	if message_json["type"] == "changer position musique":
 		changer_position_musique_received.emit(message_json, message_bytes)
 		
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if actif:
 		global_position = get_global_mouse_position()

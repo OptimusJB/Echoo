@@ -4,7 +4,7 @@ import { exit } from "node:process";
 import sqlite, { DatabaseSync } from 'node:sqlite';
 import { randomInt } from "node:crypto";
 import path from 'node:path';
-
+import * as argon2 from "argon2";
 
 let ip="0.0.0.0";
 let port=25565;
@@ -12,6 +12,7 @@ let connexions_timeout = new Map;
 let connexions_data = new Map;
 
 let timeout_time = 10000; // en ms
+let connexion_cooldown = 2500;  // en ms, réglé sur 3 secondes sur le client
 
 let buffer_slice = 2.097e+6 // environ 2mio
 // on crée le fichier de stop du serveur
@@ -23,7 +24,7 @@ try{
 }
 
 // on récupère / crée l'identifiant du serveur
-var id_serveur;
+let id_serveur;
 try{
     if(!fs.existsSync("server_id.txt")){
         // on crée le fichier
@@ -35,7 +36,7 @@ try{
     id_serveur = parseInt(fichier_read);
 
 } catch{
-    console.log("un erreur est survenue lors de la lecture du fichier server_id.txt");
+    console.log("une erreur est survenue lors de la lecture du fichier server_id.txt");
     exit();
 }
 
@@ -58,11 +59,12 @@ try{
     port = parseInt(fichier_read["port"]);
 
 } catch{
-    console.log("un erreur est survenue lors de la lecture du fichier server_ip.json");
+    console.log("une erreur est survenue lors de la lecture du fichier server_ip.json");
     exit();
 }
 
 // on récupère les settings présents dans server_settings.txt
+let server_settings
 try{
     if(!fs.existsSync("server_settings.txt")){
         console.log("fichier server_settings.txt introuvable");
@@ -70,14 +72,15 @@ try{
     }
 
     let fichier_read = fs.readFileSync("server_settings.txt", "utf-8");
-    var server_settings = JSON.parse(fichier_read);
+    server_settings = JSON.parse(fichier_read);
 
 } catch{
-    console.log("un erreur est survenue lors de la lecture du fichier server_settings.txt");
+    console.log("une erreur est survenue lors de la lecture du fichier server_settings.txt");
     exit();
 }
 
 // on tente d'ouvrir la base de données
+let database;
 try{
     if(!fs.existsSync("chemin_database.txt")){
         // on crée le fichier
@@ -92,7 +95,7 @@ try{
     
     // on essaye d'ouvrir la base de données
     try{
-        var database = new DatabaseSync(fichier_read);
+        database = new DatabaseSync(fichier_read);
     } catch{
         console.log("impossible d'ouvrir la base de données");
         exit();
@@ -171,11 +174,23 @@ function check_connected(pseudo){
     return 0;
 }
 
-function handle(websocketpeer, message_json, message_bytes){
+async function verifier_mdp(hash, mdp){
+    try{
+        return await argon2.verify(hash, mdp);
+    }
+    catch{};
+    
+}
+async function handle(websocketpeer, message_json, message_bytes){
     // message de la forme {'type':'valeur', ...}
-    // TODO ajouter vérification des clés
-    // TODO ajouter timer
     if(message_json.type == "se connecter"){
+        // on check le cooldown
+        if(Date.now() - websocketpeer.connexion_cooldown < connexion_cooldown){
+            console.log("cooldown non fini, fermeture socket");
+            socket.terminate();
+            return;
+        }
+
         let resultat;
         if (server_settings["mode bannissement"] == 0)
             resultat = database_select("SELECT password, (SELECT MAX(banni) FROM Utilisateurs WHERE ip=?) AS banni FROM Utilisateurs WHERE username = ?", [websocketpeer.ip_client, message_json.pseudo]);
@@ -183,7 +198,7 @@ function handle(websocketpeer, message_json, message_bytes){
         
         if(resultat.length > 0){
             // l'utilisateur existe
-            if(resultat[0].password == message_json.mdp && resultat[0].banni != 1){
+            if(await verifier_mdp(resultat[0].password, message_json.mdp) && resultat[0].banni != 1){
                 // l'utilisateur peut se connecter, mais avant on vérifie qu'il n'est pas déjà connecté
                 if(check_connected(message_json.pseudo)) send(JSON.stringify({"type":"se connecter", "resultat":"deja co"}), websocketpeer);
                 else{
@@ -191,10 +206,12 @@ function handle(websocketpeer, message_json, message_bytes){
                     websocketpeer.pseudo = message_json.pseudo;
                     websocketpeer.mdp = message_json.mdp;
                     send(JSON.stringify({"type":"se connecter", "resultat":"oui", "taille envoi fichier":server_settings["taille envoi fichier"].toString(), "id serveur":id_serveur.toString()}), websocketpeer);
+                    console.log("connexion de " + websocketpeer.pseudo);
                 }
             }
             else{
                 // mauvais mot de passe
+                websocketpeer.connexion_cooldown = Date.now()
                 send(JSON.stringify({"type":"se connecter", "resultat":"non"}), websocketpeer);
             }
         }
@@ -222,7 +239,7 @@ function handle(websocketpeer, message_json, message_bytes){
         // on vérifie que le pseudo n'existe pas
         resultat = database_select("SELECT username FROM Utilisateurs WHERE username=?", [message_json.pseudo]);
         if (resultat.length == 0){
-        // TODO : faire un hashage
+        message_json.mdp = await argon2.hash(message_json.mdp);
         resultat = database_exec("INSERT INTO Utilisateurs(username, password, ip, banni) VALUES(?, ?, ?, 0)", [message_json.pseudo, message_json.mdp, websocketpeer.ip_client]);
         
         console.log("nouvel utilisateur : " + message_json.pseudo);
@@ -271,7 +288,14 @@ function handle(websocketpeer, message_json, message_bytes){
 
 
         else if(message_json.type == "get image"){
-            // TODO faire une vérification de l'image demandée
+            // on vérifie d'abord si l'image figure dans la base de données, et que l'utilisateur a le droit d'y accéder
+            let resultat = database_select("SELECT image FROM (SELECT image FROM Uplaylists WHERE id_utilisateur=(SELECT id FROM Utilisateurs WHERE username = ?) UNION SELECT image FROM Albums UNION SELECT image FROM Artistes) AS Images WHERE image = ?", [websocketpeer.pseudo, message_json.image]);
+            if(!resultat.length > 0){
+                console.log("get image : accès non autorisé, fermeture socket");
+                websocketpeer.terminate();
+                return;
+            }
+
             let fichier_read
             try{
                 fichier_read = fs.readFileSync(message_json.image);
@@ -541,7 +565,14 @@ function handle(websocketpeer, message_json, message_bytes){
                     console.log("erreur lors de la suppression de l'ancien fichier cover");
                 }
                 
-                // TODO vérifier l'extension et banaliser les ../../
+                // on vérifie l'extension et on récupère seulement le nom de base
+                if(!(["png", "jpg", "jpeg", "bmp", "svg"].includes(message_json.image_extension))){
+                    console.log("set playlist infos : format non autorisé, fermeture socket");
+                    websocketpeer.terminate();
+                    return;
+                }
+                // il n'y a rien à banaliser
+
                 // on stocke l'image sur le disque
                 // note : il n'y a pas le point à l'extension
                 chemin_image = import.meta.dirname + "/Uplaylists covers/" + message_json.id_playlist + "." + message_json.image_extension
@@ -591,6 +622,18 @@ function verif_no_number(message_json, test_json=true, test_tableau=true){
     }
 }
 
+function normaliser_ip(ip){
+    // normalise l'ip (par exemple, s'il s'agit d'une ip ipv4, sous forme d'ipv6, renvoie la version ipv4)
+    let new_ip;
+    if(ip && ip.startsWith("::ffff:")) new_ip = ip.substring(7);
+    
+    // localhost peut être de la forme ::1, au cas où on le convertit en 127.0.0.1
+    if(ip == "::1"){
+        new_ip = "127.0.0.1";
+    }
+    return new_ip;
+}
+
 wss.on("connection", function connection(websocketpeer, req){ // connection d'un client
     connexions_timeout.set(websocketpeer, Date.now());
     connexions_data.set(websocketpeer, new Map);
@@ -602,14 +645,19 @@ wss.on("connection", function connection(websocketpeer, req){ // connection d'un
     websocketpeer.pseudo = "";
     websocketpeer.mdp = "";
     websocketpeer.timeout_block = false
+    websocketpeer.connexion_cooldown = Date.now() - connexion_cooldown
 
     // on met l'ip du websocket
-    // TODO checker XforwardedFor
-    // TODO normaliser ip (ipv4, ipv6 compressé, ipv6 non compressé)
-    websocketpeer.ip_client = req.socket.remoteAddress;
+    // on normalise l'ip (ipv4, ipv6 compressé, ipv6 non compressé)
+    let ip_client = normaliser_ip(req.socket.remoteAddress);
+    // on vérifie x-forwarded-for
+    if(req.headers['x-forwarded-for'] && server_settings["liste blanche ip"].includes(ip_client)){
+        ip_client = req.headers['x-forwarded-for'].split(',')[0].trim();
+    }
+    websocketpeer.ip_client = ip_client;
 
     websocketpeer.on("error", console.error);
-    websocketpeer.on("message", function message(data, est_binaire){
+    websocketpeer.on("message", async function message(data, est_binaire){
         //console.log("reçu");
         // on met à jour le temps
         connexions_timeout.set(websocketpeer, Date.now());
@@ -664,10 +712,13 @@ wss.on("connection", function connection(websocketpeer, req){ // connection d'un
         //console.log("message reçu : " + message_text.type);
 
         // on lance handle
-        // TODO : ajouter try avec catch fermeture socket avec terminate, et aussi avec affichage de l'erreur
-        //verif_no_number(message_text); // TODO à enlever à la fin
-        handle(websocketpeer, message_text, message_bytes);
-
+        //verif_no_number(message_text);
+        try{
+            await handle(websocketpeer, message_text, message_bytes); // asynchrone seulement pour la génération et la vérificaion du mdp
+        }
+        catch (err){
+            console.log("erreur lors du handle : " + err);
+        }
         // on remet à jour le temps (potentiel envoi de gros fichiers)
         connexions_timeout.set(websocketpeer, Date.now());
     });
@@ -693,8 +744,8 @@ function check_timeout(){
         //console.log("%d > %d", Date.now() - connexions_timeout.get(client), timeout_time);
         if (Date.now() - connexions_timeout.get(client) > timeout_time && !client.timeout_block){
             // on enlève la connexion de connexions_timeout et connexions_data et on la coupe
-            console.log("suppression timeout");
-            console.log("avant timeout : ", client.readyState);
+            console.log("suppression timeout de " + client.pseudo);
+            //console.log("avant timeout : ", client.readyState);
             connexions_timeout.delete(client);
             connexions_data.delete(client);
             if (client.readyState == WebSocket.CONNECTING || client.readyState == WebSocket.OPEN) client.terminate();

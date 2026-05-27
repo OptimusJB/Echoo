@@ -208,13 +208,13 @@ func _process(_delta: float) -> void:
 				
 				nb_reponses_attendues -= 1
 				#print("reçu : ", message_text)
-				verif_no_number(message_text)	# TODO à enlever à la fin
+				#verif_no_number(message_text)
 				noeud_appelant.received(message_text, message_bytes)
 				
 func send(message):	# soit str soit bytes, le stringify doit avoir été fait avant
 	var est_chaine = false
 	if message is String:
-		verif_no_number(JSON.parse_string(message))	# TODO à enlever à la fin
+		#verif_no_number(JSON.parse_string(message))	# TODO à enlever à la fin
 		# on convertit la chaine en bytes
 		est_chaine = true
 		message = (message + "&SPFEND&").to_utf8_buffer()

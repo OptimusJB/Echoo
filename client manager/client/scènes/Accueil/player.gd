@@ -154,7 +154,7 @@ func changer_position(new_position):
 	if was_paused:
 		$"../AudioStreamPlayer".stream_paused = true
 		
-func _on_barre_drag_ended(value_changed: bool) -> void:
+func _on_barre_drag_ended(_value_changed: bool) -> void:
 	player_grab = false
 	# on change la position de lecture
 	changer_position($"centre/slider/barre".value)
@@ -228,7 +228,7 @@ func _on_barre_volume_value_changed(value: float) -> void:
 	$"../AudioStreamPlayer".volume_linear = FonctionsGlobal.to_float(Settings.get_setting("volume"))
 
 
-func _on_barre_volume_drag_ended(value_changed: bool) -> void:
+func _on_barre_volume_drag_ended(_value_changed: bool) -> void:
 	# on sauvegarde le volume
 	Settings.save_settings()
 
