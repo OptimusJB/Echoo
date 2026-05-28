@@ -1,0 +1,55 @@
+[gd_scene format=3 uid="uid://b27tp6fxvdsew"]
+
+[ext_resource type="Script" uid="uid://cg72hdop6g3cb" path="res://global/sous menu/sous_menu.gd" id="1_1q7tn"]
+[ext_resource type="Script" uid="uid://b0myqvo3h45yj" path="res://global/sous menu/bouton_type.gd" id="2_idx45"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_1q7tn"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1q7tn"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.2509804, 0.2509804, 0.2509804, 1)
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[node name="SousMenu" type="Control" unique_id=1248340178]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+script = ExtResource("1_1q7tn")
+
+[node name="bouton type" type="Button" parent="." unique_id=641784905]
+visible = false
+layout_mode = 0
+offset_left = 5.0
+offset_top = 5.0
+offset_right = 69.0
+offset_bottom = 38.0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_1q7tn")
+text = "testsfd"
+script = ExtResource("2_idx45")
+
+[node name="fond" type="PanelContainer" parent="." unique_id=912234948]
+layout_mode = 1
+offset_right = 10.0
+offset_bottom = 10.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_1q7tn")
+
+[node name="liste options" type="VBoxContainer" parent="fond" unique_id=1668224742]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[connection signal="pressed" from="bouton type" to="bouton type" method="_on_pressed"]

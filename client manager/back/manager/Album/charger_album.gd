@@ -1,0 +1,64 @@
+extends Button
+
+signal charger_album
+
+func _on_pressed() -> void:
+	var id_album = get_node("../../").id
+	charger_album.emit(id_album)
+
+func _gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_RIGHT and not event.is_pressed():
+			# on appelle le sous-menu
+			var sousmenu = get_tree().get_nodes_in_group("SousMenu")[0]
+			sousmenu.creer_sous_menu(self, ["ouvrir la page de l'album", "modifier l'image", "supprimer l'album"])
+
+func action(type_action:String):
+	# sortie du sous-menu
+	var id_album = get_node("../../").id
+	if type_action == "supprimer l'album":
+		# on supprime l'artiste
+		var database = get_tree().get_nodes_in_group("database")[0]
+		# on tente de d'abord supprimer les musiques liées à cet album
+		
+		var resultat = database.exec_sql("DELETE FROM UMusiques WHERE id_musique IN (SELECT id FROM Musiques WHERE id_album = ?)", [id_album])
+		if resultat[0]:
+			resultat = database.exec_sql("DELETE FROM Musiques WHERE id_album = ?", [id_album])
+		if resultat[0]:
+			resultat = database.exec_sql("DELETE FROM Albums WHERE id=?",  [id_album])
+		if not resultat[0]:
+			Notif.add_notif("échec de la suppression de l'album")
+			return
+		Notif.add_notif("album supprimé")
+		
+		# on enlève l'album actuel si c'est le même et que c'est ouvert
+		if int(get_tree().get_nodes_in_group("album actuel")[0].get_node("id album").text) == id_album and get_tree().get_nodes_in_group("parties")[2].visible:
+			get_tree().get_nodes_in_group("parties")[2].visible = false
+		
+		# on supprime l'album
+		$"../../".queue_free()
+		
+	elif type_action == "ouvrir la page de l'album":
+		charger_album.emit(id_album)
+	
+	elif type_action == "modifier l'image":
+		var file_dialog = get_tree().get_nodes_in_group("file dialogs")[0]
+		file_dialog.noeud_appelant = self
+		file_dialog.popup_file_dialog()
+	
+func fichier_choisi(chemin_fichier):
+	# on change l'image de l'artiste (pas de vérification)
+	var id_album = get_node("../../").id
+	var database = get_tree().get_nodes_in_group("database")[0]
+	var resultat = database.exec_sql("UPDATE Albums SET image=? WHERE id=?", [chemin_fichier, id_album])
+	if not resultat[0]:
+		Notif.add_notif("échec du changement d'image")
+		return
+		
+	# on change l'image de l'artiste et l'artiste actuel s'il est ouvert
+	var texture = RessourceLoad.easy_get_image(chemin_fichier)
+	$"../image".texture = texture
+	
+	# on change la texture de l'album actuel
+	if int(get_tree().get_nodes_in_group("album actuel")[0].get_node("id album").text) == id_album and get_tree().get_nodes_in_group("parties")[2].visible:
+		get_tree().get_nodes_in_group("album actuel")[0].get_node("image album").texture = texture

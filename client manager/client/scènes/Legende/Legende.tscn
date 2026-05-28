@@ -1,0 +1,64 @@
+[gd_scene format=3 uid="uid://ryacd6d54b5a"]
+
+[ext_resource type="Theme" uid="uid://36276l8ev85m" path="res://assets/theme_spoutoufy.tres" id="1_4n66y"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_otjyj"]
+content_margin_left = 5.0
+content_margin_right = 5.0
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_a53ga"]
+content_margin_right = 10.0
+
+[node name="Legende" type="PanelContainer" unique_id=70706988]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 55.0
+grow_horizontal = 2
+size_flags_vertical = 0
+focus_mode = 1
+theme_override_styles/panel = SubResource("StyleBoxFlat_otjyj")
+
+[node name="éléments" type="HBoxContainer" parent="." unique_id=691351242]
+custom_minimum_size = Vector2(0, 55)
+layout_mode = 2
+size_flags_vertical = 0
+theme = ExtResource("1_4n66y")
+theme_override_constants/separation = 4
+
+[node name="gauche" type="MarginContainer" parent="éléments" unique_id=105252859]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+
+[node name="numéro" type="Label" parent="éléments/gauche" unique_id=518165712]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_a53ga")
+text = "#"
+horizontal_alignment = 2
+
+[node name="espace2" type="Control" parent="éléments" unique_id=1654389787]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+mouse_filter = 1
+
+[node name="titre" type="Label" parent="éléments" unique_id=46718332]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "TITLE"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="espace" type="Control" parent="éléments" unique_id=930365169]
+custom_minimum_size = Vector2(20, 0)
+layout_mode = 2
+mouse_filter = 1
+
+[node name="album" type="Label" parent="éléments" unique_id=1956030289]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 1
+text = "ALBUM"
+text_overrun_behavior = 3

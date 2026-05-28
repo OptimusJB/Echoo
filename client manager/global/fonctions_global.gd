@@ -1,0 +1,63 @@
+extends Node
+var noeud_musique = preload("res://client/scènes/Musique/Musique.tscn")
+#var script_get_ressource = load("res://client/scènes/Accueil/easy_get_ressource.gd").new()
+
+# variables globales
+var pseudo = ""
+var mdp = ""
+
+var taille_envoi_fichier = 0.0
+var id_serveur = 0
+
+var id_current_download = null	# id de la musique atuellement en train d'être téléchargée (utile pour les musiques affichées)
+
+var start_music_selected = null # pour le shift sélection des musiques
+#var musics_selected = [] # liste des musiques sélectionnées
+
+var id_musique_ajout = null	# id de la playlist à ajouter
+	
+func to_int(texte):
+	# retourne l'élément en int, 0 si problème
+	if texte is int:
+		return texte
+	if not texte:
+		return 0
+	if texte is float:
+		return int(round(texte))
+	if (texte is String and texte.is_valid_int()) or texte is bool:
+		return int(texte)
+	return 0
+
+func to_float(texte):
+	# retourne l'élément en float, 0.0 si problème
+	if texte is float:
+		return texte
+	if not texte:
+		return 0.0
+	if texte is String and texte.is_valid_float() or texte is int:
+		return float(texte)
+	return 0.0
+
+func to_text(element):
+	# retourne l'element en str, et "" si null
+	if element == null:
+		return ""
+	return str(element)
+
+func to_text_int(element):
+	# retourne l'élément sous forme d'entier en str
+	# ex : 'truc' -> '0'
+	#      '2025' -> '2025'
+	return str(to_int(element))
+
+func to_text_float(element):
+	return str(to_float(element))
+
+func secondes_to_text(temps:int):
+	var minutes = int(float(temps)/60)
+	var secondes = (temps % 60)
+	return str(minutes) + ":" + str(secondes).pad_zeros(2)
+
+func text_to_secondes(texte:String):
+	var parties = texte.split(":")
+	return int(parties[0]) * 60 + int(parties[1])

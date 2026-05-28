@@ -1,0 +1,560 @@
+[gd_scene format=3 uid="uid://chpuy5plkrye1"]
+
+[ext_resource type="Theme" uid="uid://36276l8ev85m" path="res://assets/theme_spoutoufy.tres" id="1_2pu2h"]
+[ext_resource type="Script" uid="uid://b2rj5kq07ugbh" path="res://client/scènes/Accueil/accueil.gd" id="2_rdqf3"]
+[ext_resource type="Script" uid="uid://unl618kuvipn" path="res://client/scènes/Accueil/rechercher.gd" id="3_23ks8"]
+[ext_resource type="PackedScene" uid="uid://cgqyfnmnlool" path="res://client/scènes/ListPlaylistsView/ListPlaylistView.tscn" id="3_rdqf3"]
+[ext_resource type="Script" uid="uid://clb6okmwhvjmt" path="res://client/scènes/Accueil/enumeration.gd" id="5_3t856"]
+[ext_resource type="Texture2D" uid="uid://cbsuvjw4vgbop" path="res://assets/random_off.png" id="6_4y3b3"]
+[ext_resource type="PackedScene" uid="uid://hwb67mub0dk1" path="res://client/scènes/Attente/Attente.tscn" id="6_17si7"]
+[ext_resource type="Script" uid="uid://d2qbh46v2axke" path="res://client/scènes/Accueil/player.gd" id="6_ydhwd"]
+[ext_resource type="Texture2D" uid="uid://d1wosgciqnqqy" path="res://assets/random_on.png" id="7_ydhwd"]
+[ext_resource type="Script" uid="uid://bhjf3yqfa0q38" path="res://client/scènes/Accueil/resize.gd" id="8_4y3b3"]
+[ext_resource type="Script" uid="uid://clx2vudyigx0l" path="res://client/scènes/Accueil/image_musique.gd" id="8_5hb7a"]
+[ext_resource type="Texture2D" uid="uid://bmqfkrtlnvxpm" path="res://assets/previous.png" id="9_bep4y"]
+[ext_resource type="Texture2D" uid="uid://dewxkaw3q0pmg" path="res://assets/play_player.png" id="10_mep5p"]
+[ext_resource type="Texture2D" uid="uid://d0nar31bka6v6" path="res://assets/pause.png" id="11_fu6rb"]
+[ext_resource type="Texture2D" uid="uid://ca3fkt5jethnd" path="res://assets/next.png" id="12_pjwbn"]
+[ext_resource type="Texture2D" uid="uid://cjfuqk16t8egn" path="res://assets/repeat_off.png" id="13_5hb7a"]
+[ext_resource type="Script" uid="uid://c3lmtabi5i43t" path="res://client/scènes/Accueil/repeter.gd" id="15_bep4y"]
+[ext_resource type="Texture2D" uid="uid://5ohqfljbhutl" path="res://assets/icone_base.png" id="16_mep5p"]
+[ext_resource type="Script" uid="uid://bemr8hw8w11i1" path="res://client/scènes/Accueil/gros_plan_cover.gd" id="18_17si7"]
+[ext_resource type="Texture2D" uid="uid://bmnvu85tquim8" path="res://assets/Spoutoufy logo.png" id="19_5q245"]
+[ext_resource type="FontFile" uid="uid://e5rqa3c5uq5i" path="res://assets/Roboto_Mono/static/RobotoMono-Medium.ttf" id="19_b1vhq"]
+[ext_resource type="Texture2D" uid="uid://cplagl60qdg3r" path="res://assets/file off.png" id="19_badus"]
+[ext_resource type="Script" uid="uid://pxtl08moocrt" path="res://client/scènes/Accueil/resize_temps.gd" id="19_imhny"]
+[ext_resource type="Texture2D" uid="uid://bu3t2fhkifar6" path="res://assets/file on.png" id="20_d8t22"]
+[ext_resource type="Script" uid="uid://kjphaa8bi4so" path="res://client/scènes/Accueil/file_d'attente.gd" id="21_d8t22"]
+[ext_resource type="PackedScene" uid="uid://b27tp6fxvdsew" path="res://global/sous menu/sous menu.tscn" id="26_k2e5l"]
+[ext_resource type="Script" uid="uid://crbvy6jj8bwik" path="res://client/scènes/Accueil/deplacement.gd" id="27_a7daw"]
+[ext_resource type="PackedScene" uid="uid://dnn54qmu3vjbe" path="res://client/scènes/PlaylistSettings/PlaylistSettings.tscn" id="28_k4agt"]
+[ext_resource type="Script" uid="uid://ca5e0gwtn0b1m" path="res://client/scènes/Accueil/input_handler.gd" id="29_1rdss"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ltm4r"]
+content_margin_left = 20.0
+content_margin_top = 10.0
+content_margin_right = 20.0
+content_margin_bottom = 10.0
+bg_color = Color(0.15199637, 0.15199637, 0.15199631, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.15294118, 0.15294118, 0.15294118, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mep5p"]
+bg_color = Color(0.15294118, 0.15294118, 0.15294118, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[node name="Accueil" type="Control" unique_id=644059938]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 1
+theme = ExtResource("1_2pu2h")
+script = ExtResource("2_rdqf3")
+
+[node name="fond" type="ColorRect" parent="." unique_id=562066699]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.07444572, 0.07444573, 0.07444573, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1766515087]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="marges supérieur" type="MarginContainer" parent="VBoxContainer" unique_id=692308771]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="deconnexion" type="Button" parent="VBoxContainer/marges supérieur" unique_id=1378772875]
+layout_mode = 2
+size_flags_horizontal = 0
+focus_mode = 0
+text = "DISCONNECT"
+
+[node name="centre" type="HBoxContainer" parent="VBoxContainer/marges supérieur" unique_id=876785469]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="rechercher" type="LineEdit" parent="VBoxContainer/marges supérieur/centre" unique_id=1840486204]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+size_flags_horizontal = 6
+placeholder_text = "SEARCH"
+script = ExtResource("3_23ks8")
+
+[node name="timer texte" type="Timer" parent="VBoxContainer/marges supérieur/centre/rechercher" unique_id=227345036]
+one_shot = true
+
+[node name="téléchargés" type="CheckBox" parent="VBoxContainer/marges supérieur/centre" unique_id=979334640]
+layout_mode = 2
+text = "ONLY_DL"
+
+[node name="Button" type="Button" parent="VBoxContainer/marges supérieur" unique_id=1592837296]
+layout_mode = 2
+size_flags_horizontal = 8
+focus_mode = 0
+text = "SETTINGS"
+
+[node name="marges corps" type="MarginContainer" parent="VBoxContainer" unique_id=1773847381]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_right = 0
+
+[node name="corps" type="HSplitContainer" parent="VBoxContainer/marges corps" unique_id=1227525279]
+layout_mode = 2
+split_offsets = PackedInt32Array(322)
+split_offset = 322
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/marges corps/corps" unique_id=54361589]
+layout_mode = 2
+
+[node name="ListPlaylistView" parent="VBoxContainer/marges corps/corps/PanelContainer" unique_id=281558320 groups=["ListPlaylistView"] instance=ExtResource("3_rdqf3")]
+layout_mode = 2
+focus_mode = 2
+
+[node name="musiques" type="HSplitContainer" parent="VBoxContainer/marges corps/corps" unique_id=1264630319]
+layout_mode = 2
+
+[node name="Enumeration" type="PanelContainer" parent="VBoxContainer/marges corps/corps/musiques" unique_id=812830795 groups=["enumeration"]]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.65
+focus_mode = 2
+script = ExtResource("5_3t856")
+
+[node name="Attente" parent="VBoxContainer/marges corps/corps/musiques" unique_id=1984280448 instance=ExtResource("6_17si7")]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="fond player" type="PanelContainer" parent="VBoxContainer" unique_id=697010720]
+visible = false
+layout_mode = 2
+focus_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ltm4r")
+
+[node name="player" type="HBoxContainer" parent="VBoxContainer/fond player" unique_id=1982445940 groups=["player"]]
+layout_mode = 2
+script = ExtResource("6_ydhwd")
+
+[node name="gauche" type="HBoxContainer" parent="VBoxContainer/fond player/player" unique_id=1995499629]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="masque" type="PanelContainer" parent="VBoxContainer/fond player/player/gauche" unique_id=1378135070]
+clip_children = 1
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_mep5p")
+
+[node name="fond noir" type="ColorRect" parent="VBoxContainer/fond player/player/gauche/masque" unique_id=665258447]
+layout_mode = 2
+color = Color(0, 0, 0, 1)
+
+[node name="image musique" type="TextureRect" parent="VBoxContainer/fond player/player/gauche/masque" unique_id=1004443894]
+custom_minimum_size = Vector2(72, 72)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource("16_mep5p")
+expand_mode = 1
+stretch_mode = 5
+script = ExtResource("8_5hb7a")
+
+[node name="infos musique" type="VBoxContainer" parent="VBoxContainer/fond player/player/gauche" unique_id=352005487]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+
+[node name="nom" type="Label" parent="VBoxContainer/fond player/player/gauche/infos musique" unique_id=112092126]
+layout_mode = 2
+text = "truc"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="artiste" type="LinkButton" parent="VBoxContainer/fond player/player/gauche/infos musique" unique_id=1570526439]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "trucccccccccccddddddddfddddddddddddddddddddddddddddddddddddddddd"
+underline = 1
+text_overrun_behavior = 3
+
+[node name="espace" type="Control" parent="VBoxContainer/fond player/player/gauche" unique_id=1682487696]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.5
+
+[node name="centre" type="VBoxContainer" parent="VBoxContainer/fond player/player" unique_id=2133939420]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.3
+
+[node name="boutons" type="HBoxContainer" parent="VBoxContainer/fond player/player/centre" unique_id=1784014770]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_constants/separation = 20
+
+[node name="size aléatoire" type="Control" parent="VBoxContainer/fond player/player/centre/boutons" unique_id=1106405839]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="aléatoire" type="TextureButton" parent="VBoxContainer/fond player/player/centre/boutons/size aléatoire" unique_id=109472057]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -12.5
+offset_top = -12.5
+offset_right = 12.5
+offset_bottom = 12.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+focus_mode = 0
+toggle_mode = true
+texture_normal = ExtResource("6_4y3b3")
+texture_pressed = ExtResource("7_ydhwd")
+ignore_texture_size = true
+stretch_mode = 4
+script = ExtResource("8_4y3b3")
+
+[node name="size precedent" type="Control" parent="VBoxContainer/fond player/player/centre/boutons" unique_id=1079895244]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="precedent" type="TextureButton" parent="VBoxContainer/fond player/player/centre/boutons/size precedent" unique_id=1396000455]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -12.5
+offset_top = -12.5
+offset_right = 12.5
+offset_bottom = 12.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+focus_mode = 0
+texture_normal = ExtResource("9_bep4y")
+ignore_texture_size = true
+stretch_mode = 4
+script = ExtResource("8_4y3b3")
+
+[node name="size jouer" type="Control" parent="VBoxContainer/fond player/player/centre/boutons" unique_id=84585214]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="jouer" type="TextureButton" parent="VBoxContainer/fond player/player/centre/boutons/size jouer" unique_id=166279710]
+custom_minimum_size = Vector2(45, 45)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -22.5
+offset_top = -22.5
+offset_right = 22.5
+offset_bottom = 22.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+focus_mode = 0
+toggle_mode = true
+texture_normal = ExtResource("10_mep5p")
+texture_pressed = ExtResource("11_fu6rb")
+ignore_texture_size = true
+stretch_mode = 4
+script = ExtResource("8_4y3b3")
+
+[node name="size suivant" type="Control" parent="VBoxContainer/fond player/player/centre/boutons" unique_id=529134364]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="suivant" type="TextureButton" parent="VBoxContainer/fond player/player/centre/boutons/size suivant" unique_id=947269435]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -12.5
+offset_top = -12.5
+offset_right = 12.5
+offset_bottom = 12.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+focus_mode = 0
+texture_normal = ExtResource("12_pjwbn")
+ignore_texture_size = true
+stretch_mode = 4
+script = ExtResource("8_4y3b3")
+
+[node name="size repeter" type="Control" parent="VBoxContainer/fond player/player/centre/boutons" unique_id=1002962118]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="repeter" type="TextureButton" parent="VBoxContainer/fond player/player/centre/boutons/size repeter" unique_id=796409984]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -12.5
+offset_top = -12.5
+offset_right = 12.5
+offset_bottom = 12.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+focus_mode = 0
+texture_normal = ExtResource("13_5hb7a")
+ignore_texture_size = true
+stretch_mode = 4
+script = ExtResource("15_bep4y")
+
+[node name="slider" type="HBoxContainer" parent="VBoxContainer/fond player/player/centre" unique_id=1733600011]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="temps actuel" type="Label" parent="VBoxContainer/fond player/player/centre/slider" unique_id=547299972 node_paths=PackedStringArray("noeud_label_voisin")]
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_fonts/font = ExtResource("19_b1vhq")
+theme_override_font_sizes/font_size = 17
+text = "1:12"
+horizontal_alignment = 2
+script = ExtResource("19_imhny")
+noeud_label_voisin = NodePath("../temps max")
+
+[node name="barre" type="HSlider" parent="VBoxContainer/fond player/player/centre/slider" unique_id=1735262540]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+focus_mode = 0
+scrollable = false
+
+[node name="temps max" type="Label" parent="VBoxContainer/fond player/player/centre/slider" unique_id=1727420931]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("19_b1vhq")
+theme_override_font_sizes/font_size = 17
+text = "2:31"
+
+[node name="droite" type="HBoxContainer" parent="VBoxContainer/fond player/player" unique_id=517591614]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="espace" type="Control" parent="VBoxContainer/fond player/player/droite" unique_id=163463244]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.5
+
+[node name="size file d\'attente" type="Control" parent="VBoxContainer/fond player/player/droite" unique_id=786222016]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="file d\'attente" type="TextureButton" parent="VBoxContainer/fond player/player/droite/size file d\'attente" unique_id=846368594]
+custom_minimum_size = Vector2(35, 35)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -17.5
+offset_top = -17.5
+offset_right = 17.5
+offset_bottom = 17.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+focus_mode = 0
+toggle_mode = true
+texture_normal = ExtResource("19_badus")
+texture_pressed = ExtResource("20_d8t22")
+ignore_texture_size = true
+stretch_mode = 4
+script = ExtResource("21_d8t22")
+
+[node name="barre volume" type="HSlider" parent="VBoxContainer/fond player/player/droite" unique_id=698870461]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+focus_mode = 0
+max_value = 1.0
+step = 0.1
+value = 1.0
+
+[node name="timer_refresh" type="Timer" parent="VBoxContainer/fond player/player" unique_id=905729081]
+wait_time = 0.2
+autostart = true
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="VBoxContainer/fond player" unique_id=191914258]
+
+[node name="gros plan cover" type="ColorRect" parent="." unique_id=475604817]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.44705883)
+script = ExtResource("18_17si7")
+
+[node name="centrage" type="CenterContainer" parent="gros plan cover" unique_id=1397593633]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="cover" type="TextureRect" parent="gros plan cover/centrage" unique_id=1931098221]
+custom_minimum_size = Vector2(700, 700)
+layout_mode = 2
+mouse_filter = 0
+texture = ExtResource("19_5q245")
+expand_mode = 1
+
+[node name="SousMenu" parent="." unique_id=1248340178 groups=["sous menu"] instance=ExtResource("26_k2e5l")]
+visible = false
+layout_mode = 1
+
+[node name="deplacement" type="PanelContainer" parent="." unique_id=1645666401 groups=["deplacement"]]
+visible = false
+layout_mode = 0
+offset_right = 10.0
+offset_bottom = 10.0
+mouse_filter = 2
+script = ExtResource("27_a7daw")
+
+[node name="fond noir" type="ColorRect" parent="deplacement" unique_id=455976032]
+layout_mode = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="image" type="TextureRect" parent="deplacement" unique_id=770486552]
+texture_filter = 4
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("16_mep5p")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PlaylistSettings" parent="." unique_id=934129773 groups=["playlist settings"] instance=ExtResource("28_k4agt")]
+visible = false
+layout_mode = 1
+
+[node name="input handler" type="Control" parent="." unique_id=1013558852]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("29_1rdss")
+
+[connection signal="pressed" from="VBoxContainer/marges supérieur/deconnexion" to="." method="_on_deconnexion_pressed"]
+[connection signal="charger_recherche" from="VBoxContainer/marges supérieur/centre/rechercher" to="VBoxContainer/marges corps/corps/musiques/Enumeration" method="_on_rechercher_charger_recherche"]
+[connection signal="text_changed" from="VBoxContainer/marges supérieur/centre/rechercher" to="VBoxContainer/marges supérieur/centre/rechercher" method="_on_text_changed"]
+[connection signal="timeout" from="VBoxContainer/marges supérieur/centre/rechercher/timer texte" to="VBoxContainer/marges supérieur/centre/rechercher" method="_on_timer_texte_timeout"]
+[connection signal="pressed" from="VBoxContainer/marges supérieur/Button" to="VBoxContainer/marges corps/corps/musiques/Enumeration" method="_settings_clicked"]
+[connection signal="charger_artiste" from="VBoxContainer/fond player/player" to="VBoxContainer/marges corps/corps/musiques/Enumeration" method="_artiste_clicked"]
+[connection signal="update_queue" from="VBoxContainer/fond player/player" to="VBoxContainer/marges corps/corps/musiques/Attente" method="update"]
+[connection signal="gui_input" from="VBoxContainer/fond player/player/gauche/masque/image musique" to="VBoxContainer/fond player/player/gauche/masque/image musique" method="_on_gui_input"]
+[connection signal="image_gros_plan" from="VBoxContainer/fond player/player/gauche/masque/image musique" to="gros plan cover" method="_on_image_musique_image_gros_plan"]
+[connection signal="pressed" from="VBoxContainer/fond player/player/gauche/infos musique/artiste" to="VBoxContainer/fond player/player" method="_on_artiste_pressed"]
+[connection signal="button_down" from="VBoxContainer/fond player/player/centre/boutons/size aléatoire/aléatoire" to="VBoxContainer/fond player/player/centre/boutons/size aléatoire/aléatoire" method="_on_button_down"]
+[connection signal="button_up" from="VBoxContainer/fond player/player/centre/boutons/size aléatoire/aléatoire" to="VBoxContainer/fond player/player/centre/boutons/size aléatoire/aléatoire" method="_on_button_up"]
+[connection signal="mouse_entered" from="VBoxContainer/fond player/player/centre/boutons/size aléatoire/aléatoire" to="VBoxContainer/fond player/player/centre/boutons/size aléatoire/aléatoire" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="VBoxContainer/fond player/player/centre/boutons/size aléatoire/aléatoire" to="VBoxContainer/fond player/player/centre/boutons/size aléatoire/aléatoire" method="_on_mouse_exited"]
+[connection signal="toggled" from="VBoxContainer/fond player/player/centre/boutons/size aléatoire/aléatoire" to="VBoxContainer/fond player/player" method="_on_aléatoire_toggled"]
+[connection signal="button_down" from="VBoxContainer/fond player/player/centre/boutons/size precedent/precedent" to="VBoxContainer/fond player/player/centre/boutons/size precedent/precedent" method="_on_button_down"]
+[connection signal="button_up" from="VBoxContainer/fond player/player/centre/boutons/size precedent/precedent" to="VBoxContainer/fond player/player/centre/boutons/size precedent/precedent" method="_on_button_up"]
+[connection signal="mouse_entered" from="VBoxContainer/fond player/player/centre/boutons/size precedent/precedent" to="VBoxContainer/fond player/player/centre/boutons/size precedent/precedent" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="VBoxContainer/fond player/player/centre/boutons/size precedent/precedent" to="VBoxContainer/fond player/player/centre/boutons/size precedent/precedent" method="_on_mouse_exited"]
+[connection signal="pressed" from="VBoxContainer/fond player/player/centre/boutons/size precedent/precedent" to="VBoxContainer/fond player/player" method="_on_precedent_pressed"]
+[connection signal="button_down" from="VBoxContainer/fond player/player/centre/boutons/size jouer/jouer" to="VBoxContainer/fond player/player/centre/boutons/size jouer/jouer" method="_on_button_down"]
+[connection signal="button_up" from="VBoxContainer/fond player/player/centre/boutons/size jouer/jouer" to="VBoxContainer/fond player/player/centre/boutons/size jouer/jouer" method="_on_button_up"]
+[connection signal="mouse_entered" from="VBoxContainer/fond player/player/centre/boutons/size jouer/jouer" to="VBoxContainer/fond player/player/centre/boutons/size jouer/jouer" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="VBoxContainer/fond player/player/centre/boutons/size jouer/jouer" to="VBoxContainer/fond player/player/centre/boutons/size jouer/jouer" method="_on_mouse_exited"]
+[connection signal="toggled" from="VBoxContainer/fond player/player/centre/boutons/size jouer/jouer" to="VBoxContainer/fond player/player" method="_on_jouer_toggled"]
+[connection signal="button_down" from="VBoxContainer/fond player/player/centre/boutons/size suivant/suivant" to="VBoxContainer/fond player/player/centre/boutons/size suivant/suivant" method="_on_button_down"]
+[connection signal="button_up" from="VBoxContainer/fond player/player/centre/boutons/size suivant/suivant" to="VBoxContainer/fond player/player/centre/boutons/size suivant/suivant" method="_on_button_up"]
+[connection signal="mouse_entered" from="VBoxContainer/fond player/player/centre/boutons/size suivant/suivant" to="VBoxContainer/fond player/player/centre/boutons/size suivant/suivant" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="VBoxContainer/fond player/player/centre/boutons/size suivant/suivant" to="VBoxContainer/fond player/player/centre/boutons/size suivant/suivant" method="_on_mouse_exited"]
+[connection signal="pressed" from="VBoxContainer/fond player/player/centre/boutons/size suivant/suivant" to="VBoxContainer/fond player/player" method="_on_suivant_pressed"]
+[connection signal="button_down" from="VBoxContainer/fond player/player/centre/boutons/size repeter/repeter" to="VBoxContainer/fond player/player/centre/boutons/size repeter/repeter" method="_on_button_down"]
+[connection signal="button_up" from="VBoxContainer/fond player/player/centre/boutons/size repeter/repeter" to="VBoxContainer/fond player/player/centre/boutons/size repeter/repeter" method="_on_button_up"]
+[connection signal="mouse_entered" from="VBoxContainer/fond player/player/centre/boutons/size repeter/repeter" to="VBoxContainer/fond player/player/centre/boutons/size repeter/repeter" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="VBoxContainer/fond player/player/centre/boutons/size repeter/repeter" to="VBoxContainer/fond player/player/centre/boutons/size repeter/repeter" method="_on_mouse_exited"]
+[connection signal="pressed" from="VBoxContainer/fond player/player/centre/boutons/size repeter/repeter" to="VBoxContainer/fond player/player/centre/boutons/size repeter/repeter" method="_on_pressed"]
+[connection signal="drag_ended" from="VBoxContainer/fond player/player/centre/slider/barre" to="VBoxContainer/fond player/player" method="_on_barre_drag_ended"]
+[connection signal="drag_started" from="VBoxContainer/fond player/player/centre/slider/barre" to="VBoxContainer/fond player/player" method="_on_barre_drag_started"]
+[connection signal="value_changed" from="VBoxContainer/fond player/player/centre/slider/barre" to="VBoxContainer/fond player/player" method="_on_barre_value_changed"]
+[connection signal="afficher_file" from="VBoxContainer/fond player/player/droite/size file d\'attente/file d\'attente" to="VBoxContainer/marges corps/corps/musiques/Attente" method="afficher"]
+[connection signal="button_down" from="VBoxContainer/fond player/player/droite/size file d\'attente/file d\'attente" to="VBoxContainer/fond player/player/droite/size file d\'attente/file d\'attente" method="_on_button_down"]
+[connection signal="button_up" from="VBoxContainer/fond player/player/droite/size file d\'attente/file d\'attente" to="VBoxContainer/fond player/player/droite/size file d\'attente/file d\'attente" method="_on_button_up"]
+[connection signal="cacher_file" from="VBoxContainer/fond player/player/droite/size file d\'attente/file d\'attente" to="VBoxContainer/marges corps/corps/musiques/Attente" method="cacher"]
+[connection signal="mouse_entered" from="VBoxContainer/fond player/player/droite/size file d\'attente/file d\'attente" to="VBoxContainer/fond player/player/droite/size file d\'attente/file d\'attente" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="VBoxContainer/fond player/player/droite/size file d\'attente/file d\'attente" to="VBoxContainer/fond player/player/droite/size file d\'attente/file d\'attente" method="_on_mouse_exited"]
+[connection signal="toggled" from="VBoxContainer/fond player/player/droite/size file d\'attente/file d\'attente" to="VBoxContainer/fond player/player/droite/size file d\'attente/file d\'attente" method="_on_toggled"]
+[connection signal="drag_ended" from="VBoxContainer/fond player/player/droite/barre volume" to="VBoxContainer/fond player/player" method="_on_barre_volume_drag_ended"]
+[connection signal="value_changed" from="VBoxContainer/fond player/player/droite/barre volume" to="VBoxContainer/fond player/player" method="_on_barre_volume_value_changed"]
+[connection signal="timeout" from="VBoxContainer/fond player/player/timer_refresh" to="VBoxContainer/fond player/player" method="_on_timer_refresh_timeout"]
+[connection signal="finished" from="VBoxContainer/fond player/AudioStreamPlayer" to="VBoxContainer/fond player/player" method="_on_audio_stream_player_finished"]
+[connection signal="gui_input" from="gros plan cover" to="gros plan cover" method="_on_gui_input"]

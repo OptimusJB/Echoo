@@ -1,0 +1,82 @@
+[gd_scene format=3 uid="uid://cmoh3pr1j1xoh"]
+
+[ext_resource type="Theme" uid="uid://36276l8ev85m" path="res://assets/theme_spoutoufy.tres" id="1_mi8k4"]
+[ext_resource type="Texture2D" uid="uid://5ohqfljbhutl" path="res://assets/icone_base.png" id="2_1wfwx"]
+[ext_resource type="Script" uid="uid://bn5gdury1fd11" path="res://client/scènes/Album/album.gd" id="2_g7wbl"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_1wfwx"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ew26i"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.279, 0.279, 0.279, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_g7wbl"]
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[node name="Album" type="PanelContainer" unique_id=1373653665]
+offset_right = 10.0
+offset_bottom = 10.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme = ExtResource("1_mi8k4")
+script = ExtResource("2_g7wbl")
+
+[node name="charger album" type="Button" parent="." unique_id=84943500]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_1wfwx")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ew26i")
+
+[node name="marges" type="MarginContainer" parent="." unique_id=1560044913]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="éléments" type="VBoxContainer" parent="marges" unique_id=690767221]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="cache" type="PanelContainer" parent="marges/éléments" unique_id=1840888262]
+clip_children = 1
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_g7wbl")
+
+[node name="fond noir" type="ColorRect" parent="marges/éléments/cache" unique_id=1020471373]
+layout_mode = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="image" type="TextureRect" parent="marges/éléments/cache" unique_id=1854638601]
+custom_minimum_size = Vector2(220, 220)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_1wfwx")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="nom" type="Label" parent="marges/éléments" unique_id=1432373987]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 17
+text = "nom Album"
+autowrap_mode = 3
+
+[node name="infos" type="Label" parent="marges/éléments" unique_id=265819545]
+layout_mode = 2
+theme_override_font_sizes/font_size = 17
+text = "année"
+
+[connection signal="pressed" from="charger album" to="." method="_on_charger_album_pressed"]

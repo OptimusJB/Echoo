@@ -1,0 +1,8 @@
+# Godot 4+ specific ignores
+.godot/
+/client manager/android/
+/client manager/addons/
+/serveur/node_modules/
+/serveur/server-ip.json
+/serveur/stop-server.txt
+/serveur/UPlaylists covers/

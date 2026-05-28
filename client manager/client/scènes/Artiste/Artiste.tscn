@@ -1,0 +1,99 @@
+[gd_scene format=3 uid="uid://bvsqtth08llbv"]
+
+[ext_resource type="Theme" uid="uid://36276l8ev85m" path="res://assets/theme_spoutoufy.tres" id="1_6siyv"]
+[ext_resource type="Script" uid="uid://dfn83ko6n52mn" path="res://client/scènes/Artiste/artiste.gd" id="1_oodt7"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_50tfm"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.2784314, 0.2784314, 0.2784314, 0)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6siyv"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_oodt7"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.279, 0.279, 0.279, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_087bc"]
+corner_radius_top_left = 40
+corner_radius_top_right = 40
+corner_radius_bottom_right = 40
+corner_radius_bottom_left = 40
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_unmqm"]
+load_path = "res://.godot/imported/icone_base.png-91e1e2733a0b629740258488393281cb.ctex"
+
+[node name="Artiste" type="PanelContainer" unique_id=1436555055]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 50.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_50tfm")
+script = ExtResource("1_oodt7")
+
+[node name="charger artiste" type="Button" parent="." unique_id=1413625200]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_6siyv")
+theme_override_styles/hover = SubResource("StyleBoxFlat_oodt7")
+
+[node name="marges" type="MarginContainer" parent="." unique_id=570896263]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="éléments" type="HBoxContainer" parent="marges" unique_id=1253112777]
+layout_mode = 2
+size_flags_vertical = 0
+mouse_filter = 2
+theme = ExtResource("1_6siyv")
+
+[node name="espace" type="Control" parent="marges/éléments" unique_id=1591748627]
+custom_minimum_size = Vector2(39, 0)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="masque" type="PanelContainer" parent="marges/éléments" unique_id=873011327]
+clip_children = 1
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_087bc")
+
+[node name="fond noir" type="ColorRect" parent="marges/éléments/masque" unique_id=1771822991]
+layout_mode = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="image" type="TextureRect" parent="marges/éléments/masque" unique_id=1990597262]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("CompressedTexture2D_unmqm")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="nom" type="Label" parent="marges/éléments" unique_id=1197125478]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 6
+text = "nom artiste"
+clip_text = true
+text_overrun_behavior = 3
+
+[connection signal="gui_input" from="." to="." method="_on_gui_input"]
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
+[connection signal="pressed" from="charger artiste" to="." method="_on_charger_artiste_pressed"]

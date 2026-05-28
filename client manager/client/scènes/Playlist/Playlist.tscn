@@ -1,0 +1,83 @@
+[gd_scene format=3 uid="uid://cc0lq6r42t5ws"]
+
+[ext_resource type="Theme" uid="uid://36276l8ev85m" path="res://assets/theme_spoutoufy.tres" id="1_d4psf"]
+[ext_resource type="Texture2D" uid="uid://5ohqfljbhutl" path="res://assets/icone_base.png" id="2_016wd"]
+[ext_resource type="Script" uid="uid://fdrct3i6gto7" path="res://client/scènes/Playlist/playlist.gd" id="2_ybjx0"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_efus3"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ug233"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2pheh"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.279, 0.279, 0.279, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ybjx0"]
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[node name="Playlist" type="PanelContainer" unique_id=889125197]
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+size_flags_vertical = 0
+theme = ExtResource("1_d4psf")
+theme_override_styles/panel = SubResource("StyleBoxEmpty_efus3")
+script = ExtResource("2_ybjx0")
+
+[node name="charger playlist" type="Button" parent="." unique_id=1139599881]
+layout_mode = 2
+focus_mode = 0
+mouse_filter = 1
+theme_override_styles/normal = SubResource("StyleBoxEmpty_ug233")
+theme_override_styles/hover = SubResource("StyleBoxFlat_2pheh")
+
+[node name="marges" type="MarginContainer" parent="." unique_id=270633159]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="éléments" type="HBoxContainer" parent="marges" unique_id=1427075585]
+layout_mode = 2
+size_flags_vertical = 0
+mouse_filter = 2
+
+[node name="cache" type="PanelContainer" parent="marges/éléments" unique_id=1494284171]
+clip_children = 1
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ybjx0")
+
+[node name="fond noir" type="ColorRect" parent="marges/éléments/cache" unique_id=2084272245]
+layout_mode = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="image" type="TextureRect" parent="marges/éléments/cache" unique_id=683944987]
+custom_minimum_size = Vector2(65, 65)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_016wd")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="nom" type="Label" parent="marges/éléments" unique_id=1186358768]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+text = "Playlist"
+text_overrun_behavior = 3
+
+[connection signal="pressed" from="charger playlist" to="." method="_on_charger_playlist_pressed"]

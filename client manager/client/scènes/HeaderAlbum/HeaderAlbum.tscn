@@ -1,0 +1,84 @@
+[gd_scene format=3 uid="uid://ckcx1qgbgsxup"]
+
+[ext_resource type="Script" uid="uid://c0qrdwr4dlacm" path="res://client/scènes/HeaderAlbum/header_album.gd" id="1_bidla"]
+[ext_resource type="Theme" uid="uid://36276l8ev85m" path="res://assets/theme_spoutoufy.tres" id="1_qb1kf"]
+[ext_resource type="Texture2D" uid="uid://5ohqfljbhutl" path="res://assets/icone_base.png" id="1_skrrg"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bidla"]
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 0.0
+content_margin_bottom = 10.0
+bg_color = Color(0.1, 0.1, 0.1, 0.6)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_skrrg"]
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[node name="HeaderAlbum" type="PanelContainer" unique_id=1420067143]
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+focus_mode = 1
+theme = ExtResource("1_qb1kf")
+theme_override_styles/panel = SubResource("StyleBoxFlat_bidla")
+script = ExtResource("1_bidla")
+
+[node name="éléments" type="HBoxContainer" parent="." unique_id=1374326394]
+layout_mode = 2
+
+[node name="masque" type="PanelContainer" parent="éléments" unique_id=340818719]
+clip_children = 1
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_skrrg")
+
+[node name="fond noir" type="ColorRect" parent="éléments/masque" unique_id=2040564865]
+layout_mode = 2
+color = Color(0, 0, 0, 1)
+
+[node name="image" type="TextureRect" parent="éléments/masque" unique_id=1241118837]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+focus_mode = 1
+texture = ExtResource("1_skrrg")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="marges" type="MarginContainer" parent="éléments" unique_id=625191426]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="textes" type="VBoxContainer" parent="éléments/marges" unique_id=494331343]
+layout_mode = 2
+
+[node name="nom" type="Label" parent="éléments/marges/textes" unique_id=515675374]
+layout_mode = 2
+theme_override_font_sizes/font_size = 33
+text = "nom Album"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="artiste" type="LinkButton" parent="éléments/marges/textes" unique_id=1977454757]
+layout_mode = 2
+text = "Artiste"
+underline = 1
+text_overrun_behavior = 3
+
+[node name="infos" type="HBoxContainer" parent="éléments/marges/textes" unique_id=1779739227]
+layout_mode = 2
+
+[node name="texte infos" type="Label" parent="éléments/marges/textes/infos" unique_id=1055446093]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 17
+text = "Année ● Genre"
+text_overrun_behavior = 3
+
+[connection signal="pressed" from="éléments/marges/textes/artiste" to="." method="_on_artiste_pressed"]

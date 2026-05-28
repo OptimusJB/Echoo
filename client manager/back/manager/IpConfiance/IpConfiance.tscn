@@ -1,0 +1,35 @@
+[gd_scene format=3 uid="uid://cry4f2fub0h4s"]
+
+[ext_resource type="Script" uid="uid://dirudwjyh1pr2" path="res://back/manager/IpConfiance/supprimer.gd" id="1_kq7a0"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u80ej"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.25490198, 0.25490198, 0.25490198, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[node name="IpConfiance" type="PanelContainer" unique_id=2097596642]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_u80ej")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=2032602289]
+layout_mode = 2
+
+[node name="supprimer" type="Button" parent="HBoxContainer" unique_id=1812064507]
+layout_mode = 2
+text = "supprimer"
+script = ExtResource("1_kq7a0")
+
+[node name="ip" type="Label" parent="HBoxContainer" unique_id=633734030]
+layout_mode = 2
+
+[connection signal="pressed" from="HBoxContainer/supprimer" to="HBoxContainer/supprimer" method="_on_pressed"]

@@ -1,0 +1,53 @@
+[gd_scene format=3 uid="uid://crayficw8dsfh"]
+
+[ext_resource type="Texture2D" uid="uid://c7oebmh1trh6k" path="res://icon.svg" id="1_vpkwp"]
+[ext_resource type="Script" uid="uid://cjf0taw08403q" path="res://back/manager/Artiste/charger_artiste.gd" id="2_7oip2"]
+[ext_resource type="Script" uid="uid://div58cxwisbc6" path="res://back/manager/Artiste/artiste_name_changer.gd" id="2_vaa4v"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vpkwp"]
+
+[node name="Artiste" type="HBoxContainer" unique_id=1950876648]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="systeme_image" type="MarginContainer" parent="." unique_id=891200833]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="image" type="TextureRect" parent="systeme_image" unique_id=286590457]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+size_flags_horizontal = 0
+texture = ExtResource("1_vpkwp")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="fond noir" type="ColorRect" parent="systeme_image/image" unique_id=999300593]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="charger artiste" type="Button" parent="systeme_image" unique_id=1404402952]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_vpkwp")
+script = ExtResource("2_7oip2")
+
+[node name="LineEdit" type="LineEdit" parent="." unique_id=1694625637]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+placeholder_text = "nom de l'artiste"
+script = ExtResource("2_vaa4v")
+
+[connection signal="pressed" from="systeme_image/charger artiste" to="systeme_image/charger artiste" method="_on_pressed"]
+[connection signal="focus_exited" from="LineEdit" to="LineEdit" method="_on_focus_exited"]
+[connection signal="text_submitted" from="LineEdit" to="LineEdit" method="update_nom"]

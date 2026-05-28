@@ -1,0 +1,66 @@
+[gd_scene format=3 uid="uid://vqojgkpibm0b"]
+
+[ext_resource type="Script" uid="uid://p37o4lcisbm8" path="res://global/notif/notif.gd" id="1_sc0dr"]
+[ext_resource type="Script" uid="uid://c44m1ow0rkfsy" path="res://global/notif/notif_preset.gd" id="2_nrmkb"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xo4cr"]
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+expand_margin_left = 5.0
+expand_margin_top = 5.0
+expand_margin_right = 5.0
+expand_margin_bottom = 5.0
+
+[node name="Notif" type="Control" unique_id=1377107267]
+z_index = 1
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_sc0dr")
+
+[node name="notif_preset" type="MarginContainer" parent="." unique_id=539282324 groups=["notif_preset"]]
+visible = false
+layout_mode = 0
+offset_left = 555.0
+offset_top = 550.0
+offset_right = 587.0
+offset_bottom = 573.0
+size_flags_horizontal = 4
+script = ExtResource("2_nrmkb")
+
+[node name="fond" type="Panel" parent="notif_preset" unique_id=846296710]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_xo4cr")
+
+[node name="texte" type="Label" parent="notif_preset" unique_id=759420636]
+layout_mode = 2
+text = "truc"
+
+[node name="temps_affichage" type="Timer" parent="notif_preset" unique_id=1510105282]
+wait_time = 3.0
+one_shot = true
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=1765680670]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -98.0
+offset_right = 10.0
+offset_bottom = -75.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="notifs" type="VBoxContainer" parent="CenterContainer" unique_id=622257286 groups=["notifs"]]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[connection signal="timeout" from="notif_preset/temps_affichage" to="notif_preset" method="_on_temps_affichage_timeout"]

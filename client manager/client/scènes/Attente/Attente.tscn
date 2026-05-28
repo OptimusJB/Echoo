@@ -1,0 +1,35 @@
+[gd_scene format=3 uid="uid://hwb67mub0dk1"]
+
+[ext_resource type="Script" uid="uid://dpgruq7urbdx2" path="res://client/scènes/Attente/attente.gd" id="1_u2ip2"]
+
+[node name="Attente" type="PanelContainer" unique_id=1984280448]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_u2ip2")
+
+[node name="marges" type="MarginContainer" parent="." unique_id=1697619017]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="éléments" type="VBoxContainer" parent="marges" unique_id=1645850571]
+layout_mode = 2
+
+[node name="file d\'attente" type="Label" parent="marges/éléments" unique_id=1416851882]
+layout_mode = 2
+size_flags_vertical = 0
+text = "QUEUE"
+text_overrun_behavior = 3
+
+[node name="scroll" type="ScrollContainer" parent="marges/éléments" unique_id=1933149333]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="listes musiques" type="VBoxContainer" parent="marges/éléments/scroll" unique_id=1321954550]
+layout_mode = 2
+size_flags_horizontal = 3

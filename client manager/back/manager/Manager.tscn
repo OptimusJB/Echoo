@@ -1,0 +1,622 @@
+[gd_scene format=3 uid="uid://om336lsnkmbo"]
+
+[ext_resource type="Script" uid="uid://cqv2pujj67s73" path="res://back/manager/manager.gd" id="1_gnkgc"]
+[ext_resource type="Script" uid="uid://ckiu1dcrljcuh" path="res://global/fonctions_database.gd" id="2_gy5a5"]
+[ext_resource type="Script" uid="uid://c67tgx7h43k6s" path="res://back/manager/chemin.gd" id="3_ribnt"]
+[ext_resource type="Texture2D" uid="uid://5ohqfljbhutl" path="res://assets/icone_base.png" id="4_5rmsu"]
+[ext_resource type="Script" uid="uid://c61vwn5wi5sv7" path="res://back/manager/gestion_utilisateurs.gd" id="4_buvgh"]
+[ext_resource type="Script" uid="uid://gapp1sw8g8cd" path="res://back/manager/app.gd" id="4_suclj"]
+[ext_resource type="Script" uid="uid://dqahhcnu31pud" path="res://back/manager/annee.gd" id="5_1hc43"]
+[ext_resource type="Script" uid="uid://cc5acfpxniji4" path="res://back/manager/options_serveur.gd" id="5_llder"]
+[ext_resource type="PackedScene" uid="uid://b27tp6fxvdsew" path="res://global/sous menu/sous menu.tscn" id="5_suclj"]
+[ext_resource type="Script" uid="uid://crclrqm666twe" path="res://back/manager/genre.gd" id="6_bkwmb"]
+[ext_resource type="Script" uid="uid://i4wrjyey7d8y" path="res://back/manager/boutons_qualité.gd" id="7_bkwmb"]
+[ext_resource type="Script" uid="uid://dtdr4l7bsdjbb" path="res://back/manager/file_select.gd" id="9_o3pu0"]
+[ext_resource type="Script" uid="uid://cwkbcj87jlerh" path="res://back/manager/retour.gd" id="9_toyh7"]
+[ext_resource type="Script" uid="uid://bqpdph5t2nk8r" path="res://back/manager/window_gestion_utilisateur.gd" id="10_6cnwv"]
+[ext_resource type="Script" uid="uid://8pk2ygrvd66h" path="res://back/manager/files_select.gd" id="10_buvgh"]
+[ext_resource type="Script" uid="uid://clw58jw0hj5w1" path="res://back/manager/chercher.gd" id="10_t6fdu"]
+[ext_resource type="Script" uid="uid://dpmsn82mbepk5" path="res://back/manager/retour_options.gd" id="13_oeabr"]
+[ext_resource type="Script" uid="uid://bm5ifqo383lxt" path="res://back/manager/type_ban_select.gd" id="13_ribnt"]
+[ext_resource type="Script" uid="uid://c73rfn1h2462w" path="res://back/manager/window_options.gd" id="14_5m8ug"]
+[ext_resource type="Script" uid="uid://c66ojst57vcho" path="res://back/manager/bouton_ajouter_ip.gd" id="16_5m8ug"]
+[ext_resource type="Script" uid="uid://dtqpf5upcqv0u" path="res://back/manager/taille_max_fichier.gd" id="16_pwxhr"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_toyh7"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.2966023, 0.29660237, 0.29660222, 1)
+border_color = Color(0.29803923, 0.29803923, 0.29803923, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t4gtq"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.24115604, 0.24115607, 0.24115595, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_suclj"]
+bg_color = Color(0.18072194, 0.18072197, 0.18072197, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+expand_margin_left = 5.0
+expand_margin_top = 5.0
+expand_margin_right = 5.0
+expand_margin_bottom = 5.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_buvgh"]
+bg_color = Color(0.18039216, 0.18039216, 0.18039216, 1)
+
+[node name="Manager" type="Control" unique_id=191382699]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+script = ExtResource("1_gnkgc")
+
+[node name="database" type="Node" parent="." unique_id=445489198 groups=["database"]]
+script = ExtResource("2_gy5a5")
+
+[node name="Fond" type="ColorRect" parent="." unique_id=1557830203]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.10524041, 0.10524041, 0.1052404, 1)
+
+[node name="creation database" type="Control" parent="." unique_id=26419766 groups=["windows"]]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="centre" type="CenterContainer" parent="creation database" unique_id=831079524]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="creation database/centre" unique_id=2140406657]
+layout_mode = 2
+
+[node name="not found" type="Label" parent="creation database/centre/VBoxContainer" unique_id=2041797285]
+layout_mode = 2
+text = "La base de données n'a pas été trouvée"
+horizontal_alignment = 1
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="creation database/centre/VBoxContainer" unique_id=2045152694]
+layout_mode = 2
+
+[node name="create database" type="Button" parent="creation database/centre/VBoxContainer/AspectRatioContainer" unique_id=2091996015]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_toyh7")
+text = "créer base de données"
+
+[node name="MarginContainer" type="MarginContainer" parent="creation database" unique_id=1035111879]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -23.0
+offset_right = 70.0
+grow_vertical = 0
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="chemin" type="Label" parent="creation database/MarginContainer" unique_id=955088701]
+layout_mode = 2
+size_flags_vertical = 0
+text = "chemin : "
+script = ExtResource("3_ribnt")
+
+[node name="App" type="Control" parent="." unique_id=1366334384 groups=["windows"]]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("4_suclj")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="App" unique_id=766848172]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="MarginContainer" type="MarginContainer" parent="App/VBoxContainer" unique_id=1354787175]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+
+[node name="HBoxContainer" type="HBoxContainer" parent="App/VBoxContainer/MarginContainer" unique_id=630656818]
+layout_mode = 2
+
+[node name="gestion utilisateurs" type="Button" parent="App/VBoxContainer/MarginContainer/HBoxContainer" unique_id=1507577687]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_t4gtq")
+text = "gestion utilisateurs"
+script = ExtResource("4_buvgh")
+
+[node name="options serveur" type="Button" parent="App/VBoxContainer/MarginContainer/HBoxContainer" unique_id=460278863]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_t4gtq")
+text = "options serveur"
+script = ExtResource("5_llder")
+
+[node name="HSplitContainer" type="HSplitContainer" parent="App/VBoxContainer" unique_id=945937026]
+layout_mode = 2
+size_flags_vertical = 3
+split_offsets = PackedInt32Array(250)
+drag_area_highlight_in_editor = true
+split_offset = 250
+
+[node name="Artistes" type="MarginContainer" parent="App/VBoxContainer/HSplitContainer" unique_id=1286723258 groups=["parties"]]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 10
+
+[node name="Fond" type="Panel" parent="App/VBoxContainer/HSplitContainer/Artistes" unique_id=1355296171]
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_suclj")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="App/VBoxContainer/HSplitContainer/Artistes" unique_id=1109598856]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="HBoxContainer" type="HBoxContainer" parent="App/VBoxContainer/HSplitContainer/Artistes/VBoxContainer" unique_id=1170182645]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="App/VBoxContainer/HSplitContainer/Artistes/VBoxContainer/HBoxContainer" unique_id=1656473302 groups=["recherche_artiste"]]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Chercher artiste"
+
+[node name="rechercher" type="Button" parent="App/VBoxContainer/HSplitContainer/Artistes/VBoxContainer/HBoxContainer" unique_id=969852636]
+layout_mode = 2
+text = "Rechercher"
+
+[node name="ajouter artiste" type="Button" parent="App/VBoxContainer/HSplitContainer/Artistes/VBoxContainer" unique_id=37212200]
+layout_mode = 2
+text = "Ajouter artiste"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="App/VBoxContainer/HSplitContainer/Artistes/VBoxContainer" unique_id=1570242950]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="liste artistes" type="VBoxContainer" parent="App/VBoxContainer/HSplitContainer/Artistes/VBoxContainer/ScrollContainer" unique_id=2080643284 groups=["liste artistes"]]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="charger plus" type="Button" parent="App/VBoxContainer/HSplitContainer/Artistes/VBoxContainer/ScrollContainer/liste artistes" unique_id=1268963146]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+text = "charger plus"
+
+[node name="split albums titres" type="HSplitContainer" parent="App/VBoxContainer/HSplitContainer" unique_id=974841026]
+visible = false
+layout_mode = 2
+split_offsets = PackedInt32Array(250)
+drag_area_highlight_in_editor = true
+split_offset = 250
+
+[node name="Albums" type="MarginContainer" parent="App/VBoxContainer/HSplitContainer/split albums titres" unique_id=366909555 groups=["parties"]]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 10
+
+[node name="Fond" type="Panel" parent="App/VBoxContainer/HSplitContainer/split albums titres/Albums" unique_id=1436661529]
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_suclj")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="App/VBoxContainer/HSplitContainer/split albums titres/Albums" unique_id=1552447863]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="artiste actuel" type="HBoxContainer" parent="App/VBoxContainer/HSplitContainer/split albums titres/Albums/VBoxContainer" unique_id=913974708 groups=["artiste actuel"]]
+layout_mode = 2
+
+[node name="image artiste" type="TextureRect" parent="App/VBoxContainer/HSplitContainer/split albums titres/Albums/VBoxContainer/artiste actuel" unique_id=227958052]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+texture = ExtResource("4_5rmsu")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="fond noir" type="ColorRect" parent="App/VBoxContainer/HSplitContainer/split albums titres/Albums/VBoxContainer/artiste actuel/image artiste" unique_id=693657493]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="nom artiste" type="Label" parent="App/VBoxContainer/HSplitContainer/split albums titres/Albums/VBoxContainer/artiste actuel" unique_id=1775433762]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+text = "Artiste"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="id artiste" type="Label" parent="App/VBoxContainer/HSplitContainer/split albums titres/Albums/VBoxContainer/artiste actuel" unique_id=1849308905]
+visible = false
+layout_mode = 2
+
+[node name="label albums" type="Label" parent="App/VBoxContainer/HSplitContainer/split albums titres/Albums/VBoxContainer" unique_id=679743890]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Albums :"
+
+[node name="ajouter album" type="Button" parent="App/VBoxContainer/HSplitContainer/split albums titres/Albums/VBoxContainer" unique_id=1570566702]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "ajouter album"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="App/VBoxContainer/HSplitContainer/split albums titres/Albums/VBoxContainer" unique_id=381206576]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="liste albums" type="VBoxContainer" parent="App/VBoxContainer/HSplitContainer/split albums titres/Albums/VBoxContainer/ScrollContainer" unique_id=2137106728 groups=["liste albums"]]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Titres" type="MarginContainer" parent="App/VBoxContainer/HSplitContainer/split albums titres" unique_id=723895392 groups=["parties"]]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 10
+
+[node name="Fond" type="Panel" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres" unique_id=276957789]
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_suclj")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres" unique_id=648641684]
+layout_mode = 2
+
+[node name="album actuel" type="HBoxContainer" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer" unique_id=688201076 groups=["album actuel"]]
+layout_mode = 2
+
+[node name="id album" type="Label" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel" unique_id=248020992]
+visible = false
+layout_mode = 2
+
+[node name="image album" type="TextureRect" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel" unique_id=1438462912]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+texture = ExtResource("4_5rmsu")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="fond noir" type="ColorRect" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/image album" unique_id=1407053969]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="infos" type="VBoxContainer" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel" unique_id=387234146]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="nom" type="Label" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos" unique_id=11456438]
+layout_mode = 2
+text = "Album"
+clip_text = true
+text_overrun_behavior = 3
+
+[node name="annee" type="LineEdit" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos" unique_id=52414517]
+layout_mode = 2
+placeholder_text = "année"
+script = ExtResource("5_1hc43")
+
+[node name="genre" type="LineEdit" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos" unique_id=2126467997]
+layout_mode = 2
+placeholder_text = "genre"
+script = ExtResource("6_bkwmb")
+
+[node name="boutons qualité" type="HBoxContainer" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer" unique_id=1479321466]
+layout_mode = 2
+script = ExtResource("7_bkwmb")
+
+[node name="ajouter musique" type="Label" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/boutons qualité" unique_id=1553705331]
+layout_mode = 2
+text = "ajouter musiques :"
+
+[node name="min" type="Button" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/boutons qualité" unique_id=486546072]
+layout_mode = 2
+text = "min"
+
+[node name="moy" type="Button" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/boutons qualité" unique_id=401011547]
+layout_mode = 2
+text = "moy"
+
+[node name="max" type="Button" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/boutons qualité" unique_id=797247252]
+layout_mode = 2
+text = "max"
+
+[node name="troncature" type="LineEdit" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/boutons qualité" unique_id=782872676]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "début à enlever"
+
+[node name="sélections" type="HBoxContainer" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer" unique_id=783418354]
+layout_mode = 2
+
+[node name="tout sélectionner" type="Button" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/sélections" unique_id=1307083169]
+layout_mode = 2
+text = "tout sélectionner"
+
+[node name="tout désélectionner" type="Button" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/sélections" unique_id=120137711]
+layout_mode = 2
+text = "tout désélectionner"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer" unique_id=1615246848]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="liste musiques" type="VBoxContainer" parent="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/ScrollContainer" unique_id=895473392 groups=["liste musiques"]]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="GestionUtilisateurs" type="Control" parent="." unique_id=1683893756 groups=["windows"]]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("10_6cnwv")
+
+[node name="Fond" type="Panel" parent="GestionUtilisateurs" unique_id=150291154]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_buvgh")
+
+[node name="marges" type="MarginContainer" parent="GestionUtilisateurs" unique_id=338516150]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+
+[node name="elements" type="VBoxContainer" parent="GestionUtilisateurs/marges" unique_id=1334471357]
+layout_mode = 2
+
+[node name="menu" type="HBoxContainer" parent="GestionUtilisateurs/marges/elements" unique_id=1311129477]
+layout_mode = 2
+
+[node name="retour" type="Button" parent="GestionUtilisateurs/marges/elements/menu" unique_id=922791988]
+layout_mode = 2
+text = "retour"
+script = ExtResource("9_toyh7")
+
+[node name="chercher" type="Button" parent="GestionUtilisateurs/marges/elements/menu" unique_id=174430939]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "rechercher"
+script = ExtResource("10_t6fdu")
+
+[node name="type recherche" type="OptionButton" parent="GestionUtilisateurs/marges/elements/menu" unique_id=1743765030]
+layout_mode = 2
+size_flags_horizontal = 0
+selected = 0
+fit_to_longest_item = false
+item_count = 3
+popup/item_0/text = "tous"
+popup/item_0/id = 0
+popup/item_1/text = "non bannis"
+popup/item_1/id = 1
+popup/item_2/text = "bannis"
+popup/item_2/id = 2
+
+[node name="chercher pseudo" type="LineEdit" parent="GestionUtilisateurs/marges/elements/menu" unique_id=1987995278]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "chercher un pseudo"
+
+[node name="type ban" type="OptionButton" parent="GestionUtilisateurs/marges/elements" unique_id=1119538862]
+layout_mode = 2
+size_flags_horizontal = 0
+selected = 0
+fit_to_longest_item = false
+item_count = 2
+popup/item_0/text = "bannir l'ip"
+popup/item_0/id = 0
+popup/item_1/text = "bannir uniquement le pseudo"
+popup/item_1/id = 1
+script = ExtResource("13_ribnt")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="GestionUtilisateurs/marges/elements" unique_id=1288707050]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="liste utilisateurs" type="VBoxContainer" parent="GestionUtilisateurs/marges/elements/ScrollContainer" unique_id=1045960091 groups=["liste utilisateurs"]]
+layout_mode = 2
+
+[node name="Options" type="Control" parent="." unique_id=1223357793 groups=["windows"]]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("14_5m8ug")
+
+[node name="Fond" type="Panel" parent="Options" unique_id=2070424807]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_buvgh")
+
+[node name="marges" type="MarginContainer" parent="Options" unique_id=1491542838]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+
+[node name="elements" type="VBoxContainer" parent="Options/marges" unique_id=162562300]
+layout_mode = 2
+
+[node name="retour" type="Button" parent="Options/marges/elements" unique_id=1750154200]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "retour"
+script = ExtResource("13_oeabr")
+
+[node name="taille max fichier" type="LineEdit" parent="Options/marges/elements" unique_id=1744707739]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "taille max envoi fichier (en Mio)"
+script = ExtResource("16_pwxhr")
+
+[node name="texte liste blanche" type="Label" parent="Options/marges/elements" unique_id=1005581193]
+layout_mode = 2
+text = "liste des ip de confiance :"
+
+[node name="ajouter ip" type="HBoxContainer" parent="Options/marges/elements" unique_id=1169660357]
+layout_mode = 2
+
+[node name="bouton ajouter" type="Button" parent="Options/marges/elements/ajouter ip" unique_id=1837211482]
+layout_mode = 2
+text = "ajouter ip"
+script = ExtResource("16_5m8ug")
+
+[node name="ip choisie" type="LineEdit" parent="Options/marges/elements/ajouter ip" unique_id=1487120332]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "entrez une ip (ex : 127.0.0.1)"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Options/marges/elements" unique_id=1801057485]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="liste blanche ip" type="VBoxContainer" parent="Options/marges/elements/ScrollContainer" unique_id=1685981007 groups=["liste blanche ip"]]
+layout_mode = 2
+
+[node name="SousMenu" parent="." unique_id=1248340178 groups=["SousMenu"] instance=ExtResource("5_suclj")]
+visible = false
+layout_mode = 1
+
+[node name="file_select_image" type="FileDialog" parent="." unique_id=1923921141 groups=["file dialogs"]]
+title = "Open a File"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.png", "*.jpg", "*.jpeg", "*.bmp", "*.svg")
+use_native_dialog = true
+script = ExtResource("9_o3pu0")
+
+[node name="files_select_audio" type="FileDialog" parent="." unique_id=523538411 groups=["file dialogs"]]
+oversampling_override = 1.0
+title = "Open File(s)"
+position = Vector2i(0, 36)
+file_mode = 1
+access = 2
+filters = PackedStringArray("*.ogg", "*.wav", "*.mp3")
+use_native_dialog = true
+script = ExtResource("10_buvgh")
+
+[node name="file_select_audio" type="FileDialog" parent="." unique_id=631213953 groups=["file dialogs"]]
+oversampling_override = 1.0
+title = "Open a File"
+position = Vector2i(0, 36)
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.ogg", "*.wav", "*.mp3")
+use_native_dialog = true
+script = ExtResource("9_o3pu0")
+
+[connection signal="pressed" from="creation database/centre/VBoxContainer/AspectRatioContainer/create database" to="." method="_on_create_database_pressed"]
+[connection signal="pressed" from="App/VBoxContainer/MarginContainer/HBoxContainer/gestion utilisateurs" to="App/VBoxContainer/MarginContainer/HBoxContainer/gestion utilisateurs" method="_on_pressed"]
+[connection signal="pressed" from="App/VBoxContainer/MarginContainer/HBoxContainer/options serveur" to="App/VBoxContainer/MarginContainer/HBoxContainer/options serveur" method="_on_pressed"]
+[connection signal="pressed" from="App/VBoxContainer/HSplitContainer/Artistes/VBoxContainer/HBoxContainer/rechercher" to="App" method="charger_artistes"]
+[connection signal="pressed" from="App/VBoxContainer/HSplitContainer/Artistes/VBoxContainer/ajouter artiste" to="App" method="_on_ajouter_artiste_pressed"]
+[connection signal="pressed" from="App/VBoxContainer/HSplitContainer/Artistes/VBoxContainer/ScrollContainer/liste artistes/charger plus" to="App" method="ajouter_artistes"]
+[connection signal="pressed" from="App/VBoxContainer/HSplitContainer/split albums titres/Albums/VBoxContainer/ajouter album" to="App" method="_on_ajouter_album_pressed"]
+[connection signal="focus_exited" from="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos/annee" to="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos/annee" method="_on_focus_exited"]
+[connection signal="text_submitted" from="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos/annee" to="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos/annee" method="update_annee"]
+[connection signal="focus_exited" from="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos/genre" to="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos/genre" method="_on_focus_exited"]
+[connection signal="text_submitted" from="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos/genre" to="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/album actuel/infos/genre" method="update_genre"]
+[connection signal="charger_album" from="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/boutons qualité" to="App" method="_charger_album_view"]
+[connection signal="pressed" from="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/boutons qualité/min" to="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/boutons qualité" method="_on_min_pressed"]
+[connection signal="pressed" from="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/boutons qualité/moy" to="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/boutons qualité" method="_on_moy_pressed"]
+[connection signal="pressed" from="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/boutons qualité/max" to="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/boutons qualité" method="_on_max_pressed"]
+[connection signal="pressed" from="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/sélections/tout sélectionner" to="App" method="_on_tout_sélectionner_pressed"]
+[connection signal="pressed" from="App/VBoxContainer/HSplitContainer/split albums titres/Titres/VBoxContainer/sélections/tout désélectionner" to="App" method="_on_tout_désélectionner_pressed"]
+[connection signal="pressed" from="GestionUtilisateurs/marges/elements/menu/retour" to="GestionUtilisateurs/marges/elements/menu/retour" method="_on_pressed"]
+[connection signal="pressed" from="GestionUtilisateurs/marges/elements/menu/chercher" to="GestionUtilisateurs/marges/elements/menu/chercher" method="_on_pressed"]
+[connection signal="item_selected" from="GestionUtilisateurs/marges/elements/type ban" to="GestionUtilisateurs/marges/elements/type ban" method="_on_item_selected"]
+[connection signal="pressed" from="Options/marges/elements/retour" to="Options/marges/elements/retour" method="_on_pressed"]
+[connection signal="focus_exited" from="Options/marges/elements/taille max fichier" to="Options/marges/elements/taille max fichier" method="_on_focus_exited"]
+[connection signal="text_submitted" from="Options/marges/elements/taille max fichier" to="Options/marges/elements/taille max fichier" method="_on_text_submitted"]
+[connection signal="pressed" from="Options/marges/elements/ajouter ip/bouton ajouter" to="Options/marges/elements/ajouter ip/bouton ajouter" method="_on_pressed"]
+[connection signal="file_selected" from="file_select_image" to="file_select_image" method="_on_file_selected"]
+[connection signal="files_selected" from="files_select_audio" to="files_select_audio" method="_on_files_selected"]
+[connection signal="file_selected" from="file_select_audio" to="file_select_audio" method="_on_file_selected"]
