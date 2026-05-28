@@ -12,14 +12,14 @@ config_version=5
 
 config/name="Echoo"
 config/description="logiciel d'écoute de musique"
-run/main_scene="uid://om336lsnkmbo"
+run/main_scene="uid://beesj4kjrcf0x"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 run/max_fps=60
 run/low_processor_mode=true
 boot_splash/show_image=false
 boot_splash/stretch_mode=0
 boot_splash/image="uid://f3cj2ga0x5wp"
-config/icon="uid://f3cj2ga0x5wp"
+config/icon="uid://djb1vorls17q0"
 
 [audio]
 
@@ -40,7 +40,7 @@ window/stretch/aspect="ignore"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/godot-sqlite/plugin.cfg")
+enabled=PackedStringArray()
 
 [global_group]
 

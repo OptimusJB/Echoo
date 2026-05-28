@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cqv2pujj67s73" path="res://back/manager/manager.gd" id="1_gnkgc"]
 [ext_resource type="Script" uid="uid://ckiu1dcrljcuh" path="res://global/fonctions_database.gd" id="2_gy5a5"]
+[ext_resource type="Script" uid="uid://c67tgx7h43k6s" path="res://back/manager/chemin.gd" id="3_ribnt"]
 [ext_resource type="Texture2D" uid="uid://5ohqfljbhutl" path="res://assets/icone_base.png" id="4_5rmsu"]
 [ext_resource type="Script" uid="uid://c61vwn5wi5sv7" path="res://back/manager/gestion_utilisateurs.gd" id="4_buvgh"]
 [ext_resource type="Script" uid="uid://gapp1sw8g8cd" path="res://back/manager/app.gd" id="4_suclj"]
@@ -113,6 +114,23 @@ layout_mode = 2
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_toyh7")
 text = "créer base de données"
+
+[node name="MarginContainer" type="MarginContainer" parent="creation database" unique_id=1035111879]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -23.0
+offset_right = 70.0
+grow_vertical = 0
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="chemin" type="Label" parent="creation database/MarginContainer" unique_id=955088701]
+layout_mode = 2
+size_flags_vertical = 0
+text = "chemin : "
+script = ExtResource("3_ribnt")
 
 [node name="App" type="Control" parent="." unique_id=1366334384 groups=["windows"]]
 visible = false
@@ -552,6 +570,7 @@ title = "Open a File"
 file_mode = 0
 access = 2
 filters = PackedStringArray("*.png", "*.jpg", "*.jpeg", "*.bmp", "*.svg")
+use_native_dialog = true
 script = ExtResource("9_o3pu0")
 
 [node name="files_select_audio" type="FileDialog" parent="." unique_id=523538411 groups=["file dialogs"]]
@@ -561,6 +580,7 @@ position = Vector2i(0, 36)
 file_mode = 1
 access = 2
 filters = PackedStringArray("*.ogg", "*.wav", "*.mp3")
+use_native_dialog = true
 script = ExtResource("10_buvgh")
 
 [node name="file_select_audio" type="FileDialog" parent="." unique_id=631213953 groups=["file dialogs"]]
@@ -570,6 +590,7 @@ position = Vector2i(0, 36)
 file_mode = 0
 access = 2
 filters = PackedStringArray("*.ogg", "*.wav", "*.mp3")
+use_native_dialog = true
 script = ExtResource("9_o3pu0")
 
 [connection signal="pressed" from="creation database/centre/VBoxContainer/AspectRatioContainer/create database" to="." method="_on_create_database_pressed"]

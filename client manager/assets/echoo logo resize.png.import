@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://f3cj2ga0x5wp"
-path="res://.godot/imported/Echoo logo no bg.png-10905198a7f340cd9acbd278b19987a2.ctex"
+uid="uid://djb1vorls17q0"
+path="res://.godot/imported/echoo logo resize.png-ce6f8a0f4e6bb89551e2291177a5a152.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/Echoo logo no bg.png"
-dest_files=["res://.godot/imported/Echoo logo no bg.png-10905198a7f340cd9acbd278b19987a2.ctex"]
+source_file="res://assets/echoo logo resize.png"
+dest_files=["res://.godot/imported/echoo logo resize.png-ce6f8a0f4e6bb89551e2291177a5a152.ctex"]
 
 [params]
 

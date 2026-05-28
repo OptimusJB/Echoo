@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://c7o6lyr1sljve" path="res://client/scènes/Connexion/connexion.gd" id="2_enjtl"]
 [ext_resource type="Script" uid="uid://dp7t23flur4wj" path="res://client/scènes/Connexion/radio.gd" id="2_gykwv"]
 [ext_resource type="Script" uid="uid://b534t1dx6onp" path="res://client/scènes/Connexion/options.gd" id="3_4ebt3"]
-[ext_resource type="Texture2D" uid="uid://f3cj2ga0x5wp" path="res://assets/Echoo logo no bg.png" id="5_4ebt3"]
+[ext_resource type="Texture2D" uid="uid://djb1vorls17q0" path="res://assets/echoo logo resize.png" id="5_4ebt3"]
 [ext_resource type="Script" uid="uid://de6274stljiah" path="res://client/scènes/Connexion/se_connecter.gd" id="7_4ebt3"]
 [ext_resource type="Script" uid="uid://cy7obs2rmgtbo" path="res://client/scènes/Connexion/nouveau_compte.gd" id="8_woofx"]
 
