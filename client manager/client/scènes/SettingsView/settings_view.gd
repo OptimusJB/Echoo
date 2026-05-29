@@ -9,15 +9,15 @@ func charger(noeud_enumeration):
 	Client.is_locked = true
 	# "echelle":1.0, "ip":"", "port":25565, "type connexion":"wss", "charger images":1, "cache max":100, "type son":0, "qualite":"max", "volume":1.0, "generer mipmaps":1, "commencer à la chanson cliquee":0, "langue":"", commun=1
 	# on met les valeurs
-	$"éléments/langue/HBoxContainer/options langue".selected = {"fr":0, "en":1}[Settings.get_setting("langue")]
-	$"éléments/échelle/HBoxContainer/nombre échelle".value = Settings.get_setting("echelle")
-	$"éléments/charger images/HBoxContainer/bouton charger images".button_pressed = Settings.get_setting("charger images")
-	$"éléments/cache max/HBoxContainer/nombre cache max".value = Settings.get_setting("cache max")
-	$"éléments/type son/HBoxContainer/options type son".selected = Settings.get_setting("type son")
-	$"éléments/qualite/HBoxContainer/options qualite".selected = {"max":0, "moy":1, "min":2}[Settings.get_setting("qualite")]
-	$"éléments/lisser images/HBoxContainer/bouton lisser images".button_pressed = Settings.get_setting("generer mipmaps")
-	$"éléments/commencer chanson clic/HBoxContainer/bouton chanson clic".button_pressed = Settings.get_setting("commencer à la chanson cliquee")
-	$"éléments/commun/HBoxContainer/bouton commun".button_pressed = Settings.get_setting("telechargements")["est commun"]
+	$"éléments/langue/HBoxContainer/options langue".selected = {"fr":0, "en":1}[FonctionsGlobal.to_text(Settings.get_setting("langue"))]
+	$"éléments/échelle/HBoxContainer/nombre échelle".value = FonctionsGlobal.to_float(Settings.get_setting("echelle"))
+	$"éléments/charger images/HBoxContainer/bouton charger images".button_pressed = FonctionsGlobal.to_int(Settings.get_setting("charger images"))
+	$"éléments/cache max/HBoxContainer/nombre cache max".value = FonctionsGlobal.to_int(Settings.get_setting("cache max"))
+	$"éléments/type son/HBoxContainer/options type son".selected = FonctionsGlobal.to_int({0:0, 1:2, 2:1}[Settings.get_setting("type son")])
+	$"éléments/qualite/HBoxContainer/options qualite".selected = FonctionsGlobal.to_int({"max":0, "moy":1, "min":2}[Settings.get_setting("qualite")])
+	$"éléments/lisser images/HBoxContainer/bouton lisser images".button_pressed = FonctionsGlobal.to_int(Settings.get_setting("generer mipmaps"))
+	$"éléments/commencer chanson clic/HBoxContainer/bouton chanson clic".button_pressed = FonctionsGlobal.to_int(Settings.get_setting("commencer à la chanson cliquee"))
+	$"éléments/commun/HBoxContainer/bouton commun".button_pressed = FonctionsGlobal.to_int(Settings.get_setting("telechargements")["est commun"])
 	
 	# on add_child la scène
 	for enfant in noeud_enumeration.get_children():
