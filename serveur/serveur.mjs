@@ -187,7 +187,7 @@ async function handle(websocketpeer, message_json, message_bytes){
         // on check le cooldown
         if(Date.now() - websocketpeer.connexion_cooldown < connexion_cooldown){
             console.log("cooldown non fini, fermeture socket");
-            socket.terminate();
+            websocketpeer.terminate();
             return;
         }
 

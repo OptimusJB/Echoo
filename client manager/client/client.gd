@@ -55,6 +55,8 @@ func connexion_serveur():
 	if socket.get_ready_state() != WebSocketPeer.STATE_CLOSED:
 		print("connexion déjà active, on recrée le socket")
 		socket = WebSocketPeer.new()
+		socket.inbound_buffer_size = max_buffer
+		socket.outbound_buffer_size = max_buffer
 		#print(socket.get_ready_state())
 		#return -2
 	
