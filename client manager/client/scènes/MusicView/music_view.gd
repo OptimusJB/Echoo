@@ -5,12 +5,15 @@ var noeud_header_album = preload("res://client/scènes/HeaderAlbum/HeaderAlbum.t
 var noeud_header_playlist = preload("res://client/scènes/HeaderPlaylist/HeaderPlaylist.tscn")
 var noeud_legende = preload("res://client/scènes/Legende/Legende.tscn")
 
-var script_get_ressource = preload("res://client/scènes/Accueil/easy_get_ressource.gd").new()
+var script_get_ressource = null
 var noeud_enum:Node
 
 var type_chargement=""
 var id_chargement
 
+func _ready() -> void:
+	script_get_ressource = Client.get_tree().get_first_node_in_group("easy_get_ressource")
+	
 func charger_album(id_album:int, noeud_enumeration):
 	# on envoie la recherche au serveur
 	if Client.is_locked:

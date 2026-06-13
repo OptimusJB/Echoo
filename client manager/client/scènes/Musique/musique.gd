@@ -1,7 +1,7 @@
 extends PanelContainer
 class_name objet_musique
 
-var script_get_ressoure = preload("res://client/scènes/Accueil/easy_get_ressource.gd").new()
+var script_get_ressource = null
 var player
 
 var focus = false
@@ -61,6 +61,8 @@ func _on_mouse_exited() -> void:
 		#$"éléments/gauche/numéro".afficher()
 
 func _ready():
+	script_get_ressource = Client.get_tree().get_first_node_in_group("easy_get_ressource")
+	
 	# on se connecte au player
 	player = get_tree().get_first_node_in_group("player")
 	creer_playlist.connect(player.creer_playlist_play)
@@ -125,7 +127,7 @@ func _process(_delta: float) -> void:
 	if FonctionsGlobal.id_current_download != id and $"éléments/milieu/HBoxContainer/dowloading".visible:
 		# fin du téléchargement, on retire le downloading
 		$"éléments/milieu/HBoxContainer/dowloading".visible = false
-	if script_get_ressoure.est_musique_telecharge(id, Settings.get_setting("qualite")):
+	if script_get_ressource.est_musique_telecharge(id, Settings.get_setting("qualite")):
 		if not $"éléments/milieu/HBoxContainer/downloaded".visible:
 			$"éléments/milieu/HBoxContainer/downloaded".visible = true
 	elif $"éléments/milieu/HBoxContainer/downloaded".visible:
@@ -155,7 +157,7 @@ func _gui_input(event: InputEvent) -> void:
 		else:
 			var element
 			# on change le bouton selon si la musique est téléchargée ou pas
-			if script_get_ressoure.est_musique_telecharge(id, Settings.get_setting("qualite")):
+			if script_get_ressource.est_musique_telecharge(id, Settings.get_setting("qualite")):
 				element = tr("DELETE_FROM_DISK")
 			else:
 				element = tr("DOWNLOAD_MUSIC")
@@ -211,9 +213,9 @@ func action(action_choisie):
 	elif action_choisie == tr("VIEW_ALBUM"):
 		_on_album_pressed()
 	elif action_choisie == tr("DOWNLOAD_MUSIC"):
-		script_get_ressoure.telecharger_musiques([id])
+		script_get_ressource.telecharger_musiques([id])
 	elif action_choisie == tr("DELETE_FROM_DISK"):
-		script_get_ressoure.supprimer_musiques([id])
+		script_get_ressource.supprimer_musiques([id])
 	elif action_choisie == tr("ADD_TO_PLAYLIST"):
 		FonctionsGlobal.id_musique_ajout = id
 	elif action_choisie == tr("REMOVE_FROM_PLAYLIST"):

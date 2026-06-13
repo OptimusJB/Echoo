@@ -1,5 +1,5 @@
 extends HBoxContainer
-var script_get_ressource = preload("res://client/scènes/Accueil/easy_get_ressource.gd").new()
+var script_get_ressource = null
 
 var nom_playlist = ""
 var playlist = []
@@ -17,6 +17,9 @@ var player_grab = false	# true si la barre du player est maintenue
 signal update_queue
 signal charger_artiste
 
+func _ready() -> void:
+	script_get_ressource = Client.get_tree().get_first_node_in_group("easy_get_ressource")
+	
 func shuffle_playlist():
 	playlist_play_no_random = playlist_play.duplicate()
 	var id_musique_actuelle = playlist_play.pop_at(position_play)

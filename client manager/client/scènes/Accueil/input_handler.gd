@@ -7,6 +7,10 @@ func _input(event: InputEvent) -> void:
 	if focus_actuel is LineEdit or focus_actuel is TextEdit:
 		return
 	
+	# on vérifie que ctrl n'est pas pressé (si pressé, cela veut dire qu'on veut changer la résolution / clear le cache)
+	if Input.is_key_pressed(KEY_CTRL):
+		return
+		
 	var noeud_player = get_tree().get_first_node_in_group("player")
 	if noeud_player.get_node("../").visible:
 		if event.is_action_released("play"):

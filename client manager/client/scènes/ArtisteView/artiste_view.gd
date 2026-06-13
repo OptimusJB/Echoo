@@ -1,10 +1,13 @@
 extends ScrollContainer
 
 var noeud_album = preload("res://client/scènes/Album/Album.tscn")
-var script_get_ressource = preload("res://client/scènes/Accueil/easy_get_ressource.gd").new()
+var script_get_ressource = null
 
 var noeud_enum:Node
 
+func _ready() -> void:
+	script_get_ressource = Client.get_tree().get_first_node_in_group("easy_get_ressource")
+	
 func charger_artiste(id_artiste:int, noeud_enumeration):
 	# on envoie la recherche au serveur
 	if Client.is_locked:

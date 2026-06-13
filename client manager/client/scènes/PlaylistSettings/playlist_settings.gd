@@ -1,5 +1,4 @@
 extends Control
-var script_get_ressource = preload("res://client/scènes/Accueil/easy_get_ressource.gd").new()
 var chemin_image = null
 var id_playlist_actuelle:int
 var image_playlist_actuelle:String

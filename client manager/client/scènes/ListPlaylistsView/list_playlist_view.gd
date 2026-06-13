@@ -1,5 +1,5 @@
 extends ScrollContainer
-var script_get_ressource = preload("res://client/scènes/Accueil/easy_get_ressource.gd").new()
+var script_get_ressource = null
 var noeud_playlist = preload("res://client/scènes/Playlist/Playlist.tscn")
 
 signal creer_playlist_received
@@ -33,6 +33,8 @@ func charger_playlists():
 	Client.is_locked = false
 	
 func _ready() -> void:
+	script_get_ressource = Client.get_tree().get_first_node_in_group("easy_get_ressource")
+	
 	# on charge les playlists
 	await charger_playlists()
 	

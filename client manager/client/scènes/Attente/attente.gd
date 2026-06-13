@@ -1,17 +1,19 @@
 extends PanelContainer
-var script_get_ressource = preload("res://client/scènes/Accueil/easy_get_ressource.gd").new()
+var script_get_ressource = null
 var a_charger = true
 var a_update = false
 
 var current_musics = []
 
+func _ready() -> void:
+	script_get_ressource = Client.get_tree().get_first_node_in_group("easy_get_ressource")
+	
 func charger_file():
 	
 	if not visible:
 		# on chargera plus tard
 		a_charger = true
 		return
-		
 	# on supprime tous les éléments déjà présents
 	for element in $"marges/éléments/scroll/listes musiques".get_children():
 		element.queue_free()
@@ -19,6 +21,11 @@ func charger_file():
 	# on affiche avec le texte de chargement
 	$"marges/éléments/file d'attente".text = "LOADING"
 	#visible = true
+	
+	# on bloque jusqu'à ce que le client soit disponible
+	while Client.is_locked:
+		await get_tree().process_frame
+	Client.is_locked = true
 	
 	# on récupère la liste des musiques
 	var player = get_tree().get_first_node_in_group("player")
@@ -28,6 +35,7 @@ func charger_file():
 	if position_musique == -1:
 		# pas de musique jouée
 		push_error("pas de musique jouée")
+		Client.is_locked = false
 		return
 	
 	current_musics = player.playlist_play.duplicate()
@@ -48,6 +56,7 @@ func charger_file():
 	# on met le titrede la playlist / album
 	$"marges/éléments/file d'attente".text = tr("QUEUE") + " : " + str(player.nom_playlist)
 	a_charger = false
+	Client.is_locked = false
 
 
 func update():
@@ -71,7 +80,8 @@ func update():
 			noeud_liste_musiques.get_child(i).visible = true
 	
 	# on met à jour le titre au cas où le titre de la même playlist à changé
-	$"marges/éléments/file d'attente".text = tr("QUEUE") + " : " + str(noeud_player.nom_playlist)
+	if current_musics == noeud_player.playlist:
+		$"marges/éléments/file d'attente".text = tr("QUEUE") + " : " + str(noeud_player.nom_playlist)
 	a_update = false
 
 func afficher():
