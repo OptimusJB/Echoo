@@ -90,9 +90,12 @@ func _on_valider_pressed() -> void:
 				playlist.get_node("marges/éléments/cache/image").texture = RessourceLoad.easy_get_image(chemin_image)
 			playlist.get_node("marges/éléments/nom").text = nom_playlist
 	
-	# on change le nom enregistré dans le player
+	# on change le nom enregistré dans le player et dans la file d'attente
 	var noeud_player = get_tree().get_first_node_in_group("player")
 	noeud_player.nom_playlist = nom_playlist
+	
+	var noeud_attente = get_tree().get_first_node_in_group("file attente")
+	noeud_attente.get_node("marges/éléments/file d'attente").text = tr("QUEUE") + " : " + nom_playlist
 	
 	Client.is_locked = false
 	$fond.can_remove = true

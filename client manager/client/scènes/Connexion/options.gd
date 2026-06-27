@@ -12,6 +12,13 @@ func _on_choisir_serveur_pressed() -> void:
 	$radio.check_pressed()
 	visible = true
 	
+	# on affiche le message d'avertissement de téléchargement si besoin
+	var telechargements = Settings.get_setting("telechargements")
+	if len(telechargements["musiques"].keys()) > 0:
+		$"avertissement dl".visible = true
+	else:
+		$"avertissement dl".visible = false
+	
 	# on affiche le bon bouton
 	$"../choisir serveur".visible = false
 	$"../valider".visible = true

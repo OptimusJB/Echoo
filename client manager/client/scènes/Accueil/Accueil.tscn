@@ -147,7 +147,7 @@ size_flags_stretch_ratio = 2.65
 focus_mode = 2
 script = ExtResource("5_3t856")
 
-[node name="Attente" parent="VBoxContainer/marges corps/corps/musiques" unique_id=1984280448 instance=ExtResource("6_17si7")]
+[node name="Attente" parent="VBoxContainer/marges corps/corps/musiques" unique_id=1984280448 groups=["file attente"] instance=ExtResource("6_17si7")]
 visible = false
 layout_mode = 2
 size_flags_horizontal = 3

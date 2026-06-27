@@ -79,9 +79,6 @@ func update():
 		else:
 			noeud_liste_musiques.get_child(i).visible = true
 	
-	# on met à jour le titre au cas où le titre de la même playlist à changé
-	if current_musics == noeud_player.playlist:
-		$"marges/éléments/file d'attente".text = tr("QUEUE") + " : " + str(noeud_player.nom_playlist)
 	a_update = false
 
 func afficher():

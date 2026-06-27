@@ -30,4 +30,4 @@ func _process(_delta: float) -> void:
 	elif not get_window().has_focus() and not full_disable_veille:
 		if not est_veille:
 			mode_veille()
-	print(est_veille)
+	#print(est_veille)
