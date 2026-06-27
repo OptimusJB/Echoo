@@ -101,6 +101,7 @@ locale/translations=PackedStringArray("res://client/traductions/Echoo traduction
 
 [physics]
 
+2d/physics_engine="Dummy"
 3d/physics_engine="Jolt Physics"
 
 [rendering]

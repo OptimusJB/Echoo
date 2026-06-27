@@ -6,7 +6,10 @@ var url = "wss://192.168.1.26"
 var port = 25565
 
 var max_buffer = 1.049e+7 # environ 10mio
-var buffer_slice = 2.097e+6 # environ 2mio
+var buffer_slice = 65536 # environ 64 ko
+var max_buffer_per_frame = 2.097e+6 # environ 2mio. La réception peut dépasser ce nombre (au maximum buffer_slice de dépassement)
+var send_buffer_used = 0	# quantité d'octets envoyés pendant la frame
+
 #var buffer_slice = 1
 var reponse = {"text":null, "bytes":null}	# reçu par le serveur
 
@@ -85,11 +88,11 @@ func timer_ping_timeout():
 		# je ne sais plus pourquoi elle était là avant, parce que à première vue elle sert à rien
 		# la ligne était déjà là avant la refonte, sous la forme {"text":"", "bytes":null}, à l'époque où ce code s'exécutait seulement quand il n'y avait aucun message en attente de réception
 		# reponse = {"text":null, "bytes":null}
-		while len("quoi".to_utf8_buffer()) > socket.outbound_buffer_size - socket.get_current_outbound_buffered_amount() or socket.send_text("quoi") == ERR_OUT_OF_MEMORY:
+		while len("ping".to_utf8_buffer()) > socket.outbound_buffer_size - socket.get_current_outbound_buffered_amount() or socket.send_text("ping") == ERR_OUT_OF_MEMORY:
 			#print("pas assez de place dans le buffer pour le ping, on attend la prochaine frame")
 			await get_tree().process_frame
-			socket.poll()
-		nb_reponses_attendues += 1
+			#socket.poll()
+		#nb_reponses_attendues += 1
 		print("ping envoyé")
 	timer_ping.start()
 
@@ -124,7 +127,9 @@ func _ready() -> void:
 	socket.outbound_buffer_size = max_buffer
 	#socket.outbound_buffer_size = 12
 	#print("inbound : %d, outbound : %d" % [socket.inbound_buffer_size, socket.outbound_buffer_size])
-
+	
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	
 func verif_no_number(message_json):
 	if message_json is not Array and message_json is not Dictionary:
 		return
@@ -164,54 +169,53 @@ func _process(_delta: float) -> void:
 			disconnected.emit()
 		return
 	
-	# si nb_reponses_attendues > 0, on check les potentiels paquets arrivés
-	if nb_reponses_attendues > 0:
-		if socket.get_available_packet_count():
-			last_reponse = Time.get_ticks_msec()
-			#timer_ping.start()
-			
-			paquet = socket.get_packet()
-			if socket.was_string_packet():
-				paquet = paquet.get_string_from_utf8()
-				
-				# on check si c'est un pong
-				if paquet == "feur":
-					print("pong reçu")
-					nb_reponses_attendues -= 1
-					return
-			else:
-				#socket.send_text("ok")
-				if paquet.slice(0, len("&SPFCHAINE&".to_utf8_buffer())) == "&SPFCHAINE&".to_utf8_buffer():
-					paquet = paquet.slice(len("&SPFCHAINE&".to_utf8_buffer()))
-					if not reponse["text"]:
-						reponse["text"] = paquet
-					else:
-						reponse["text"].append_array(paquet)
-						
-				elif not reponse["bytes"]:
-					reponse["bytes"] = paquet
+	var buffer_tot = 0
+	while socket.get_available_packet_count() and buffer_tot < max_buffer_per_frame:
+		last_reponse = Time.get_ticks_msec()
+		#timer_ping.start()
+		
+		paquet = socket.get_packet()
+		buffer_tot = buffer_tot + paquet.size()
+		if socket.was_string_packet():
+			paquet = paquet.get_string_from_utf8()
+			# on check si c'est un pong
+			if paquet == "ping":
+				print("ping serveur reçu")
+				#nb_reponses_attendues -= 1
+				continue
+		else:
+			#socket.send_text("ok")
+			if paquet.slice(0, len("&SPFCHAINE&".to_utf8_buffer())) == "&SPFCHAINE&".to_utf8_buffer():
+				paquet = paquet.slice(len("&SPFCHAINE&".to_utf8_buffer()))
+				if not reponse["text"]:
+					reponse["text"] = paquet
 				else:
-					reponse["bytes"].append_array(paquet)
+					reponse["text"].append_array(paquet)
+					
+			elif not reponse["bytes"]:
+				reponse["bytes"] = paquet
+			else:
+				reponse["bytes"].append_array(paquet)
+		
+		# on check si le message entier est parvenu
+		if not reponse["text"] == null and reponse["text"].slice(len(reponse["text"]) - len("&SPFEND&".to_utf8_buffer())) == "&SPFEND&".to_utf8_buffer():
+			# on tronque pour enlever &SPFEND&
+			reponse["text"] = reponse["text"].get_string_from_utf8()
+			reponse["text"] = reponse["text"].substr(0, len(reponse["text"]) - len("&SPFEND&"))
 			
-			# on check si le message entier est parvenu
-			if not reponse["text"] == null and reponse["text"].slice(len(reponse["text"]) - len("&SPFEND&".to_utf8_buffer())) == "&SPFEND&".to_utf8_buffer():
-				# on tronque pour enlever &SPFEND&
-				reponse["text"] = reponse["text"].get_string_from_utf8()
-				reponse["text"] = reponse["text"].substr(0, len(reponse["text"]) - len("&SPFEND&"))
-				
-				# reponse["text"] doit être sous forme de JSON
-				var message_text = JSON.parse_string(reponse["text"])
-				var message_bytes = reponse["bytes"]
-				reponse = {"text":null, "bytes":null}	# on supprime le contenu de réponse
-				
-				if message_text == null:
-					print("un message a été reçu, mais le parse en json a échoué")
-					return
-				
-				nb_reponses_attendues -= 1
-				#print("reçu : ", message_text)
-				#verif_no_number(message_text)
-				noeud_appelant.received(message_text, message_bytes)
+			# reponse["text"] doit être sous forme de JSON
+			var message_text = JSON.parse_string(reponse["text"])
+			var message_bytes = reponse["bytes"]
+			reponse = {"text":null, "bytes":null}	# on supprime le contenu de réponse
+			
+			if message_text == null:
+				print("un message a été reçu, mais le parse en json a échoué")
+				continue
+			
+			nb_reponses_attendues -= 1
+			#print("reçu : ", message_text)
+			#verif_no_number(message_text)
+			noeud_appelant.received(message_text, message_bytes)
 				
 func send(message):	# soit str soit bytes, le stringify doit avoir été fait avant
 	var est_chaine = false
@@ -224,16 +228,22 @@ func send(message):	# soit str soit bytes, le stringify doit avoir été fait av
 	
 	var sous_message
 	while message:
-		await get_tree().process_frame
-		socket.poll()
+		#await get_tree().process_frame
+		#socket.poll()
 		
 		sous_message = message.slice(0, buffer_slice)
 		if est_chaine:
 			sous_message = "&SPFCHAINE&".to_utf8_buffer() + sous_message
+		
+		send_buffer_used = send_buffer_used + len(sous_message)
+		if send_buffer_used > max_buffer_per_frame:
+			await get_tree().process_frame
+			send_buffer_used = 0
+			
 		while len(sous_message) > socket.outbound_buffer_size - socket.get_current_outbound_buffered_amount() or socket.send(sous_message) == ERR_OUT_OF_MEMORY:
 			#print("pas assez de place dans le buffer, on attend la prochaine frame")
 			await get_tree().process_frame
-			socket.poll()
+			#socket.poll()
 			if socket.get_ready_state() != socket.STATE_OPEN:
 				return
 		if socket.get_ready_state() != socket.STATE_OPEN:

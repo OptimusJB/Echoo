@@ -14,7 +14,9 @@ let connexions_data = new Map;
 let timeout_time = 10000; // en ms
 let connexion_cooldown = 2500;  // en ms, réglé sur 3 secondes sur le client
 
-let buffer_slice = 2.097e+6 // environ 2mio
+//let buffer_slice = 2.097e+6 // environ 2mio
+let buffer_slice = 65536 // environ 64 ko
+
 // on crée le fichier de stop du serveur
 try{
     fs.writeFileSync("stop_server.txt", "0");
@@ -684,8 +686,7 @@ wss.on("connection", function connection(websocketpeer, req){ // connection d'un
         else{
             data = data.toString("utf-8");
              // on check si c'est un ping
-            if(data == "quoi"){
-                websocketpeer.send("feur");
+            if(data == "ping"){
                 return;
             }
         }
@@ -753,6 +754,14 @@ function check_timeout(){
     }
 }
 
+function send_ping(){
+    let client;
+    for(client of wss.clients){
+        client.send("ping");
+    }
+}
+
+setInterval(send_ping, 5000); // on envoie un ping aux clients
 setInterval(check_timeout, 10000); // on vérifie si des connexions sont rompues toutes les minutes
 setInterval(check_stop, 60000); // on vérifie si le serveur doit s'arrêter toutes les minutes
 console.log("serveur lancé");

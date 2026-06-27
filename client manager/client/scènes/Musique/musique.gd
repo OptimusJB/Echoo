@@ -83,26 +83,24 @@ func _on_play_pressed() -> void:
 
 func _process(_delta: float) -> void:
 	# on check le rafaichissement du playing
-	if player.get_node("../AudioStreamPlayer").has_stream_playback():	# on change l'animation seulement si focus:
-		if get_window().has_focus():
-			if player.playlist_play[player.position_play] == id:
-				# cette musique est jouée, on check le temps
-				if not $"éléments/gauche/marges playing/playing".visible and not $"éléments/gauche/size play/play".visible:
-					$"éléments/gauche/marges playing/playing".visible = true
-				
-				#if $"éléments/gauche/numéro".visible:
-					#$"éléments/gauche/numéro".visible = false
-				
-				if not $"éléments/milieu/HBoxContainer/titre".has_theme_color_override("font_color"):
-					# change également la couleur du texte
-					$"éléments/milieu/HBoxContainer/titre".add_theme_color_override("font_color", Color(0.004, 0.396, 0.929))
-				
-				
-				if Time.get_ticks_msec() - dernier_refresh_playing >= 30 and not player.get_node("../AudioStreamPlayer").stream_paused:
-					# on passe à la frame suivante (si la musique est jouée)
-					numero_frame_playing = (numero_frame_playing + 1) % 11
-					$"éléments/gauche/marges playing/playing".texture = noeud_animation_playing.sprite_frames.get_frame_texture("default", numero_frame_playing)
-					dernier_refresh_playing = Time.get_ticks_msec()
+	if player.get_node("../AudioStreamPlayer").has_stream_playback() and get_window().has_focus() and player.playlist_play[player.position_play] == id:
+		# cette musique est jouée, on check le temps
+		if not $"éléments/gauche/marges playing/playing".visible and not $"éléments/gauche/size play/play".visible:
+			$"éléments/gauche/marges playing/playing".visible = true
+		
+		#if $"éléments/gauche/numéro".visible:
+			#$"éléments/gauche/numéro".visible = false
+		
+		if not $"éléments/milieu/HBoxContainer/titre".has_theme_color_override("font_color"):
+			# change également la couleur du texte
+			$"éléments/milieu/HBoxContainer/titre".add_theme_color_override("font_color", Color(0.004, 0.396, 0.929))
+		
+		
+		if Time.get_ticks_msec() - dernier_refresh_playing >= 30 and not player.get_node("../AudioStreamPlayer").stream_paused:
+			# on passe à la frame suivante (si la musique est jouée)
+			numero_frame_playing = (numero_frame_playing + 1) % 11
+			$"éléments/gauche/marges playing/playing".texture = noeud_animation_playing.sprite_frames.get_frame_texture("default", numero_frame_playing)
+			dernier_refresh_playing = Time.get_ticks_msec()
 			
 	else:
 		if $"éléments/gauche/marges playing/playing".visible:
