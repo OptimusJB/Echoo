@@ -13,7 +13,7 @@ func mode_normal():
 func mode_veille():
 	get_tree().paused = true
 	RenderingServer.render_loop_enabled = false	# ne sert pas trop
-	OS.low_processor_usage_mode_sleep_usec = 6900*64#6900*32
+	OS.low_processor_usage_mode_sleep_usec = 500000#6900*64#6900*32
 	#OS.low_processor_usage_mode_sleep_usec = 6900*2
 	#Engine.max_fps = 1
 	est_veille = true
@@ -31,3 +31,4 @@ func _process(_delta: float) -> void:
 		if not est_veille:
 			mode_veille()
 	#print(est_veille)
+	#print(Engine.get_frames_per_second())

@@ -3,6 +3,13 @@ var noeud_musique = preload("res://client/scènes/Musique/Musique.tscn")
 signal image_received
 signal music_received
 
+# signaux pour les musiques
+signal music_downloaded	# émit quand une musique a été téléchargée, ne doit pas enlever l'icône de download
+signal image_downloaded # note : il s'agit du chemin de l'image. émit quand l'image d'une musique a été téléchargée, ne doit pas enlever l'icône de download
+signal end_download	# émit quand le téléchargement d'une musique se termine
+signal start_download	# émit quand le téléchargement d'une musique commence (sous-entend que le précédent s'est terminé)
+signal musics_deleted # émit quand des musiques (et leur image) sont supprimées. Il s'agit d'un tableau d'entiers (id des musiques)
+
 # ATTENTION les fonctions ne vérifient pas Client.is_locked
 func easy_get_image_buffer(chemin_image):
 	# fonction qui récupère l'image via le serveur
@@ -81,11 +88,17 @@ func easy_get_music(id_musique, qualite, return_buffer=false):
 		Notif.add_notif(tr("QUALITY_NOT_AVAILABLE") % [tr(qualite.to_upper()), tr(reponse[0]["qualite"].to_upper())])
 	return musique_stream
 	
-func easy_get_image(chemin_image):
+func easy_get_image(chemin_image, id_musique_liee=null):
 	if not chemin_image:
 		RessourceLoad.set_icone_base(chemin_image)
 		return RessourceLoad.icone_base
-
+	
+	# si une musique est liée, on regarde d'abord si celle si est téléchargée avec son image
+	# on gait ça avant tout, car l'image sur le serveur a peut être changé entre temps (on privilégie donc l'image sur le disque)
+	var image_dl = get_image_path_of_downloaded_music(id_musique_liee)
+	if image_dl:
+		chemin_image = image_dl	# l'image est téléchargée, donc on est sûr qu'il n'y aura pas de tentative de la chercher sur le serveur (si échec de l'ouverture du fichier, on charge pas l'image)
+		
 	# on regarde si l'image est chargée
 	var image
 	if RessourceLoad.is_loaded(chemin_image):
@@ -171,9 +184,24 @@ func est_musique_existante(id_musique:int):
 func est_image_telecharge(id_image:int):
 	return id_image in Settings.get_setting("telechargements")["images"].keys() and Settings.get_setting("telechargements")["images"][id_image]["extension"] != null
 
+func est_chemin_image_telecharge(chemin_image:String):
+	if chemin_image in Settings.get_setting("telechargements")["images id"].keys():
+		var id_image = Settings.get_setting("telechargements")["images id"][chemin_image]
+		return est_image_telecharge(id_image)
+	
+func est_image_de_musique_telecharge(id_musique:int):
+	return est_musique_existante(id_musique) and est_image_telecharge(Settings.get_setting("telechargements")["musiques"][id_musique]["id image"])
+
 func est_image_presente(id_image:int):
 	return id_image in Settings.get_setting("telechargements")["images"].keys()
-	
+
+func get_image_path_of_downloaded_music(id_musique):
+	# renvoie null si non trouvé
+	if id_musique and est_image_de_musique_telecharge(id_musique):
+		var id_image = Settings.get_setting("telechargements")["musiques"][id_musique]["id image"]
+		return Settings.get_setting("telechargements")["images id"].find_key(id_image)
+	return null
+
 func create_folders() -> int:
 	# fonction qui crée les dossiers de stockage des musiques et des images s'ils n'existent pas
 	if not DirAccess.dir_exists_absolute("user://downloaded/"):
@@ -198,6 +226,7 @@ func telecharger_musiques(liste_id_musiques):
 	var new_image
 	for id_musique in liste_id_musiques:
 		FonctionsGlobal.id_current_download = id_musique
+		start_download.emit(FonctionsGlobal.id_current_download)
 		await Client.get_tree().process_frame
 		
 		# on vérifie d'abord si l'id de la musique est téléchargé
@@ -219,6 +248,7 @@ func telecharger_musiques(liste_id_musiques):
 			if not create_folders():
 				push_error("impossible de créer les dossiers d'enregistrements")
 				Notif.add_notif("DOWNLOAD_FAILED")
+				end_download.emit(FonctionsGlobal.id_current_download)
 				FonctionsGlobal.id_current_download = null
 				return
 				
@@ -259,6 +289,7 @@ func telecharger_musiques(liste_id_musiques):
 			else:
 				Settings.get_setting("telechargements")["images"][id_image] = {"extension":null, "nb utilisations":1}
 			Settings.save_settings()
+			music_downloaded.emit(FonctionsGlobal.id_current_download)
 			
 			if Settings.get_setting("charger images"):
 				if not est_image_telecharge(id_image):
@@ -288,10 +319,16 @@ func telecharger_musiques(liste_id_musiques):
 						
 						Settings.get_setting("telechargements")["images"][id_image] = new_image
 						Settings.save_settings()
+						image_downloaded.emit(noeud_player.infos_musiques[id_musique]["image"])
+				else:	# else du if not est_image_telecharge(id_image)
+					image_downloaded.emit(noeud_player.infos_musiques[id_musique]["image"])
+	end_download.emit(FonctionsGlobal.id_current_download)
 	FonctionsGlobal.id_current_download = null
 
 func supprimer_musiques(liste_id_musiques):
 	# WARNING la fonction de vérifie pas si le client est bloqué
+	var liste_suppressions_musiques = []
+	var liste_suppressions_images = []
 	var _noeud_player = Client.get_tree().get_first_node_in_group("player")
 	var qualite = Settings.get_setting("qualite")	# qualité demandé à easy_get_music
 		
@@ -330,6 +367,7 @@ func supprimer_musiques(liste_id_musiques):
 			if qualite_test == "commun":
 				Settings.get_setting("telechargements")["musiques"].erase(id_musique)
 		Settings.save_settings()
+		liste_suppressions_musiques.append(id_musique)
 		
 	# nettoyage des images, on les supprime du disque et on enlève leur référence si elles ne sont plus utilisées
 	# on regarde même celles non liées à la boucle précédente, au cas la suppression avait raté précédemment
@@ -354,6 +392,10 @@ func supprimer_musiques(liste_id_musiques):
 			Settings.get_setting("telechargements")["images"].erase(id_image)
 			Settings.get_setting("telechargements")["images id"].erase(chemin_image)
 			Settings.save_settings()
+			liste_suppressions_images.append(chemin_image)
+			
+	# on émet le signal avec toutes les musiques supprimées
+	musics_deleted.emit(liste_suppressions_musiques, liste_suppressions_images)
 
 # création musique
 func creer_musique(id:int, position_playlist:int, nom:String, id_artiste:int, nom_artiste:String, id_album:int, nom_album:String, image:String, afficher_numero=true, id_playlist=null) -> Node:
@@ -373,13 +415,14 @@ func creer_musique(id:int, position_playlist:int, nom:String, id_artiste:int, no
 	new_noeud.id_album = id_album
 	new_noeud.id_artiste = id_artiste
 	new_noeud.position_playlist = position_playlist
+	new_noeud.chemin_image = image
 	
 	new_noeud.get_node("éléments/gauche/numéro").text = FonctionsGlobal.to_text(position_playlist + 1)
 	new_noeud.get_node("éléments/milieu/HBoxContainer/titre").text = nom
 	new_noeud.get_node("éléments/milieu/artiste").text = nom_artiste
 	new_noeud.get_node("éléments/album").text = nom_album
 	
-	new_noeud.get_node("éléments/masque/image").texture = await easy_get_image(image)
+	new_noeud.get_node("éléments/masque/image").texture = await easy_get_image(image, id)
 	new_noeud.album_clicked.connect(Client.get_tree().get_first_node_in_group("enumeration")._album_clicked)
 	new_noeud.artiste_clicked.connect(Client.get_tree().get_first_node_in_group("enumeration")._artiste_clicked)
 	

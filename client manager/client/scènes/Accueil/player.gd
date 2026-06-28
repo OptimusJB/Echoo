@@ -2,6 +2,7 @@ extends HBoxContainer
 var script_get_ressource = null
 
 var nom_playlist = ""
+var nom_playlist_play = ""	# nom playlist en cours
 var playlist = []
 var infos_musiques = {}	# clé:id musique, valeur:{"position", "nom", "id_artiste", "nom_artiste", "id_album", "nom_album", "image"}
 
@@ -16,6 +17,9 @@ var player_grab = false	# true si la barre du player est maintenue
 
 signal update_queue
 signal charger_artiste
+
+# signaux pour les musique
+signal playing	# émit quand une nouvelle musique est jouée
 
 func _ready() -> void:
 	script_get_ressource = Client.get_tree().get_first_node_in_group("easy_get_ressource")
@@ -58,7 +62,7 @@ func received(message_json, _message_bytes):
 		# on change les infos sur le player
 		$"centre/slider/temps actuel".text = FonctionsGlobal.secondes_to_text(0)
 		$"centre/slider/temps max".text = FonctionsGlobal.secondes_to_text($"../AudioStreamPlayer".stream.get_length())
-		$"gauche/masque/image musique".texture = await script_get_ressource.easy_get_image(infos["image_musique"])
+		$"gauche/masque/image musique".texture = await script_get_ressource.easy_get_image(infos["image_musique"], playlist_play[position_play])
 		$"gauche/infos musique/nom".text = FonctionsGlobal.to_text(infos["nom_musique"])
 		$"gauche/infos musique/artiste".text = FonctionsGlobal.to_text(infos["nom_artiste"])
 		
@@ -71,6 +75,9 @@ func received(message_json, _message_bytes):
 		
 		$"../".visible = true
 		$"../AudioStreamPlayer".play()
+		if position_play < 0:
+			print("position play : ", position_play)
+		playing.emit(playlist_play[position_play])
 		
 	Client.is_locked = false
 	
@@ -81,12 +88,15 @@ func jouer_musique(position_musique:int):
 		# on cache le player s'il n'y a pas de musique
 		if not $"../AudioStreamPlayer".has_stream_playback():
 			$"../".visible = false
+			playing.emit(-1)
 		return
 	Client.is_locked = true
 	
 	# on s'arrête si position_musique est suspect
 	if position_musique < 0:
 		Client.is_locked = false
+		$"../".visible = false
+		playing.emit(-1)
 		return
 		
 	# on coupe la musique en cours s'il y en a une
@@ -131,7 +141,9 @@ func creer_playlist_play(position_playlist:int):
 	
 	# on retire le repeat
 	$"centre/boutons/size repeter/repeter".reset()
-		
+	
+	# on change le nom de la playlist en cours
+	nom_playlist_play = nom_playlist
 	jouer_musique(position_play)
 
 
@@ -174,7 +186,6 @@ func _on_jouer_toggled(toggled_on: bool) -> void:
 	else:
 		$"../AudioStreamPlayer".stream_paused = true
 
-
 func _on_audio_stream_player_finished() -> void:
 	if Client.is_locked:
 		
@@ -182,6 +193,7 @@ func _on_audio_stream_player_finished() -> void:
 		# on cache le player s'il n'y a pas de musique
 		if not $"../AudioStreamPlayer".has_stream_playback():
 			$"../".visible = false
+			playing.emit(-1)
 		return
 		
 	var noeud_repeat = $"centre/boutons/size repeter/repeter"
@@ -204,9 +216,10 @@ func _on_audio_stream_player_finished() -> void:
 		if noeud_repeat.etat_texte[noeud_repeat.etat] == "on":
 			jouer_musique(0)
 		else:
-			$"../".visible = false
-			$"../AudioStreamPlayer".stop()	# si jamais c'est suivant qui a appelé
 			position_play += 1	# pour ne rien afficher dans la liste d'attente
+			$"../AudioStreamPlayer".stop()	# si jamais c'est suivant qui a appelé
+			$"../".visible = false
+			playing.emit(-1)
 			update_queue.emit()
 	else:
 		jouer_musique(position_play + 1)

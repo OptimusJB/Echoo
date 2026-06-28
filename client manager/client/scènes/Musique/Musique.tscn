@@ -12,6 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://ky8htaemke5l" path="res://assets/download off.png" id="8_8rxxk"]
 [ext_resource type="Texture2D" uid="uid://bi3cosww6jv3g" path="res://assets/playing/frame_002_delay-0.033s.png" id="8_bsctr"]
 [ext_resource type="Texture2D" uid="uid://b73k0c56v5gcc" path="res://assets/playing/frame_003_delay-0.033s.png" id="9_0pnuq"]
+[ext_resource type="Texture2D" uid="uid://edh5a4j0y2ko" path="res://assets/image downloaded.svg" id="9_en5vl"]
 [ext_resource type="Texture2D" uid="uid://b7j5718c28rkp" path="res://assets/download/frame_00_delay-0.033s.png" id="9_kuycy"]
 [ext_resource type="Script" uid="uid://b5oq3u7y5vusv" path="res://client/scènes/Musique/button_down_accept.gd" id="10_kuycy"]
 [ext_resource type="Texture2D" uid="uid://guax17xs7461" path="res://assets/playing/frame_004_delay-0.033s.png" id="10_xmuge"]
@@ -318,6 +319,14 @@ visible = false
 custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 texture = ExtResource("8_8rxxk")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="image downloaded" type="TextureRect" parent="éléments/milieu/HBoxContainer" unique_id=627287044]
+visible = false
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+texture = ExtResource("9_en5vl")
 expand_mode = 1
 stretch_mode = 4
 
