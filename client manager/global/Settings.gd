@@ -25,7 +25,7 @@ func save_settings(use_debug=false) -> int:
 		# on fait un deuxième fichier en json
 		use_json = true
 		var old_save_filename=save_filename
-		save_filename = save_filename.get_basename() + "_debug.txt"
+		save_filename = save_filename.get_basename() + "_debug.json"
 		save_settings(false)
 		save_filename = old_save_filename
 		use_json = false

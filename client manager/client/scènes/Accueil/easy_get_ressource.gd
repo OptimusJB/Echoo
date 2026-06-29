@@ -181,7 +181,7 @@ func est_musique_existante(id_musique:int):
 	# renvoie true si l'id de la musique est enregistrée
 	return id_musique in Settings.get_setting("telechargements")["musiques"].keys()
 
-func est_image_telecharge(id_image:int):
+func est_image_telecharge(id_image:int) -> bool:
 	return id_image in Settings.get_setting("telechargements")["images"].keys() and Settings.get_setting("telechargements")["images"][id_image]["extension"] != null
 
 func est_chemin_image_telecharge(chemin_image:String):
@@ -225,6 +225,14 @@ func telecharger_musiques(liste_id_musiques):
 	var new_musique
 	var new_image
 	for id_musique in liste_id_musiques:
+		if not id_musique is int:
+			push_warning("id_musique n'est pas un int")
+			continue
+		
+		if not id_musique in noeud_player.infos_musiques.keys():
+			push_warning("id musique n'est pas dans infos_musiques")
+			continue
+
 		FonctionsGlobal.id_current_download = id_musique
 		start_download.emit(FonctionsGlobal.id_current_download)
 		await Client.get_tree().process_frame
@@ -271,16 +279,20 @@ func telecharger_musiques(liste_id_musiques):
 			var id_image:int
 			# on détermine l'id de l'image si elle existe déjà, sinon on lui en attribue une
 			# id images de la forme {"nom image":id_associé}
-			if noeud_player.infos_musiques[id_musique]["image"] in Settings.get_setting("telechargements")["images id"].keys():
+			if new_musique["id image"] != null:
+				id_image = new_musique["id image"]
+				#id_image = Settings.get_setting("telechargements")["images id"][noeud_player.infos_musiques[id_musique]["image"]]
+			elif noeud_player.infos_musiques[id_musique]["image"] in Settings.get_setting("telechargements")["images id"].keys():
 				id_image = Settings.get_setting("telechargements")["images id"][noeud_player.infos_musiques[id_musique]["image"]]
+				new_musique["id image"] = id_image
 			else:
 				id_image = Settings.get_setting("telechargements")["next image id"]
 				# on enregistre dans les settings l'id associé
 				Settings.get_setting("telechargements")["images id"][noeud_player.infos_musiques[id_musique]["image"]] = id_image
 				Settings.get_setting("telechargements")["next image id"] = id_image + 1
+				new_musique["id image"] = id_image
 			
-			# on met id image de la musique sur la musique
-			new_musique["id image"] = id_image
+			# on ajoute / met à jour la musique dans les settings
 			Settings.get_setting("telechargements")["musiques"][id_musique] = new_musique
 			
 			# on augmente le compteur d'utilisations de l'image
@@ -319,9 +331,9 @@ func telecharger_musiques(liste_id_musiques):
 						
 						Settings.get_setting("telechargements")["images"][id_image] = new_image
 						Settings.save_settings()
-						image_downloaded.emit(noeud_player.infos_musiques[id_musique]["image"])
+						image_downloaded.emit(get_image_path_of_downloaded_music(id_musique))
 				else:	# else du if not est_image_telecharge(id_image)
-					image_downloaded.emit(noeud_player.infos_musiques[id_musique]["image"])
+					image_downloaded.emit(get_image_path_of_downloaded_music(id_musique))
 	end_download.emit(FonctionsGlobal.id_current_download)
 	FonctionsGlobal.id_current_download = null
 

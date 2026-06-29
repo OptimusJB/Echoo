@@ -68,6 +68,7 @@ func _ready():
 	var chemin_dl = script_get_ressource.get_image_path_of_downloaded_music(id)
 	if chemin_dl:
 		chemin_image = chemin_dl
+	# sinon chemin_image est défini par creer_musique dans easy_get_ressource (image de base)
 	
 	# on connecte les signaux
 	script_get_ressource.music_downloaded.connect(music_downloaded)
