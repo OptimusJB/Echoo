@@ -1,6 +1,7 @@
 extends Label
 @export var noeud_label_voisin:Control
 var old=0
+
 func check_taille():
 	#print("check")
 	var taille_actuel = $"../temps actuel".get_minimum_size().x

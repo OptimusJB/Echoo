@@ -24,6 +24,7 @@ grow_vertical = 2
 script = ExtResource("1_sc0dr")
 
 [node name="notif_preset" type="MarginContainer" parent="." unique_id=539282324 groups=["notif_preset"]]
+process_mode = 3
 visible = false
 layout_mode = 0
 offset_left = 555.0
@@ -44,6 +45,7 @@ text = "truc"
 [node name="temps_affichage" type="Timer" parent="notif_preset" unique_id=1510105282]
 wait_time = 3.0
 one_shot = true
+ignore_time_scale = true
 
 [node name="CenterContainer" type="CenterContainer" parent="." unique_id=1765680670]
 layout_mode = 1

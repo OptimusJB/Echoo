@@ -76,3 +76,7 @@ SETTING_START_TEXT,"Si cette option est activée, la file d'attente commencera �
 DISCONNECT,Déconnexion,Log out
 COOLDOWN,Cooldown de connexion,Connection cooldown
 ALREADY_CONNECTED,Vous êtes déjà connecté sur un autre appareil,You are already logged in on another device
+WARNING_DL,Note : changer de serveur rendra vos téléchargements incohérents,Note: Changing servers will cause your downloads to become inconsistent
+SETTING_MUSICS_NUMBER,Musiques téléchargées : %d,Downloaded music: %d
+SETTING_IMAGES_NUMBER,Images téléchargées : %d,Downloaded images : %d
+SETTING_MUSICS_CLEAR,Supprimer tous les téléchargements,Delete all downloads

@@ -12,6 +12,7 @@
 [ext_resource type="Script" uid="uid://dryf4by0vs3q" path="res://client/scènes/SettingsView/bouton_lisser_images.gd" id="9_f5ngv"]
 [ext_resource type="Script" uid="uid://b5pj1d3qp7efx" path="res://client/scènes/SettingsView/bouton_chanson_clic.gd" id="10_j4k7y"]
 [ext_resource type="Script" uid="uid://c12avlqsq6ucf" path="res://client/scènes/SettingsView/bouton_commun.gd" id="11_pjd4i"]
+[ext_resource type="Script" uid="uid://ccpuhcog6xxol" path="res://client/scènes/SettingsView/bouton_supprimer_musiques.gd" id="12_5cgf7"]
 
 [node name="SettingsView" type="ScrollContainer" unique_id=1436242142]
 anchors_preset = 15
@@ -270,6 +271,31 @@ size_flags_horizontal = 8
 size_flags_vertical = 0
 script = ExtResource("11_pjd4i")
 
+[node name="supprimer musiques" type="MarginContainer" parent="éléments" unique_id=1634931459]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="éléments/supprimer musiques" unique_id=237141451]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="musiques" type="Label" parent="éléments/supprimer musiques/VBoxContainer" unique_id=793421506]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "SETTING_MUSICS_NUMBER"
+text_overrun_behavior = 3
+
+[node name="images" type="Label" parent="éléments/supprimer musiques/VBoxContainer" unique_id=277675227]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "SETTING_IMAGES_NUMBER"
+text_overrun_behavior = 3
+
+[node name="bouton supprimer musiques" type="Button" parent="éléments/supprimer musiques/VBoxContainer" unique_id=248483304]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "SETTING_MUSICS_CLEAR"
+script = ExtResource("12_5cgf7")
+
 [node name="vider cache" type="MarginContainer" parent="éléments" unique_id=1906291830]
 layout_mode = 2
 
@@ -279,6 +305,7 @@ size_flags_horizontal = 0
 text = "SETTING_RAM_CLEAR"
 script = ExtResource("6_npgdh")
 
+[connection signal="afficher_dl_numbers" from="éléments/langue/HBoxContainer/options langue" to="." method="afficher_dl_numbers"]
 [connection signal="item_selected" from="éléments/langue/HBoxContainer/options langue" to="éléments/langue/HBoxContainer/options langue" method="_on_item_selected"]
 [connection signal="value_changed" from="éléments/échelle/HBoxContainer/nombre échelle" to="éléments/échelle/HBoxContainer/nombre échelle" method="_on_value_changed"]
 [connection signal="toggled" from="éléments/charger images/HBoxContainer/bouton charger images" to="éléments/charger images/HBoxContainer/bouton charger images" method="_on_toggled"]
@@ -288,4 +315,6 @@ script = ExtResource("6_npgdh")
 [connection signal="toggled" from="éléments/lisser images/HBoxContainer/bouton lisser images" to="éléments/lisser images/HBoxContainer/bouton lisser images" method="_on_toggled"]
 [connection signal="toggled" from="éléments/commencer chanson clic/HBoxContainer/bouton chanson clic" to="éléments/commencer chanson clic/HBoxContainer/bouton chanson clic" method="_on_toggled"]
 [connection signal="toggled" from="éléments/commun/HBoxContainer/bouton commun" to="éléments/commun/HBoxContainer/bouton commun" method="_on_toggled"]
+[connection signal="maj_dl_numbers" from="éléments/supprimer musiques/VBoxContainer/bouton supprimer musiques" to="." method="maj_dl_numbers"]
+[connection signal="pressed" from="éléments/supprimer musiques/VBoxContainer/bouton supprimer musiques" to="éléments/supprimer musiques/VBoxContainer/bouton supprimer musiques" method="_on_pressed"]
 [connection signal="pressed" from="éléments/vider cache/bouton vider cache" to="éléments/vider cache/bouton vider cache" method="_on_pressed"]

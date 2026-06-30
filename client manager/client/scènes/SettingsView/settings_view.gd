@@ -1,6 +1,25 @@
 extends ScrollContainer
 
 class_name settings_view
+
+var script_get_ressource = null
+var nb_musiques = 0
+var nb_images = 0
+
+func afficher_dl_numbers():
+	$"éléments/supprimer musiques/VBoxContainer/musiques".text = tr("SETTING_MUSICS_NUMBER") % [nb_musiques]
+	$"éléments/supprimer musiques/VBoxContainer/images".text = tr("SETTING_IMAGES_NUMBER") % [nb_images]
+	
+func maj_dl_numbers():
+	# on met à jour le nombre de musiques et images téléchargées
+	nb_musiques = 0
+	nb_images = 0
+	for id_musique in Settings.get_setting("telechargements")["musiques"].keys():
+		nb_musiques = nb_musiques + 4 - Settings.get_setting("telechargements")["musiques"][id_musique].values().count(null)
+	for id_image in Settings.get_setting("telechargements")["images"].keys():
+		nb_images = nb_images + 1
+	afficher_dl_numbers()
+	
 func charger(noeud_enumeration):
 	# pas besoin du client mais on lock quand même pour éviter les bugs bizarres
 	if Client.is_locked:
@@ -19,6 +38,9 @@ func charger(noeud_enumeration):
 	$"éléments/commencer chanson clic/HBoxContainer/bouton chanson clic".button_pressed = FonctionsGlobal.to_int(Settings.get_setting("commencer à la chanson cliquee"))
 	$"éléments/commun/HBoxContainer/bouton commun".button_pressed = FonctionsGlobal.to_int(Settings.get_setting("telechargements")["est commun"])
 	
+	# on met à jour le nombre de musiques et images téléchargées
+	maj_dl_numbers()
+	
 	# on add_child la scène
 	for enfant in noeud_enumeration.get_children():
 		enfant.queue_free()
@@ -26,3 +48,6 @@ func charger(noeud_enumeration):
 	noeud_enumeration.add_child(self)
 	
 	Client.is_locked = false
+
+func _ready() -> void:
+	script_get_ressource = Client.get_tree().get_first_node_in_group("easy_get_ressource")
