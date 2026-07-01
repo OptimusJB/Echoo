@@ -3,6 +3,7 @@ class_name objet_musique
 
 var script_get_ressource = null
 var player
+var noeud_scroll
 
 var focus = false
 var afficher_numero = true	# si false, le bouton n'apparaîtra pas quand on enlève la souris
@@ -25,6 +26,7 @@ var is_in_queue	= false	# mettre à true si jamais la musique est dans la file d
 var id_playlist = null
 
 var est_telecharge = false
+
 
 signal jouer_musique
 signal creer_playlist
@@ -98,6 +100,11 @@ func _ready():
 		playing(id)
 	if FonctionsGlobal.id_current_download == id:
 		start_download(id)
+	
+	# on récupère le noeud scroll
+	noeud_scroll = self
+	while not noeud_scroll is ScrollContainer:
+		noeud_scroll = noeud_scroll.get_node("../")
 
 func _on_play_pressed() -> void:
 	# position_playlist sert s'il y a plusieurs musiques identiques dans la playlist
@@ -119,7 +126,7 @@ func end_download(id_musique:int):
 	if id == id_musique:
 		if $"éléments/milieu/HBoxContainer/dowloading".visible:
 			$"éléments/milieu/HBoxContainer/dowloading".visible = false
-		if not player.playlist_play[player.position_play] == id:
+		if not (player.get_node("../AudioStreamPlayer").has_stream_playback() and player.playlist_play[player.position_play] == id):
 			set_process(false)
 
 func start_download(id_musique:int):
@@ -175,6 +182,10 @@ func afficher_indicateur():
 			$"éléments/gauche/size play/play".cacher()
 	
 func _process(delta: float) -> void:
+	# on arrête si la musique n'est pas dans le cadre ou s'il n'est pas affiché
+	if not noeud_scroll.get_global_rect().intersects(get_global_rect()) or not is_visible_in_tree():
+		return
+	
 	# on check le rafaichissement du playing
 	if $"éléments/gauche/marges playing/playing".visible and get_window().has_focus():
 		
@@ -191,7 +202,8 @@ func _process(delta: float) -> void:
 			numero_frame_download = (numero_frame_download + 1) % 30
 			$"éléments/milieu/HBoxContainer/dowloading".texture = noeud_animation_download.sprite_frames.get_frame_texture("default", numero_frame_download)
 			dernier_refresh_download = Time.get_ticks_msec()
-			
+
+"""			
 func _process_old(_delta: float) -> void:
 	# on check le rafaichissement du playing
 	if player.get_node("../AudioStreamPlayer").has_stream_playback() and get_window().has_focus() and player.playlist_play[player.position_play] == id:
@@ -247,6 +259,7 @@ func _process_old(_delta: float) -> void:
 			numero_frame_download = (numero_frame_download + 1) % 30
 			$"éléments/milieu/HBoxContainer/dowloading".texture = noeud_animation_download.sprite_frames.get_frame_texture("default", numero_frame_download)
 			dernier_refresh_download = Time.get_ticks_msec()
+"""
 
 func _on_album_pressed() -> void:
 	album_clicked.emit(id_album)

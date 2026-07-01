@@ -78,6 +78,7 @@ func received(message_json, _message_bytes):
 		
 		elif message_json["resultat"] == "deja co":
 			Notif.add_notif("ALREADY_CONNECTED")
+			$cooldown.start()
 			
 	Client.is_locked = false
 	

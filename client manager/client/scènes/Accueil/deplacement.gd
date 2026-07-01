@@ -16,6 +16,7 @@ func lancer_deplacement(id_playlist_musique, position_musique, noeud_image_musiq
 	$image.texture = noeud_image_musique.texture.duplicate()
 	visible = true
 	actif = true
+	set_process(true)
 
 func survol(position_musique):
 	if actif:
@@ -26,6 +27,7 @@ func fin_deplacement():
 		return
 	print("début : ", position_musique_depart, ", fin :", position_musique_fin)
 	actif = false
+	set_process(false)
 	visible = false
 	if position_musique_depart == position_musique_fin:
 		return
@@ -57,7 +59,10 @@ func received(message_json, message_bytes):
 		return
 	if message_json["type"] == "changer position musique":
 		changer_position_musique_received.emit(message_json, message_bytes)
-		
+
+func _ready() -> void:
+	set_process(false)
+	
 func _process(_delta: float) -> void:
 	if actif:
 		global_position = get_global_mouse_position()

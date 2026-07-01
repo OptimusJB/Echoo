@@ -528,6 +528,7 @@ script = ExtResource("30_jysfg")
 [connection signal="timeout" from="VBoxContainer/marges supérieur/centre/rechercher/timer texte" to="VBoxContainer/marges supérieur/centre/rechercher" method="_on_timer_texte_timeout"]
 [connection signal="pressed" from="VBoxContainer/marges supérieur/Button" to="VBoxContainer/marges corps/corps/musiques/Enumeration" method="_settings_clicked"]
 [connection signal="charger_artiste" from="VBoxContainer/fond player/player" to="VBoxContainer/marges corps/corps/musiques/Enumeration" method="_artiste_clicked"]
+[connection signal="number_changed" from="VBoxContainer/fond player/player" to="VBoxContainer/fond player/player/centre/slider/temps actuel" method="number_changed"]
 [connection signal="update_queue" from="VBoxContainer/fond player/player" to="VBoxContainer/marges corps/corps/musiques/Attente" method="update"]
 [connection signal="gui_input" from="VBoxContainer/fond player/player/gauche/masque/image musique" to="VBoxContainer/fond player/player/gauche/masque/image musique" method="_on_gui_input"]
 [connection signal="image_gros_plan" from="VBoxContainer/fond player/player/gauche/masque/image musique" to="gros plan cover" method="_on_image_musique_image_gros_plan"]

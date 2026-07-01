@@ -9,6 +9,7 @@ func disconnected():
 
 func _ready() -> void:
 	# on se connecte au disconnected du client
+	set_process(false)
 	Client.disconnected.connect(disconnected)
 
 func _input(event: InputEvent) -> void:
@@ -25,6 +26,7 @@ func _input(event: InputEvent) -> void:
 		Notif.add_notif(tr("RAM_CLEAR"))
 
 var retour_au_lobby = false
+
 func _on_deconnexion_pressed() -> void:
 	#$"retour au lobby".connexion = true
 	#get_tree().change_scene_to_file.call_deferred("res://client/scènes/Connexion/connexion.tscn")
@@ -32,8 +34,10 @@ func _on_deconnexion_pressed() -> void:
 	# call_deferred ne marche pas, car celui-ci est exécuté entre _physics_process et _process
 	# donc ça peut poser problème pour d'autres noeuds (voir resize_temps.gd avec sa boucle de process_frame)
 	retour_au_lobby = true
+	set_process(true)
 
 func _process(_delta: float) -> void:
+	# WARNING set_process(false) au début
 	if retour_au_lobby:
 		close_no_message = true
 		Client.socket.close()

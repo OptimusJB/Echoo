@@ -17,6 +17,7 @@ var player_grab = false	# true si la barre du player est maintenue
 
 signal update_queue
 signal charger_artiste
+signal number_changed
 
 # signaux pour les musique
 signal playing	# émit quand une nouvelle musique est jouée
@@ -62,6 +63,7 @@ func received(message_json, _message_bytes):
 		# on change les infos sur le player
 		$"centre/slider/temps actuel".text = FonctionsGlobal.secondes_to_text(0)
 		$"centre/slider/temps max".text = FonctionsGlobal.secondes_to_text($"../AudioStreamPlayer".stream.get_length())
+		number_changed.emit()	# on en met un ici au cas où le temps actuel était déjà à 0
 		$"gauche/masque/image musique".texture = await script_get_ressource.easy_get_image(infos["image_musique"], playlist_play[position_play])
 		$"gauche/infos musique/nom".text = FonctionsGlobal.to_text(infos["nom_musique"])
 		$"gauche/infos musique/artiste".text = FonctionsGlobal.to_text(infos["nom_artiste"])
@@ -154,7 +156,8 @@ func _on_timer_refresh_timeout() -> void:
 	
 	var avancement = $"../AudioStreamPlayer".get_playback_position()
 	$"centre/slider/barre".value = float(int(avancement))
-	$"centre/slider/temps actuel".text = FonctionsGlobal.secondes_to_text(avancement)
+	
+	#$"centre/slider/temps actuel".text = FonctionsGlobal.secondes_to_text(avancement)
 	#print(avancement)
 	#print($"centre/slider/barre".value, " et ", $"centre/slider/temps actuel".text)
 
@@ -176,7 +179,7 @@ func _on_barre_drag_ended(_value_changed: bool) -> void:
 
 func _on_barre_value_changed(value: float) -> void:
 	$"centre/slider/temps actuel".text = FonctionsGlobal.secondes_to_text(int(value))
-
+	number_changed.emit()
 
 func _on_jouer_toggled(toggled_on: bool) -> void:
 	# toggled_on --> en cours de lecture --> texture pause

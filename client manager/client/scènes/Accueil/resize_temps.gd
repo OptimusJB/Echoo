@@ -11,12 +11,14 @@ func check_taille():
 	noeud_label_voisin.custom_minimum_size.x = taille
 	custom_minimum_size.x = taille
 	
-func _process(_delta: float) -> void:
+func number_changed() -> void:
 	check_taille()
 	#print(Engine.get_process_frames())
 	
+	"""
 	set_process(false)
 	for i in range(30):
 		#print("b : ", get_tree(), " et ",Engine.get_process_frames(), " et ", FonctionsGlobal.nombre)
 		await get_tree().process_frame
 	set_process(true)
+	"""
