@@ -577,7 +577,8 @@ async function handle(websocketpeer, message_json, message_bytes){
 
                 // on stocke l'image sur le disque
                 // note : il n'y a pas le point à l'extension
-                chemin_image = import.meta.dirname + "/Uplaylists covers/" + message_json.id_playlist + "." + message_json.image_extension
+                if (!server_settings["chemins relatifs"]) chemin_image = import.meta.dirname + "/Uplaylists covers/" + message_json.id_playlist + "." + message_json.image_extension
+                else chemin_image = "Uplaylists covers/" + message_json.id_playlist + "." + message_json.image_extension
                 fs.writeFileSync(chemin_image, message_bytes);
                 
             }
@@ -719,6 +720,7 @@ wss.on("connection", function connection(websocketpeer, req){ // connection d'un
         }
         catch (err){
             console.log("erreur lors du handle : " + err);
+            websocketpeer.terminate();
         }
         // on remet à jour le temps (potentiel envoi de gros fichiers)
         connexions_timeout.set(websocketpeer, Date.now());
