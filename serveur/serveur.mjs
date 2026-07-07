@@ -6,8 +6,8 @@ import { randomInt } from "node:crypto";
 import path from 'node:path';
 import * as argon2 from "argon2";
 
-let ip="0.0.0.0";
-let port=25565;
+let ip="";
+let server_port=25565;
 let connexions_timeout = new Map;
 let connexions_data = new Map;
 
@@ -47,7 +47,7 @@ try{
     if(!fs.existsSync("server_ip.json")){
         // on crée le fichier
         let data_fichier = {
-            "ip":"0.0.0.0",
+            "ip":"",
             "port":25565
         }
         let data_str = JSON.stringify(data_fichier);
@@ -57,8 +57,8 @@ try{
     let fichier_read = fs.readFileSync("server_ip.json", "utf-8");
     let data_fichier = JSON.parse(fichier_read);
 
-    ip = fichier_read["ip"];
-    port = parseInt(fichier_read["port"]);
+    ip = data_fichier["ip"];
+    server_port = parseInt(data_fichier["port"]);
 
 } catch{
     console.log("une erreur est survenue lors de la lecture du fichier server_ip.json");
@@ -110,7 +110,7 @@ try{
 }
 
 const wss = new WebSocketServer({
-    port:25565,
+    port:server_port,
     host:ip,
 });
 
@@ -627,7 +627,7 @@ function verif_no_number(message_json, test_json=true, test_tableau=true){
 
 function normaliser_ip(ip){
     // normalise l'ip (par exemple, s'il s'agit d'une ip ipv4, sous forme d'ipv6, renvoie la version ipv4)
-    let new_ip;
+    let new_ip = ip;
     if(ip && ip.startsWith("::ffff:")) new_ip = ip.substring(7);
     
     // localhost peut être de la forme ::1, au cas où on le convertit en 127.0.0.1
